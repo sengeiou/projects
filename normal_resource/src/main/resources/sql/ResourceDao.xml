@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.normal.resources.impl.ResourceDao">
+    <resultMap id="BaseResultMap" type="com.normal.resources.impl.Resource">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="res_suffix" jdbcType="VARCHAR" property="resSuffix"/>
+        <result column="res_name" jdbcType="VARCHAR" property="resName"/>
+        <result column="real_url" jdbcType="VARCHAR" property="realUrl"/>
+        <result column="res_labels" jdbcType="INTEGER" property="resLabels"
+                typeHandler="com.normal.resources.impl.ResourceBitLabelsHandler"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, res_suffix, res_name, real_url, res_labels, status
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from trd_resource
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="queryByKeyword" parameterType="com.normal.core.mybatis.Page" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from trd_resource
+        where res_name like concat('%',#{params.keyword},'%')
+    </select>
+    <select id="queryByLabels" parameterType="com.normal.core.mybatis.Page" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from trd_resource
+        where res_labels <![CDATA[ & #{params.labels} ]]>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from trd_resource
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.normal.resources.impl.Resource"
+            useGeneratedKeys="true">
+        insert into trd_resource
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="resSuffix != null">
+                res_suffix,
+            </if>
+            <if test="resName != null">
+                res_name,
+            </if>
+            <if test="realUrl != null">
+                real_url,
+            </if>
+            <if test="resLabels != null">
+                res_labels,
+            </if>
+            <if test="status != null">
+                `status`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="resSuffix != null">
+                #{resSuffix,jdbcType=VARCHAR},
+            </if>
+            <if test="resName != null">
+                #{resName,jdbcType=VARCHAR},
+            </if>
+            <if test="realUrl != null">
+                #{realUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="resLabels != null">
+                #{resLabels,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.normal.resources.impl.Resource">
+        update trd_resource
+        <set>
+            <if test="resSuffix != null">
+                res_suffix = #{resSuffix,jdbcType=VARCHAR},
+            </if>
+            <if test="resName != null">
+                res_name = #{resName,jdbcType=VARCHAR},
+            </if>
+            <if test="realUrl != null">
+                real_url = #{realUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="resLabels != null">
+                res_labels = #{resLabels,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                `status` = #{status,jdbcType=TINYINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>
