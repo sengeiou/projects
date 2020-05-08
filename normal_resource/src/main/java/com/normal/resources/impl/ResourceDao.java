@@ -1,6 +1,7 @@
 package com.normal.resources.impl;
 
 import com.normal.core.mybatis.Page;
+import com.normal.core.mybatis.PageParam;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -16,9 +17,9 @@ public interface ResourceDao {
 
     int updateByPrimaryKeySelective(Resource record);
 
-    List<Resource> queryByLabels(Page page);
+    Page<Resource> queryByLabels(PageParam page);
 
-    List<Resource> queryByKeyword(Page page);
+    Page<Resource> queryByKeyword(PageParam page);
 
 
 

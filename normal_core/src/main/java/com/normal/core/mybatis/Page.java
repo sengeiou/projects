@@ -11,7 +11,6 @@ public class Page<T> {
     private int totalRecord;
     private int totalPage;
     private List<T> results;
-    private Map<String, Object> params = new HashMap<String, Object>();
     public int getPageNo() {
         return pageNo;
     }
@@ -52,14 +51,6 @@ public class Page<T> {
 
     public void setResults(List<T> results) {
         this.results = results;
-    }
-
-    public Map<String, Object> getParams() {
-        return params;
-    }
-
-    public void setParams(Map<String, Object> params) {
-        this.params = params;
     }
 
     @Override
