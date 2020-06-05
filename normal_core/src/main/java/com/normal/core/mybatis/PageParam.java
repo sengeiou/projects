@@ -1,20 +1,37 @@
 package com.normal.core.mybatis;
 
 import java.util.HashMap;
-import java.util.Map;
 
-import lombok.Getter;
-import lombok.Setter;
-@Getter
-@Setter
-public class PageParam {
-    private int pageNo = 0; 
-    private int pageSize = 15;
-    private Map<String, Object> param = new HashMap<String,Object>();
-    
+public class PageParam extends HashMap<String, Object> {
 
-    public int getOffset(){
-        return this.pageNo * this.pageSize;
+    public PageParam() {
+        super();
+        put("pageNo", 0);
+        put("pageSize", 15);
+        put("offset", 0);
     }
 
+    public void setPageNo(int pageNo) {
+        this.put("pageNo", pageNo);
+    }
+
+    public int getPageNo() {
+        return (int) get("pageNo");
+    }
+
+    public void setPageSize(int pageSize) {
+        this.put("pageSize", pageSize);
+    }
+
+    public int getPageSize() {
+        return (int) get("pageSize");
+    }
+
+    @Override
+    public Object get(Object key) {
+        if ("offset".equals(key)) {
+            return  getPageNo() * getPageSize();
+        }
+        return super.get(key);
+    }
 }

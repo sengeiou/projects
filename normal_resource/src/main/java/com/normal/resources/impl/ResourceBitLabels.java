@@ -1,5 +1,7 @@
 package com.normal.resources.impl;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.math.BigInteger;
 import java.util.BitSet;
 import java.util.HashSet;
@@ -57,6 +59,7 @@ public class ResourceBitLabels {
         return value.toString();
     }
 
+    @JsonValue
     public Set<ResourceLabelEnum> getLabels() {
         Set<ResourceLabelEnum> labels = new HashSet<>();
         ResourceLabelEnum[] values = ResourceLabelEnum.values();

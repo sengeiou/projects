@@ -1,5 +1,10 @@
 package com.normal.core.web;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class Result {
 
     private String code;

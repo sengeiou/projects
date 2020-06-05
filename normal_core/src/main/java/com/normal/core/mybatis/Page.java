@@ -1,8 +1,6 @@
 package com.normal.core.mybatis;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Page<T> {
 
@@ -11,6 +9,7 @@ public class Page<T> {
     private int totalRecord;
     private int totalPage;
     private List<T> results;
+
     public int getPageNo() {
         return pageNo;
     }
@@ -57,7 +56,7 @@ public class Page<T> {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("Page [pageNo=").append(pageNo).append(", pageSize=")
-                .append(pageSize).append(", results=").append(results).append(
+                .append(pageSize).append(
                 ", totalPage=").append(totalPage).append(
                 ", totalRecord=").append(totalRecord).append("]");
         return builder.toString();

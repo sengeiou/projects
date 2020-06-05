@@ -1,18 +1,13 @@
 package com.normal.resources.impl;
 
-import java.io.Serializable;
-
 /**
  * trd_resource
- * @author 
+ * 
+ * @author
  */
-public class Resource implements Serializable {
+public class Resource  {
     private Integer id;
 
-    /**
-     * 文件后缀
-     */
-    private String resSuffix;
 
     private String resName;
 
@@ -38,13 +33,6 @@ public class Resource implements Serializable {
         this.id = id;
     }
 
-    public String getResSuffix() {
-        return resSuffix;
-    }
-
-    public void setResSuffix(String resSuffix) {
-        this.resSuffix = resSuffix;
-    }
 
     public String getResName() {
         return resName;

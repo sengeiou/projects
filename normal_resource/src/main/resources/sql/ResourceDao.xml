@@ -3,7 +3,6 @@
 <mapper namespace="com.normal.resources.impl.ResourceDao">
     <resultMap id="BaseResultMap" type="com.normal.resources.impl.Resource">
         <id column="id" jdbcType="INTEGER" property="id"/>
-        <result column="res_suffix" jdbcType="VARCHAR" property="resSuffix"/>
         <result column="res_name" jdbcType="VARCHAR" property="resName"/>
         <result column="real_url" jdbcType="VARCHAR" property="realUrl"/>
         <result column="res_labels" jdbcType="INTEGER" property="resLabels"
@@ -11,7 +10,7 @@
         <result column="status" jdbcType="TINYINT" property="status"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, res_suffix, res_name, real_url, res_labels, status
+    id, res_name, real_url, res_labels, status
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
@@ -20,17 +19,18 @@
         where id = #{id,jdbcType=INTEGER}
     </select>
 
-    <select id="queryByKeyword" parameterType="com.normal.core.mybatis.Page" resultMap="BaseResultMap">
+    <select id="queryResources" parameterType="com.normal.core.mybatis.PageParam" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"></include>
         from trd_resource
-        where res_name like concat('%',#{params.keyword},'%')
-    </select>
-    <select id="queryByLabels" parameterType="com.normal.core.mybatis.Page" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"></include>
-        from trd_resource
-        where res_labels <![CDATA[ & #{params.labels} ]]>
+        <where>
+            <if test="labels != null and labels!=''">
+                res_labels <![CDATA[ & #{labels} ]]>
+            </if>
+            <if test="keyword != null and keyword!=''">
+                and res_name like concat('%',#{keyword},'%')
+            </if>
+        </where>
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
@@ -42,9 +42,6 @@
             useGeneratedKeys="true">
         insert into trd_resource
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="resSuffix != null">
-                res_suffix,
-            </if>
             <if test="resName != null">
                 res_name,
             </if>
@@ -59,9 +56,6 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="resSuffix != null">
-                #{resSuffix,jdbcType=VARCHAR},
-            </if>
             <if test="resName != null">
                 #{resName,jdbcType=VARCHAR},
             </if>
@@ -79,9 +73,6 @@
     <update id="updateByPrimaryKeySelective" parameterType="com.normal.resources.impl.Resource">
         update trd_resource
         <set>
-            <if test="resSuffix != null">
-                res_suffix = #{resSuffix,jdbcType=VARCHAR},
-            </if>
             <if test="resName != null">
                 res_name = #{resName,jdbcType=VARCHAR},
             </if>
