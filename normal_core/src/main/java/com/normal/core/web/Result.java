@@ -26,5 +26,9 @@ public class Result {
         return new Result(code, msg, false, null);
     }
 
+    public static Result fail(CommonErrorMsg errorMsg) {
+        return new Result(errorMsg.getCode(), errorMsg.getMsg(), false, null);
+    }
+
 
 }

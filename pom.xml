@@ -6,6 +6,7 @@
     <modules>
         <module>normal_resource</module>
         <module>normal_core</module>
+        <module>normal_portal</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
