@@ -22,7 +22,12 @@ public class Result {
     public static Result success(Object data) {
         return new Result("200", null, true, data);
     }
-    public static Result fail(String code , String msg) {
+
+    public static Result success() {
+        return new Result("200", null, true, null);
+    }
+
+    public static Result fail(String code, String msg) {
         return new Result(code, msg, false, null);
     }
 

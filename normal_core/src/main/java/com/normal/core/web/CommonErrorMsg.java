@@ -4,6 +4,7 @@ package com.normal.core.web;
 public enum CommonErrorMsg {
 
     RUNTIME_ERROR("-1000", "运行时异常"),
+    AUTH_ERROR("-1002", "无权限"),
 
     ILLEGE_ARG("-1001", "参数非法");
 
