@@ -1,11 +1,13 @@
 package com.normal.portal.impl;
 
+import com.normal.core.mybatis.PageParam;
 import com.normal.core.web.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,5 +31,15 @@ public class PostController {
     }
 
 
+    @RequestMapping("list")
+    public ModelAndView listPost(PageParam param) {
+        Result result = postService.listPost(param);
+        return new ModelAndView("postList", "result", result);
+    }
+
+    @RequestMapping("mng")
+    public ModelAndView toMng() {
+        return new ModelAndView("postMng");
+    }
 
 }
