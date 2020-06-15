@@ -6,6 +6,7 @@ import com.normal.core.web.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping("resource")
@@ -29,10 +30,9 @@ public class ResourceController {
     }
 
 
-    @ResponseBody
     @GetMapping("resources")
-    public Result resources(@ModelAttribute("pageParam") PageParam pageParam) {
-        return Result.success(Pages.query(() -> resourceDao.queryResources(pageParam)));
+    public ModelAndView resources(@ModelAttribute("pageParam") PageParam pageParam) {
+        return new ModelAndView("index", "page", Pages.query(() -> resourceDao.queryResources(pageParam)));
     }
 
 
