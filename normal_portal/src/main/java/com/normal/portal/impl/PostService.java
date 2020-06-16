@@ -16,9 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,19 +38,32 @@ public class PostService {
     PostMapper postMapper;
 
     public Result addPost(MultipartFile post, HttpServletRequest request) {
-        if (checkToken(request)) {
+
+        if (!checkToken(request)) {
             return Result.fail(CommonErrorMsg.AUTH_ERROR);
         }
+        String html, fileName = post.getOriginalFilename().substring(0, post.getOriginalFilename().lastIndexOf("."));
+
         try {
             String preview = PostHelper.getPostPreview(post);
-            String html = MDTool.markdown2Html(post.getResource().getFile());
-            Template template = configuration.getTemplate(getContextPath() + "/templates/postDetail.ftlh");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(post.getInputStream()));
+            StringBuffer fileContext = new StringBuffer();
+            for (; ; ) {
+                String line = reader.readLine();
+                if (line != null) {
+                    fileContext.append(line + "\n");
+                    continue;
+                }
+                break;
+            }
+            html = MDTool.markdown2Html(fileContext.toString());
+            Template template = configuration.getTemplate("postDetail.ftlh");
             Map<String, Object> dataModel = new HashMap<>(1);
             dataModel.put("post", html);
-            File outputFile = createEmptyFile(post.getName());
+            File outputFile = createEmptyFile(fileName);
             template.process(dataModel, new FileWriter(outputFile));
             Post record = new Post();
-            record.setPostTitle(post.getResource().getFilename());
+            record.setPostTitle(fileName);
             record.setPostPreview(preview);
             postMapper.insertSelective(record);
         } catch (IOException e) {
@@ -67,6 +78,9 @@ public class PostService {
 
     private File createEmptyFile(String fileName) throws IOException {
         Path staticFilePath = getStaticFilePath(fileName);
+        if (Files.exists(staticFilePath)) {
+            return staticFilePath.toFile();
+        }
         Files.createFile(staticFilePath);
         return staticFilePath.toFile();
     }
@@ -89,7 +103,7 @@ public class PostService {
 
 
     public Result deletePost(Integer id, HttpServletRequest request) {
-        if (checkToken(request)) {
+        if (!checkToken(request)) {
             return Result.fail(CommonErrorMsg.AUTH_ERROR);
         }
         Post post = postMapper.selectByPrimaryKey(id);

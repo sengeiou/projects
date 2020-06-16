@@ -84,7 +84,8 @@
             </ul>
         </div>
         <div class="post-detail">
-            ${post}
+                ${post?no_esc}
+
         </div>
 
         <div class="link">
