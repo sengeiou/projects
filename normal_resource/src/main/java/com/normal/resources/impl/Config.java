@@ -1,12 +1,15 @@
 package com.normal.resources.impl;
 
 import com.normal.core.mybatis.PageInterceptor;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
+@MapperScan(basePackages = "com.normal.resources.impl")
 public class Config {
 
     @Bean
@@ -28,4 +31,8 @@ public class Config {
             }
         };
     }
+
+
+
+
 }

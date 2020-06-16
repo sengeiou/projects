@@ -14,12 +14,12 @@
     <meta name="description" content="资源捕手专注与分享IT编程学习资源包括电子书,编程,视频教程,技术文章,文档,手册,源码,软件,工具">
     <link rel="Shortcut Icon" href="images/favicon.ico">
     <link rel="apple-touch-icon-precomposed" href="images/logo5.jpg">
-    <link href="css/style.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
     <!--[if lt IE 9]>
-    <script src="js/html5shiv.js"></script>
+    <script src="../css/html5shiv.js"></script>
     <![endif]-->
-    <script src="js/jquery-1.8.3.min.js"></script>
-    <script src="js/jquery.form.js"></script>
+    <script src="../js/jquery-1.8.3.min.js"></script>
+    <script src="../js/common.js"></script>
 
     <style type="text/css">
         .page-more a {
@@ -75,7 +75,7 @@
 <div class="cd-container clearfix">
     <main>
         <#if page.totalRecord==0>
-              <span>未能找到您要的内容. </span>
+            <span>未能找到您想要的内容. </span>
         <#else>
             <#list page.results as item>
                 <ul class="list-box">
@@ -83,20 +83,22 @@
                         <a href="${item.realUrl}" class="article-title">${item.resName}</a>
                         <dl>
                             <dd>
-                                <a href="/index/index/content/id/990760"><img src="images/favicon.ico" alt="头像">robot</a>
-                                <a href="/search/list/language/1" class="blue">编程与开发</a>
-
-                                <a href="/search/list/type/2" class="blue">电子书</a>
+                                <#list item.resLabels as label>
+                                    <a href="#" class="blue">${label}</a>
+                                </#list>
                             </dd>
                         </dl>
                     </li>
                 </ul>
             </#list>
+
             <div class="page-more">
-                <a href="#" id="page-first">首页</a>
-                <a href="#" id='page-before'>上一页</a>
-                <a href="#" id="page-after">下一页</a>
-                <a href="#" id="page-last">尾页</a>
+                <a class="page-previous" href="#">
+                    <span>上一页</span>
+                </a>
+                <a class="page-next" href="#">
+                    <span>下一页</span>
+                </a>
             </div>
         </#if>
 
@@ -109,7 +111,11 @@
         </div>
         <div class="column-box">
             <h6>资源标签</h6>
-            <div id="labels"></div>
+            <div id="labels">
+                <#list labels as label>
+                    <label><a href="#" class="blue" value="${label.idx}">${label.text}</a></label>
+                </#list>
+            </div>
         </div>
     </aside>
 </div>
@@ -143,7 +149,44 @@
                                                                             target="_blank">浙ICP备08106551号-3</a>
     </div>
 </footer>
+<script type="application/javascript">
 
-<script src="js/common.js"></script>
+    $(document).ready(function () {
+        //滚动效果
+        setInterval(function () {
+            var n = $(".download-info").find("li").height();
+            $(".download-info").find("ul:first").animate({
+                marginTop: -n
+            }, 700, function () {
+                $(this).css({
+                    marginTop: "0px"
+                }).find("li:first").appendTo(this);
+            });
+        }, 2000);
+
+        var searchBtn = $('#searchBtn'),
+            searchInput = $('.pansearch');
+
+        searchInput.on('keyup', function (event) {
+            var input = searchInput.val() || '';
+            if (event.keyCode == 13) {
+                input.replace(/\//g, '^');
+                G.locate('resources', {
+                    keyword: input
+                });
+            }
+        });
+
+        searchBtn.on('click', function (event) {
+            var input = searchInput.val() || '';
+            input = input.replace(/\//g, '^');
+            G.locate('resources', {
+                keyword: input
+            });
+        });
+    });
+
+
+</script>
 </body>
 </html>
