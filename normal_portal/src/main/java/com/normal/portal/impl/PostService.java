@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.net.URI;
@@ -36,6 +37,7 @@ public class PostService {
 
     @Autowired
     PostMapper postMapper;
+
 
     public Result addPost(MultipartFile post, HttpServletRequest request) {
 

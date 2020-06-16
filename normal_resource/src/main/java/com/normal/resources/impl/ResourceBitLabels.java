@@ -1,16 +1,22 @@
 package com.normal.resources.impl;
 
-import com.fasterxml.jackson.annotation.JsonValue;
+import freemarker.template.SimpleScalar;
+import freemarker.template.TemplateModel;
+import freemarker.template.TemplateModelException;
+import freemarker.template.TemplateSequenceModel;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
-public class ResourceBitLabels {
+public class ResourceBitLabels  implements TemplateSequenceModel {
 
     private static final int MAX_LENGTH = Integer.SIZE - 1;
     private BitSet value;
+
+    // for display
+    private List<ResourceLabelEnum> displayLabels;
 
     public ResourceBitLabels() {
         this.value = new BitSet();
@@ -18,6 +24,7 @@ public class ResourceBitLabels {
 
     public ResourceBitLabels(int value) {
         this.value = BitSet.valueOf(BigInteger.valueOf(value).toByteArray());
+        displayLabels = this.getLabels();
     }
 
     public void setFlag(int flagIndex) {
@@ -59,9 +66,9 @@ public class ResourceBitLabels {
         return value.toString();
     }
 
-    @JsonValue
-    public Set<ResourceLabelEnum> getLabels() {
-        Set<ResourceLabelEnum> labels = new HashSet<>();
+
+    public List<ResourceLabelEnum> getLabels() {
+        List<ResourceLabelEnum> labels = new ArrayList<>();
         ResourceLabelEnum[] values = ResourceLabelEnum.values();
         for (int i = value.nextSetBit(0); i != -1; ) {
             if (i < values.length) {
@@ -72,4 +79,15 @@ public class ResourceBitLabels {
         return labels;
     }
 
+
+    @Override
+    public TemplateModel get(int i) throws TemplateModelException {
+        ResourceLabelEnum label = this.displayLabels.get(i);
+        return new SimpleScalar(label.getValue());
+    }
+
+    @Override
+    public int size() throws TemplateModelException {
+        return this.displayLabels.size();
+    }
 }

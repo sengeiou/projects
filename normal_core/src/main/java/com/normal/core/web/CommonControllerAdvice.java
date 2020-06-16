@@ -4,8 +4,9 @@ import com.normal.core.NormalException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-@ControllerAdvice
+@ControllerAdvice(basePackageClasses = BaseController.class)
 public class CommonControllerAdvice {
 
     @ExceptionHandler

@@ -1,0 +1,83 @@
+@charset "utf-8";
+$black: #000000;
+$white: #ffffff;
+$grey: #111111;
+$grey-light: #eeeeee;
+$red: #ec1500;
+$green: #33a126;
+$bg: #f5f6f7;
+$f12: 12px;
+/*reset*/
+body{
+    font: 14px/1.5 "PingFang SC", Helvetica, "Helvetica Neue", "微软雅黑", Tahoma, Arial, sans-serif;
+    background: $bg;
+    color: $grey*3;
+}
+*{
+    margin:0;
+    padding:0
+}
+a{
+    outline:none;
+    text-decoration:none;
+    color: $grey * 3;
+}
+img{
+    border:0;
+}
+ul{
+    list-style:none;
+}
+input, textarea, select{
+    background:$white;
+    outline:none;
+    font-family: "PingFang SC", Helvetica, "Helvetica Neue", "微软雅黑", Tahoma, Arial, sans-serif;
+}
+h1,h2,h3,h4,h5,h6{
+    font-weight: normal;
+}
+pre{
+    display: block;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: normal;
+}
+.clearfix {
+    *zoom: 1;
+}
+.clearfix:before, .clearfix:after {
+    display: table;
+    content: "";
+    line-height: 0;
+}
+.clearfix:after {
+    clear: both;
+}
+.clr{
+    clear:both;
+}
+.fl{
+    float:left;
+}
+.fr{
+    float:right;
+}
+.tr{
+    text-align: right;
+}
+.margin0{
+    margin:0!important;
+}
+.padding0{
+    padding:0!important;
+}
+.pt60{
+    padding-top: 60px;
+}
+.blue{
+    color: #0477c0!important;
+}
+.red{
+    color: $red!important;
+}
+/*End reset*/
