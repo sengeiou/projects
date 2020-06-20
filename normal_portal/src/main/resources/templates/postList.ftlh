@@ -98,6 +98,7 @@
         </ul>
     </div>
     <div class="post-list">
+
         <div class="post">
             <div class="title">
                 <h2>xxx</h2>
