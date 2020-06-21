@@ -18,6 +18,7 @@ public class PostController {
     @Autowired
     private PostService postService;
 
+
     @RequestMapping("add")
     @ResponseBody
     public Result addPost(MultipartFile post, HttpServletRequest request) {
@@ -34,12 +35,13 @@ public class PostController {
     @RequestMapping("list")
     public ModelAndView listPost(PageParam param) {
         Result result = postService.listPost(param);
-        return new ModelAndView("postList", "result", result);
+        return new ModelAndView("postList", "data", result.getData());
     }
 
     @RequestMapping("mng")
     public ModelAndView toMng() {
         return new ModelAndView("postMng");
     }
+
 
 }
