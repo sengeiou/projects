@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.net.URI;
@@ -45,7 +44,11 @@ public class PostService {
             return Result.fail(CommonErrorMsg.AUTH_ERROR);
         }
         String html, fileName = post.getOriginalFilename().substring(0, post.getOriginalFilename().lastIndexOf("."));
-
+        Post existedPost = postMapper.selectByFileName(fileName);
+        if (existedPost != null) {
+            postMapper.deleteByPrimaryKey(existedPost.getId());
+        }
+        FileWriter out = null;
         try {
             String preview = PostHelper.getPostPreview(post);
             BufferedReader reader = new BufferedReader(new InputStreamReader(post.getInputStream()));
@@ -63,7 +66,9 @@ public class PostService {
             Map<String, Object> dataModel = new HashMap<>(1);
             dataModel.put("post", html);
             File outputFile = createEmptyFile(fileName);
-            template.process(dataModel, new FileWriter(outputFile));
+            out = new FileWriter(outputFile);
+            template.process(dataModel, out);
+
             Post record = new Post();
             record.setPostTitle(fileName);
             record.setPostPreview(preview);
@@ -74,6 +79,13 @@ public class PostService {
         } catch (TemplateException e) {
             logger.error("freemarker  parse error.  e:{}");
             return Result.fail(CommonErrorMsg.RUNTIME_ERROR);
+        } finally {
+            try {
+                out.close();
+            } catch (IOException e) {
+                //
+                logger.error("file out put stream  close exception");
+            }
         }
         return Result.success();
     }
@@ -91,10 +103,10 @@ public class PostService {
         String contextPath = getContextPath();
         String fullPath = new StringBuffer("file://")
                 .append(contextPath)
-                .append("static")
+                .append("templates")
                 .append("/")
                 .append(fileName)
-                .append(".html")
+                .append(".ftlh")
                 .toString();
         return Paths.get(URI.create(fullPath));
     }

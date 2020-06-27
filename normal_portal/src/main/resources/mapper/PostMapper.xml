@@ -16,12 +16,20 @@
     from trd_post
     where id = #{id,jdbcType=INTEGER}
   </select>
-  <select id="selectByPage" resultType="com.normal.portal.impl.Post">
+  <select id="selectByPage" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from trd_post
     order  by  update_time desc
   </select>
+
+  <select id="selectByFileName" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from trd_post
+    where  post_title = #{fileName}
+   </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from trd_post
     where id = #{id,jdbcType=INTEGER}
@@ -63,4 +71,5 @@
       </if>
     </trim>
   </insert>
+
 </mapper>

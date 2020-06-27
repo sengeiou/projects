@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 
 <head>
     <meta charset="UTF-8">
@@ -71,15 +71,6 @@
             margin-left: 10px;
         }
 
-        .title {
-            border-bottom: #ccc dashed 1px;
-        }
-
-        .create-date {
-            text-align: right;
-            color: #ccc;
-            font-size: 14px;
-        }
     </style>
 
 </head>
@@ -93,21 +84,17 @@
         </ul>
     </div>
     <div class="post-list">
+        <p>
+            个人承接一些网站开发，企业内部OA系统开发，小程序开发等业务
+        </p>
+        <p>
+            如有需要欢迎与我联系 : )　
+        </p>
 
-        <#list data.results as item>
-            <div class="post">
-                <div class="title">
-                    <h2><a href="/post/static/${item.postTitle}.do">${item.postTitle}</a></h2>
-                    <div class="create-date">${item.updateTime?string('yyyy.MM.dd')}</div>
-                </div>
-                <div>
-                    <p>
-                        ${item.postPreview}
-                    </p>
-                </div>
-            </div>
-        </#list>
-        <@page data=data url="/post/list"> </@page>
+        <p>
+            <strong>3611417830@qq.com</strong>
+        </p>
+
     </div>
 </div>
 </body>

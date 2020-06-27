@@ -16,4 +16,6 @@ public interface PostMapper {
     Post selectByPrimaryKey(Integer id);
 
     List<Post> selectByPage(PageParam param);
+
+    Post selectByFileName(String fileName);
 }

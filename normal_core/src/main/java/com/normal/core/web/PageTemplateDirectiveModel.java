@@ -38,21 +38,21 @@ public class PageTemplateDirectiveModel implements TemplateDirectiveModel {
         StringBuffer buf = new StringBuffer();
         String beforeUrl = url + "?pageNo=" + (page.getPageNo() - 1);
         String afterUrl = url + "?pageNo=" + (page.getPageNo() + 1);
-        if (page.getPageNo() == 1) {
-            buf.append("<a class=\"before\" href=\"#\"  style=\"color: #cccccc;float: left\">before</a>");
+        if (page.getPageNo() == 0) {
+            buf.append("<a class=\"before\" href=\"#\"  style=\"color: #cccccc;float: left\">前一页</a>");
         } else {
-            buf.append("<a class=\"before\" href=\"" + beforeUrl + "\"  style=\"color: #cccccc;float: left\">before</a>");
+            buf.append("<a class=\"before\" href=\"" + beforeUrl + "\"  style=\"float: left\">前一页</a>");
         }
 
-        if (page.getPageNo() == page.getTotalPage()) {
-            buf.append("<a class=\"after\" href=\"#\"  style=\"color: #cccccc;float: right\">after</a>");
+        if (page.getPageNo() == (page.getTotalPage() - 1)) {
+            buf.append("<a class=\"after\" href=\"#\"  style=\"color: #cccccc;float: right\">后一页</a>");
         } else {
-            buf.append("<a class=\"after\" href=\"" + afterUrl + "\"  style=\"color: #cccccc;float: right\">after</a>");
+            buf.append("<a class=\"after\" href=\"" + afterUrl + "\"  style=\"float: right\">后一页</a>");
         }
         joiner.add(buf.toString());
 
         Writer out = env.getOut();
         out.write(joiner.toString());
-
+        out.close();
     }
 }

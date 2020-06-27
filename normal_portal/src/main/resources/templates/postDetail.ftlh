@@ -79,8 +79,8 @@
     <div class="container">
         <div class="menu">
             <ul>
-                <li><a href="#">post</a></li>
-                <li><a href="#">about</a></li>
+                <li><a href="/post/list">首页</a></li>
+                <li><a href="/post/aboutMe">关于</a></li>
             </ul>
         </div>
         <div class="post-detail">
@@ -88,9 +88,9 @@
 
         </div>
 
-        <div class="link">
+        <#--<div class="link">
             <a href="#">xxx</a><a href="#">yyy</a><a href="#">zzz</a>
-        </div>
+        </div>-->
     </div>
 </body>
 
