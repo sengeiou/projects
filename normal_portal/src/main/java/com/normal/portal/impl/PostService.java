@@ -100,19 +100,14 @@ public class PostService {
     }
 
     private Path getStaticFilePath(String fileName) {
-        String contextPath = getContextPath();
+        String jarLocation = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
         String fullPath = new StringBuffer("file://")
-                .append(contextPath)
-                .append("templates")
-                .append("/")
+                // static update location
+                .append(jarLocation + "static/")
                 .append(fileName)
                 .append(".ftlh")
                 .toString();
         return Paths.get(URI.create(fullPath));
-    }
-
-    private String getContextPath() {
-        return this.getClass().getClassLoader().getResource("").getPath();
     }
 
 
