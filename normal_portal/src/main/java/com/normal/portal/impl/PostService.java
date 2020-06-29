@@ -103,7 +103,7 @@ public class PostService {
         String contextPath = getContextPath();
         String fullPath = new StringBuffer("file://")
                 .append(contextPath)
-                .append("templates")
+                .append("posts")
                 .append("/")
                 .append(fileName)
                 .append(".ftlh")
