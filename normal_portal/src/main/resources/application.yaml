@@ -7,7 +7,7 @@ spring:
     hikari:
       connection-test-query: select 1
       max-lifetime: 20000
-  resources:
-    static-locations: classpth:posts/
 mybatis:
   mapper-locations: classpath*:/mapper/*.xml
+post:
+  upload-dir: D:\projects\normal_portal\target\static

@@ -11,12 +11,13 @@ import org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfigura
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.CacheControl;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import sun.tools.jar.resources.jar;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 @Configuration
 @MapperScan(basePackages = "com.normal.portal.impl")
@@ -25,8 +26,11 @@ import java.io.File;
 public class Config implements WebMvcConfigurer {
     public static final Logger logger = LoggerFactory.getLogger(Config.class);
 
-     @Autowired
+    @Autowired
     freemarker.template.Configuration configuration;
+
+    @Autowired
+    PostProperties postProperties;
 
     @Bean
     public PageInterceptor pageInterceptor() {
@@ -40,9 +44,12 @@ public class Config implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        String jarLocation =  this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-        logger.info("jar location: {}", jarLocation);
-        registry.addResourceHandler("/static/**").addResourceLocations(jarLocation + "static");
+
+        String schema = System.getProperty("os.name").startsWith("Windows") ? "file:///" : "file:";
+        logger.info("resourceLocations: {}", schema + postProperties.getUploadDir());
+        registry.addResourceHandler("/static/**")
+                .addResourceLocations(schema + postProperties.getUploadDir() + File.separator)
+                .setCacheControl(CacheControl.maxAge(1, TimeUnit.HOURS).cachePublic());
     }
 
 

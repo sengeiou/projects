@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>main</title>
+    <title>关于我</title>
     <style>
         body {
             background-color: rgb(238, 238, 238);
