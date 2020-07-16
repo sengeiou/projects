@@ -8,6 +8,7 @@
         <module>normal_core</module>
         <module>normal_portal</module>
         <module>normal_devtool</module>
+        <module>normal_biz</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -60,6 +61,11 @@
                 <version>1.18.8</version>
                 <scope>provided</scope>
              </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-all</artifactId>
+                <version>4.1.42.Final</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <build>
