@@ -17,10 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,6 +63,7 @@ public class PostService {
             Template template = configuration.getTemplate("postDetail.ftlh");
             Map<String, Object> dataModel = new HashMap<>(1);
             dataModel.put("post", html);
+            dataModel.put("title", fileName);
             File outputFile = createEmptyFile(fileName);
             out = new FileWriter(outputFile);
             template.process(dataModel, out);
@@ -74,7 +73,7 @@ public class PostService {
             record.setPostPreview(preview);
             postMapper.insertSelective(record);
         } catch (IOException e) {
-            logger.error("e:{}", e);
+            logger.error("e:{}", e.getMessage());
             return Result.fail(CommonErrorMsg.RUNTIME_ERROR);
         } catch (TemplateException e) {
             logger.error("freemarker  parse error.  e:{}");
@@ -100,14 +99,13 @@ public class PostService {
     }
 
     private Path getStaticFilePath(String fileName) {
-        String jarLocation = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-        String fullPath = new StringBuffer("file://")
-                // static update location
-                .append(jarLocation + "static/")
+        String staticFilePath = new StringBuffer(config.getUploadDir())
+                .append(File.separator)
                 .append(fileName)
-                .append(".ftlh")
+                .append(".html")
                 .toString();
-        return Paths.get(URI.create(fullPath));
+        logger.info("upload dir: {}", staticFilePath);
+        return new File(staticFilePath).toPath();
     }
 
 
@@ -116,6 +114,9 @@ public class PostService {
             return Result.fail(CommonErrorMsg.AUTH_ERROR);
         }
         Post post = postMapper.selectByPrimaryKey(id);
+        if (post == null) {
+            return Result.fail(CommonErrorMsg.ILLEGE_ARG);
+        }
         try {
             Files.deleteIfExists(getStaticFilePath(post.getPostTitle()));
         } catch (IOException e) {

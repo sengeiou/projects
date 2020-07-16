@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>main</title>
+    <title>文章列表</title>
     <style>
         body {
             background-color: rgb(238, 238, 238);
@@ -97,7 +97,7 @@
         <#list data.results as item>
             <div class="post">
                 <div class="title">
-                    <h2><a href="/post/static/${item.postTitle}.do">${item.postTitle}</a></h2>
+                    <h2><a href="/static/${item.postTitle}.html">${item.postTitle}</a></h2>
                     <div class="create-date">${item.updateTime?string('yyyy.MM.dd')}</div>
                 </div>
                 <div>
