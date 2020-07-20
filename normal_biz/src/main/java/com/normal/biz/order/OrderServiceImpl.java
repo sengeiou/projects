@@ -5,11 +5,18 @@ import io.netty.buffer.ByteBuf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+
 @Component
 public class OrderServiceImpl implements  IOrderService {
 
     @Autowired
+    private BizProperties properties;
 
+    @PostConstruct
+    public void initServer() {
+
+    }
 
     @Override
     public Result createOrder(Order order) {
