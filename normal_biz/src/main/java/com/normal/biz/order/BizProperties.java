@@ -8,5 +8,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class BizProperties {
 
     private Integer priceValidMin = 10;
-    private double  priceChgOffset = 0.01f;
+    private double priceChgOffset = 0.01d;
+
+    private int port = 8001;
+    private int readTimeout = 60;
+    private int workThreadNum = 5;
+
 }

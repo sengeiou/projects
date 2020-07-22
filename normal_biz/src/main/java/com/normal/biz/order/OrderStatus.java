@@ -6,9 +6,8 @@ public enum OrderStatus implements NormalEnum {
 
     NEW(0, "新建"),
     PAIED(1, "已支付"),
-    CLOSED(2, "已关闭")
-    ;
-
+    TIMEOUT(2, "超时未付"),
+    CLOSED(3, "已关闭");
 
     private int key;
     private String value;
@@ -28,4 +27,6 @@ public enum OrderStatus implements NormalEnum {
     public String value() {
         return this.value;
     }
+
+
 }

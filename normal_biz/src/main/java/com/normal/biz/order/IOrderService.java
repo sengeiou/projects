@@ -7,7 +7,4 @@ public interface IOrderService {
 
     Result createOrder(Order order);
 
-    void onRecvQcCode(ByteBuf bf);
-
-    void onPaid(long orderId);
 }

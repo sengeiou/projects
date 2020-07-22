@@ -70,7 +70,7 @@ public class SimplePriceGenerator implements PriceGenerator {
         });
         PriceEnum matchedPriceEnum = matchedPrice.get();
         PriceWrapper existedPrice = usedPrice.get(matchedPriceEnum);
-
+        //规定范围以内价格重复,根据偏移量调整价格.
         if (existedPrice != null &&
                 System.currentTimeMillis() - existedPrice.currMillis <= TimeUnit.MINUTES.toMillis(bizProperties.getPriceValidMin())) {
             double price = existedPrice.price - bizProperties.getPriceChgOffset();

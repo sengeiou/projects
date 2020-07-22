@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.normal.biz.order.OrderMapper">
+  <resultMap id="BaseResultMap" type="com.normal.biz.order.Order">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="refer_id" jdbcType="INTEGER" property="referId" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="num" jdbcType="INTEGER" property="num" />
+    <result column="order_status" jdbcType="TINYINT"  property="orderStatus" typeHandler="com.normal.core.mybatis.EnumTypeHandler"/>
+    <result column="create_date_time" jdbcType="TIMESTAMP" property="createDateTime" />
+    <result column="update_date_time" jdbcType="TIMESTAMP" property="updateDateTime" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, refer_id, price, num, order_status, create_date_time, update_date_time, remark
+  </sql>
+
+  <update id="updateOrderStatus">
+     update  trd_order set order_status = #{orderStatus},update_date_time = unix_timestamp(now())   where id = #{id}
+  </update>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from trd_order
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.normal.biz.order.Order">
+    insert into trd_order
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="referId != null">
+        refer_id,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="num != null">
+        num,
+      </if>
+      <if test="orderStatus != null">
+        order_status,
+      </if>
+      <if test="createDateTime != null">
+        create_date_time,
+      </if>
+      <if test="updateDateTime != null">
+        update_date_time,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="referId != null">
+        #{referId,jdbcType=INTEGER},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="num != null">
+        #{num,jdbcType=INTEGER},
+      </if>
+      <if test="orderStatus != null">
+        #{orderStatus,jdbcType=TINYINT},
+      </if>
+      <if test="createDateTime != null">
+        #{createDateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDateTime != null">
+        #{updateDateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>
