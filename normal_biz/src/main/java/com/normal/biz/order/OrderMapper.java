@@ -10,6 +10,6 @@ public interface OrderMapper {
 
     Order selectByPrimaryKey(Integer id);
 
-    int updateOrderStatus(@Param("id") int id, @Param("orderStatus") OrderStatus orderStatus);
+    int updateOrderStatus(@Param("id") long id, @Param("orderStatus") OrderStatus orderStatus);
 
 }

@@ -1,6 +1,8 @@
 package com.normal.biz.order;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.normal.core.NormalException;
 import com.normal.core.web.CommonErrorMsg;
 import com.normal.core.web.Result;
 import io.netty.bootstrap.ServerBootstrap;
@@ -9,6 +11,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.ChannelGroupFuture;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
@@ -20,9 +23,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ResourceUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.math.BigDecimal;
 import java.net.InetSocketAddress;
 
 @Component
@@ -39,8 +47,12 @@ public class OrderServiceImpl implements IOrderService, ClientListener {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private PriceGenerator priceGenerator;
+
     private EventLoopGroup bossGroup;
     private EventLoopGroup workGroup;
+
 
     /**
      * 已连接的客户端channel
@@ -80,30 +92,54 @@ public class OrderServiceImpl implements IOrderService, ClientListener {
     }
 
     @Override
+    @Transactional
     public Result createOrder(Order order) {
         if (channelGroup.isEmpty()) {
             logger.warn("还没有 channel 连上来, 创建订单失败");
             return Result.fail(CommonErrorMsg.ILLEGE_STATE);
         }
+        Double nextPrice = priceGenerator.gen(order.getPrice().doubleValue());
+        order.setPrice(BigDecimal.valueOf(nextPrice));
         orderMapper.insertSelective(order);
         try {
             String json = objectMapper.writeValueAsString(order);
-            channelGroup.writeAndFlush(json);
-            return Result.success();
-        } catch (Exception e) {
+            ChannelGroupFuture future = channelGroup.writeAndFlush(json).sync();
+            if (future.isSuccess()) {
+                StringBuffer qrCode = new StringBuffer("statics/")
+                        .append(nextPrice)
+                        .append(".png");
+                File qrCodeFile = ResourceUtils.getFile("classpath:statics/" + qrCode.toString());
+                if (qrCodeFile.exists()) {
+                    return Result.success(qrCode.toString());
+                }
+                return Result.success(properties.getPriceQrCode());
+            }
+        } catch (JsonProcessingException | InterruptedException | FileNotFoundException e) {
             logger.error("e: {}", e);
-            return Result.fail(CommonErrorMsg.RUNTIME_ERROR);
+            if (e instanceof FileNotFoundException) {
+                return Result.success(properties.getPriceQrCode());
+            }
         }
+        throw new NormalException("未知异常", CommonErrorMsg.RUNTIME_ERROR);
+    }
+
+    @Override
+    public Result queryOrderStatus(long id) {
+        Order order = orderMapper.selectByPrimaryKey(Long.valueOf(id).intValue());
+        if (order != null) {
+            return Result.success(order.getOrderStatus());
+        }
+        return Result.fail(CommonErrorMsg.ILLEGE_STATE);
     }
 
 
     @Override
     public void onPaid(Order order) {
-
+        orderMapper.updateOrderStatus(order.getId(), OrderStatus.PAIED);
     }
 
     @Override
     public void onPayTimeout(Order order) {
-
+        orderMapper.updateOrderStatus(order.getId(), OrderStatus.TIMEOUT);
     }
 }

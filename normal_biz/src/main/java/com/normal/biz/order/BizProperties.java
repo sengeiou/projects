@@ -13,5 +13,6 @@ public class BizProperties {
     private int port = 8001;
     private int readTimeout = 60;
     private int workThreadNum = 5;
+    private String priceQrCode = "statics/default.png";
 
 }

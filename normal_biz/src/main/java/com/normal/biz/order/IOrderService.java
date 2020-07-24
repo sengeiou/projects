@@ -7,4 +7,5 @@ public interface IOrderService {
 
     Result createOrder(Order order);
 
+    Result queryOrderStatus(long id);
 }
