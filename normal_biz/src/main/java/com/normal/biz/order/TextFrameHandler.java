@@ -1,6 +1,8 @@
 package com.normal.biz.order;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.normal.bizmodel.Order;
+import com.normal.bizmodel.OrderStatus;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
@@ -10,6 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
+/**
+ * @author fei.he
+ */
 public class TextFrameHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 
     public static final Logger logger = LoggerFactory.getLogger(TextFrameHandler.class);

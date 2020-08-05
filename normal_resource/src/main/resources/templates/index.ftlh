@@ -19,7 +19,7 @@
     <script src="../css/html5shiv.js"></script>
     <![endif]-->
     <script src="../js/jquery-1.8.3.min.js"></script>
-    <script src="../js/common.js"></script>
+    <script src="../js/biz-common.js"></script>
 
     <style type="text/css">
         .page-more a {

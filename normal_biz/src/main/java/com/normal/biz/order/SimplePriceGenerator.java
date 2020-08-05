@@ -10,6 +10,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
+/**
+ * @author fei.he
+ */
 @Component
 public class SimplePriceGenerator implements PriceGenerator {
 

@@ -1,6 +1,6 @@
 package com.normal.core.mybatis;
 
-import com.normal.core.utils.Refacts;
+import com.normal.core.utils.Refracts;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.logging.Log;
@@ -49,7 +49,7 @@ public class PageInterceptor implements Interceptor {
         String sql = rawBoundSql.getSql();
 
         String countSql = new StringBuffer().append("select count(1) from (").append(sql).append(") a").toString();
-        Refacts.setField(rawBoundSql, "sql", countSql);
+        Refracts.setField(rawBoundSql, "sql", countSql);
         Long count = getCount(executor, ms, rawBoundSql);
 
         page.setTotalRecord(count.intValue());

@@ -9,6 +9,8 @@
         <module>normal_portal</module>
         <module>normal_devtool</module>
         <module>normal_biz</module>
+        <module>normal_biz_assistant</module>
+        <module>normal_biz_model</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -49,6 +51,11 @@
                         <artifactId>junit-vintage-engine</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.normal</groupId>
+                <artifactId>normal_biz_model</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.normal</groupId>

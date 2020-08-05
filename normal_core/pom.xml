@@ -61,6 +61,10 @@
             <groupId>com.squareup.okhttp</groupId>
             <artifactId>okhttp</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.normal</groupId>
+            <artifactId>normal_biz_model</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

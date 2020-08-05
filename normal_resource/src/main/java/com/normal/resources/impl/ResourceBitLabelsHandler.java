@@ -8,6 +8,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * @author fei.he
+ */
 public class ResourceBitLabelsHandler extends BaseTypeHandler<ResourceBitLabels> {
 
     @Override

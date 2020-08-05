@@ -12,6 +12,9 @@ import java.io.Writer;
 import java.util.Map;
 import java.util.StringJoiner;
 
+/**
+ * @author fei.he
+ */
 public class PageTemplateDirectiveModel implements TemplateDirectiveModel {
 
 

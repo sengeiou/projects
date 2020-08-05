@@ -1,54 +1,4 @@
-/**
- * order paid function
- */
-(function (w) {
-    let $ = w.$;
-
-    if (!(w && w.WebSocket)) {
-        console.error('browser not support websocket');
-        return;
-    }
-    //init config
-    let config = {
-        baseUrl: 'ws://localhost:7001',
-        timeout: 2000
-    };
-    //create hidden image if need
-
-    function showQrCode(qrCodeUrl) {
-        $.ajax({
-            url: qrCodeUrl,
-            dataType: "image/jpg"
-        });
-    }
-
-    function createOrder(order) {
-        $.post(config.baseUrl + '/order/createOrder', order, function (rst) {
-            console.log('create order rst: ', rst);
-            if (rst.success) {
-                //todo
-                showQrCode(config.baseUrl + rst.data);
-            }
-        });
-    }
-
-    let ws = new WebSocket(config.url);
-    ws.incomeOrders = [];
-
-    ws.onmessage = function (ws, event) {
-        let data = event.data,
-            order = JSON.parse(data);
-        console.info('income order: ', order);
-        this.incomeOrders.push(order);
-    };
-
-    w.createOrder = createOrder;
-    return w;
-
-})(window);
-
-
-$(document).ready(function () {
+/*$(document).ready(function () {
     //向上滚动
     setInterval(function (obj) {
         let n = $(".download-info").find("li").height();
@@ -186,7 +136,7 @@ $(document).ready(function () {
     }).resize();
 
 
-});
+});*/
 
 
 

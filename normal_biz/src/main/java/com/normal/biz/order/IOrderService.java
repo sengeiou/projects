@@ -1,11 +1,12 @@
 package com.normal.biz.order;
 
+import com.normal.bizmodel.Order;
 import com.normal.core.web.Result;
-import io.netty.buffer.ByteBuf;
 
 public interface IOrderService {
 
     Result createOrder(Order order);
 
-    Result queryOrderStatus(long id);
+    Result queryOrder(long id);
+
 }

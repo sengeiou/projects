@@ -2,18 +2,20 @@ package com.normal.biz.order;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.normal.bizmodel.Order;
+import com.normal.bizmodel.OrderStatus;
 import com.normal.core.NormalException;
 import com.normal.core.web.CommonErrorMsg;
 import com.normal.core.web.Result;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.epoll.EpollEventLoopGroup;
-import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.ChannelGroupFuture;
 import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
@@ -32,7 +34,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * @author fei.he
+ */
 @Component
 public class OrderServiceImpl implements IOrderService, ClientListener {
 
@@ -62,9 +69,9 @@ public class OrderServiceImpl implements IOrderService, ClientListener {
     @PostConstruct
     public void initServer() throws Exception {
         ServerBootstrap b = new ServerBootstrap();
-        bossGroup = new EpollEventLoopGroup();
-        workGroup = new EpollEventLoopGroup(properties.getWorkThreadNum());
-        b.group(bossGroup, workGroup).channel(EpollServerSocketChannel.class)
+        bossGroup = new NioEventLoopGroup();
+        workGroup = new NioEventLoopGroup(properties.getWorkThreadNum());
+        b.group(bossGroup, workGroup).channel(NioServerSocketChannel.class)
                 .localAddress(new InetSocketAddress(properties.getPort()))
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
@@ -94,6 +101,7 @@ public class OrderServiceImpl implements IOrderService, ClientListener {
     @Override
     @Transactional
     public Result createOrder(Order order) {
+        Map<String, Object> rstData = new HashMap<>(2);
         if (channelGroup.isEmpty()) {
             logger.warn("还没有 channel 连上来, 创建订单失败");
             return Result.fail(CommonErrorMsg.ILLEGE_STATE);
@@ -101,6 +109,7 @@ public class OrderServiceImpl implements IOrderService, ClientListener {
         Double nextPrice = priceGenerator.gen(order.getPrice().doubleValue());
         order.setPrice(BigDecimal.valueOf(nextPrice));
         orderMapper.insertSelective(order);
+        rstData.put("order", order);
         try {
             String json = objectMapper.writeValueAsString(order);
             ChannelGroupFuture future = channelGroup.writeAndFlush(json).sync();
@@ -110,27 +119,28 @@ public class OrderServiceImpl implements IOrderService, ClientListener {
                         .append(".png");
                 File qrCodeFile = ResourceUtils.getFile("classpath:statics/" + qrCode.toString());
                 if (qrCodeFile.exists()) {
-                    return Result.success(qrCode.toString());
+                    rstData.put("url", qrCode.toString());
+                    return Result.success(rstData);
                 }
-                return Result.success(properties.getPriceQrCode());
+                rstData.put("url", properties.getPriceQrCode());
+                return Result.success(rstData);
             }
         } catch (JsonProcessingException | InterruptedException | FileNotFoundException e) {
             logger.error("e: {}", e);
             if (e instanceof FileNotFoundException) {
-                return Result.success(properties.getPriceQrCode());
+                rstData.put("url", properties.getPriceQrCode());
+                return Result.success(rstData);
             }
         }
         throw new NormalException("未知异常", CommonErrorMsg.RUNTIME_ERROR);
     }
 
     @Override
-    public Result queryOrderStatus(long id) {
+    public Result queryOrder(long id) {
         Order order = orderMapper.selectByPrimaryKey(Long.valueOf(id).intValue());
-        if (order != null) {
-            return Result.success(order.getOrderStatus());
-        }
-        return Result.fail(CommonErrorMsg.ILLEGE_STATE);
+        return Result.success(order);
     }
+
 
 
     @Override

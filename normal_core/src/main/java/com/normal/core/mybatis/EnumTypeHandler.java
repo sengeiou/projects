@@ -1,6 +1,6 @@
 package com.normal.core.mybatis;
 
-import com.normal.core.NormalEnum;
+import com.normal.bizmodel.NormalEnum;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 

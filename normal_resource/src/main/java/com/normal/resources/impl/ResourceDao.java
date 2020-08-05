@@ -8,18 +8,15 @@ import java.util.List;
 @Mapper
 public interface ResourceDao {
 
-    int deleteByPrimaryKey(Integer id);
+    int deleteByPrimaryKey(Long id);
 
     int insertSelective(Resource record);
 
-    Resource selectByPrimaryKey(Integer id);
+    Resource queryByPrimaryKey(Long id);
 
     int updateByPrimaryKeySelective(Resource record);
 
     List<Resource> queryResources(PageParam page);
-
-    List<Resource> queryByKeyword(PageParam page);
-
 
 
 }

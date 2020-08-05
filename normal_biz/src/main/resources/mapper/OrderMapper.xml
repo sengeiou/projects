@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.normal.biz.order.OrderMapper">
-  <resultMap id="BaseResultMap" type="com.normal.biz.order.Order">
+  <resultMap id="BaseResultMap" type="com.normal.bizmodel.Order">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="refer_id" jdbcType="INTEGER" property="referId" />
     <result column="price" jdbcType="DECIMAL" property="price" />
@@ -28,7 +28,7 @@
   </select>
 
 
-  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.normal.biz.order.Order">
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.normal.bizmodel.Order">
     insert into trd_order
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
