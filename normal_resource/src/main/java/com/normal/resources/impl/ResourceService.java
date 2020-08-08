@@ -8,6 +8,9 @@ import com.normal.core.web.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * @author fei.he
+ */
 @Service
 public class ResourceService {
 

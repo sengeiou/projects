@@ -1,26 +1,35 @@
-package com.normal.bizassistant;
+package com.normal.bizassistant.order;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.normal.bizmodel.Order;
+import com.normal.bizmodel.OrderStatus;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.timeout.IdleStateHandler;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.Response;
 
-import java.io.InputStream;
+import java.io.*;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author: fei.he
  */
 public class BizAssistant {
     public static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BizAssistant.class);
+
 
     ExecutorService recvExecutorService = new ThreadPoolExecutor(1, 1,
             0L, TimeUnit.MILLISECONDS,
@@ -38,18 +47,21 @@ public class BizAssistant {
     Channel channel;
     String ip;
     int port;
+    Properties properties;
+    ChromeDriver driver;
 
+    /**
+     * just for unit test
+     */
+    public BizAssistant() {
+        initDriver();
+    }
 
     public BizAssistant(Properties properties) {
-        System.setProperty("webdriver.chrome.driver",ClassLoader.getSystemResource("chromedriver.exe").getFile() );
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments(new String[]{"--start-maximized"});
-        options.setCapability("acceptSslCerts", true);
-        options.setCapability("acceptInsecureCerts", true);
-        ChromeDriver driver = new ChromeDriver();
-
+        initDriver();
         this.ip = properties.getProperty("ip");
         this.port = Integer.valueOf(properties.getProperty("port"));
+        this.properties = properties;
 
         recvExecutorService.submit(
                 new Thread("recv-thread") {
@@ -62,6 +74,7 @@ public class BizAssistant {
                                 .handler(new ChannelInitializer<Channel>() {
                                     @Override
                                     protected void initChannel(Channel ch) throws Exception {
+                                        ch.pipeline().addLast(new IdleStateHandler(Integer.valueOf(properties.getProperty("read.timeout.second")), 0, 0));
                                         ch.pipeline().addLast(new SimpleChannelInboundHandler<String>() {
                                             @Override
                                             protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
@@ -75,8 +88,17 @@ public class BizAssistant {
         );
 
         for (Integer i = 0; i < Integer.valueOf(properties.getProperty("worker.num")); i++) {
-            workerExecutorService.submit(new Worker(i, queue, driver));
+            workerExecutorService.submit(new Worker(i, queue, driver, properties));
         }
+    }
+
+    private void initDriver() {
+        System.setProperty("webdriver.chrome.driver", ClassLoader.getSystemResource("chromedriver.exe").getFile());
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments(new String[]{"--start-maximized"});
+        options.setCapability("acceptSslCerts", true);
+        options.setCapability("acceptInsecureCerts", true);
+        this.driver = new ChromeDriver(options);
     }
 
 
@@ -95,17 +117,19 @@ public class BizAssistant {
         workerExecutorService.shutdown();
     }
 
-    static class Worker extends Thread {
+    class Worker extends Thread {
 
         LinkedBlockingQueue<Order> queue;
 
         ChromeDriver driver;
 
+        Properties properties;
 
-        public Worker(int i, LinkedBlockingQueue<Order> queue, ChromeDriver driver) {
+        public Worker(int i, LinkedBlockingQueue<Order> queue, ChromeDriver driver, Properties properties) {
             this.setName("worker-thread" + i);
             this.queue = queue;
             this.driver = driver;
+            this.properties = properties;
         }
 
         @Override
@@ -116,7 +140,12 @@ public class BizAssistant {
                     break;
                 }
                 try {
-                    queryPaidUntilTimeout(queue.take());
+                    Order order = queue.take();
+                    OrderStatus orderStatus = queryPaidUntilTimeout(order);
+                    Map<String, String> rst = new HashMap<>(2);
+                    rst.put("ordId", String.valueOf(order.getId()));
+                    rst.put("orderStatus", orderStatus.toString());
+                    getChannel().writeAndFlush(rst);
                 } catch (InterruptedException e) {
                     //clear interrupted status
                     Thread.interrupted();
@@ -124,20 +153,58 @@ public class BizAssistant {
             }
         }
 
-        private boolean queryPaidUntilTimeout(Order order) {
-            driver.executeScript("alert('ok')");
-            return false;
+        private OrderStatus queryPaidUntilTimeout(Order order) throws InterruptedException {
+            for (; ; ) {
+                boolean expire = LocalDateTime.now().isAfter(order.getValidDateTime().plusSeconds(Long.valueOf(properties.getProperty("query.interval")) / 1000));
+                if (expire) {
+                    return OrderStatus.TIMEOUT;
+                }
+                Thread.sleep(Long.valueOf(properties.getProperty("query.interval")));
+                driver.get(properties.getProperty("alipay.order.query.url"));
+                Response response = (Response) driver.executeScript(properties.getProperty("js"));
+                if (response == null) {
+                    logger.error("js exe error, return rst is null");
+                }
+                List<Map<String, String>> aliOrder = convertToMap(response.getValue());
+                if (aliOrder != null) {
+                    boolean paid = aliOrder.stream()
+                            .filter((item) -> String.valueOf(order.getPrice()).equals(item.get("totalPrice")) && item.get("payStatus").equals("成功"))
+                            .count() > 0;
+                    if (paid) {
+                        return OrderStatus.PAIED;
+                    }
+                }
+            }
+        }
+
+        private List<Map<String, String>> convertToMap(Object value) {
+            logger.info("js exe rst data: {}", value);
+            return null;
         }
     }
 
     public static void main(String[] args) throws Exception {
-        Properties properties = new Properties();
-        InputStream input = ClassLoader.getSystemResourceAsStream("application.properties");
-        properties.load(input);
-        input.close();
+        //load config
+        Properties properties = loadProperties();
 
+        //init
         BizAssistant bizAssistant = new BizAssistant(properties);
+
         Runtime.getRuntime().addShutdownHook(new Thread(() -> bizAssistant.shutdown()));
+    }
+
+    public static Properties loadProperties() throws IOException {
+        Properties properties = new Properties();
+        InputStream propertiesInput = ClassLoader.getSystemResourceAsStream("application.properties");
+        properties.load(propertiesInput);
+        propertiesInput.close();
+
+        InputStream jsInput = ClassLoader.getSystemResourceAsStream("index.js");
+        BufferedReader bufReader = new BufferedReader(new InputStreamReader(jsInput));
+        String jsStr = bufReader.lines().collect(Collectors.joining("\n"));
+        properties.put("js", jsStr);
+        jsInput.close();
+        return properties;
     }
 
 

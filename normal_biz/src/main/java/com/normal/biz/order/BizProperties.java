@@ -3,6 +3,9 @@ package com.normal.biz.order;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+/**
+ * @author fei.he
+ */
 @ConfigurationProperties("biz")
 @Data
 public class BizProperties {
