@@ -1,6 +1,7 @@
 package com.normal.bizassistant.order;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.normal.bizassistant.ConfigProperties;
 import com.normal.bizmodel.Order;
 import com.normal.bizmodel.OrderStatus;
 import io.netty.bootstrap.Bootstrap;
@@ -185,7 +186,7 @@ public class BizAssistant {
 
     public static void main(String[] args) throws Exception {
         //load config
-        Properties properties = loadProperties();
+        Properties properties = ConfigProperties.load();
 
         //init
         BizAssistant bizAssistant = new BizAssistant(properties);
@@ -193,19 +194,6 @@ public class BizAssistant {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> bizAssistant.shutdown()));
     }
 
-    public static Properties loadProperties() throws IOException {
-        Properties properties = new Properties();
-        InputStream propertiesInput = ClassLoader.getSystemResourceAsStream("application.properties");
-        properties.load(propertiesInput);
-        propertiesInput.close();
-
-        InputStream jsInput = ClassLoader.getSystemResourceAsStream("index.js");
-        BufferedReader bufReader = new BufferedReader(new InputStreamReader(jsInput));
-        String jsStr = bufReader.lines().collect(Collectors.joining("\n"));
-        properties.put("js", jsStr);
-        jsInput.close();
-        return properties;
-    }
 
 
 }
