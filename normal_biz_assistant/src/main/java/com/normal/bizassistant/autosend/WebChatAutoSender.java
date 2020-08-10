@@ -60,7 +60,7 @@ public class WebChatAutoSender implements IAutoSender {
             return;
         }
 
-        List<String> groups = ConfigProperties.getGroups();
+        List<String> groups = null;
         for (SimpleGoodInfo good : goods) {
             for (String group : groups) {
                 try {
@@ -77,6 +77,7 @@ public class WebChatAutoSender implements IAutoSender {
                     byte[] imgsBytes = driver.pullFile(ConfigProperties.getGoodPicsPath());
 
                     groupEle.sendKeys(Keys.ENTER);
+
                 } catch (NoSuchElementException e) {
                     logger.error("no such element by name:{}", group);
                 }

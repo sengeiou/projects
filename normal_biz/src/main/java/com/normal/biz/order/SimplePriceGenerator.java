@@ -13,7 +13,6 @@ import java.util.stream.Stream;
 /**
  * @author fei.he
  */
-@Component
 public class SimplePriceGenerator implements PriceGenerator {
 
     private Map<PriceEnum, PriceWrapper> usedPrice = new ConcurrentHashMap<>(8);

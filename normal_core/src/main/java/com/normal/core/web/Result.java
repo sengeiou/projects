@@ -3,6 +3,9 @@ package com.normal.core.web;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * @author fei.he
+ */
 @Getter
 @Setter
 public class Result {

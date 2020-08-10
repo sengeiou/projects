@@ -40,99 +40,29 @@ import java.util.Map;
 /**
  * @author fei.he
  */
-@Component
 public class OrderServiceImpl implements IOrderService, ClientListener {
 
     public static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
 
-    @Autowired
-    private BizProperties properties;
+
 
     @Autowired
     private OrderMapper orderMapper;
 
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Autowired
     private PriceGenerator priceGenerator;
 
-    private EventLoopGroup bossGroup;
-    private EventLoopGroup workGroup;
-
-
-    /**
-     * 已连接的客户端channel
-     */
-    private final ChannelGroup channelGroup = new DefaultChannelGroup(ImmediateEventExecutor.INSTANCE);
-
-    @PostConstruct
-    public void initServer() throws Exception {
-        ServerBootstrap b = new ServerBootstrap();
-        bossGroup = new NioEventLoopGroup();
-        workGroup = new NioEventLoopGroup(properties.getWorkThreadNum());
-        b.group(bossGroup, workGroup).channel(NioServerSocketChannel.class)
-                .localAddress(new InetSocketAddress(properties.getPort()))
-                .childHandler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    public void initChannel(SocketChannel ch) {
-                        ch.pipeline().addLast(
-                                new IdleStateHandler(properties.getReadTimeout(), 0, 0),
-                                new HttpServerCodec(),
-                                new HttpObjectAggregator(65536),
-                                //websocket 升级协议.
-                                new WebSocketServerProtocolHandler("/ws"),
-                                new TextFrameHandler(channelGroup, objectMapper, OrderServiceImpl.this));
-                    }
-                });
-        b.bind().syncUninterruptibly();
-
-        logger.info("server started !");
-
-    }
-
-
-    @PreDestroy
-    public void close() {
-        bossGroup.shutdownGracefully();
-        workGroup.shutdownGracefully();
-    }
 
     @Override
     @Transactional
     public Result createOrder(Order order) {
         Map<String, Object> rstData = new HashMap<>(2);
-        if (channelGroup.isEmpty()) {
-            logger.warn("还没有 channel 连上来, 创建订单失败");
-            return Result.fail(CommonErrorMsg.ILLEGE_STATE);
-        }
         Double nextPrice = priceGenerator.gen(order.getPrice().doubleValue());
         order.setPrice(BigDecimal.valueOf(nextPrice));
         orderMapper.insertSelective(order);
         rstData.put("order", order);
-        try {
-            String json = objectMapper.writeValueAsString(order);
-            ChannelGroupFuture future = channelGroup.writeAndFlush(json).sync();
-            if (future.isSuccess()) {
-                StringBuffer qrCode = new StringBuffer("statics/")
-                        .append(nextPrice)
-                        .append(".png");
-                File qrCodeFile = ResourceUtils.getFile("classpath:statics/" + qrCode.toString());
-                if (qrCodeFile.exists()) {
-                    rstData.put("url", qrCode.toString());
-                    return Result.success(rstData);
-                }
-                rstData.put("url", properties.getPriceQrCode());
-                return Result.success(rstData);
-            }
-        } catch (JsonProcessingException | InterruptedException | FileNotFoundException e) {
-            logger.error("e: {}", e);
-            if (e instanceof FileNotFoundException) {
-                rstData.put("url", properties.getPriceQrCode());
-                return Result.success(rstData);
-            }
-        }
-        throw new NormalException("未知异常", CommonErrorMsg.RUNTIME_ERROR);
+        return null;
     }
 
     @Override

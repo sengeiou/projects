@@ -185,6 +185,7 @@ public class BizAssistant {
     public static void main(String[] args) throws Exception {
         //load config
         ConfigProperties.load();
+         ConfigProperties.load();
 
         //init
         BizAssistant bizAssistant = new BizAssistant();

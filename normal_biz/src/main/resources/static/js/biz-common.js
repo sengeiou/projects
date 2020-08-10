@@ -66,6 +66,7 @@
         $.post(config.baseUrl + '/order/createOrder', order);
     };
 
+
     return w;
 
 })(window);
