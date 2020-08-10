@@ -186,10 +186,10 @@ public class BizAssistant {
 
     public static void main(String[] args) throws Exception {
         //load config
-        Properties properties = ConfigProperties.load();
+         ConfigProperties.load();
 
         //init
-        BizAssistant bizAssistant = new BizAssistant(properties);
+        BizAssistant bizAssistant = new BizAssistant();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> bizAssistant.shutdown()));
     }

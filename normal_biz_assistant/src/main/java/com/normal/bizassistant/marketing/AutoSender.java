@@ -59,7 +59,7 @@ public class AutoSender {
             return;
         }
 
-        List<String> groups = ConfigProperties.getGroups();
+        List<String> groups = null;
         for (SimpleGoodInfo good : goods) {
             for (String group : groups) {
                 try {
@@ -72,7 +72,7 @@ public class AutoSender {
                     groupEle.sendKeys(Keys.ENTER);
 
                     //send images
-                    
+
                 } catch (NoSuchElementException e) {
                     logger.error("no such element by name:{}", group);
                 }

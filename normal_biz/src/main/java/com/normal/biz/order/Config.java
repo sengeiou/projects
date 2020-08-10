@@ -26,4 +26,10 @@ public class Config {
     public PriceGenerator priceGenerator() {
         return new SimplePriceGenerator();
     }
+
+    @Bean
+    public BizServer bizServer() {
+        return new BizServer();
+    }
+
 }
