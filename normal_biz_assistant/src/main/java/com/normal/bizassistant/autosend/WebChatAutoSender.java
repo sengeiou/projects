@@ -1,4 +1,4 @@
-package com.normal.bizassistant.marketing;
+package com.normal.bizassistant.autosend;
 
 import com.normal.bizassistant.ConfigProperties;
 import io.appium.java_client.windows.WindowsDriver;
@@ -17,9 +17,9 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author: fei.he
  */
-public class AutoSender {
+public class WebChatAutoSender implements IAutoSender {
     private static WindowsDriver driver = null;
-    public static final Logger logger = LoggerFactory.getLogger(AutoSender.class);
+    public static final Logger logger = LoggerFactory.getLogger(WebChatAutoSender.class);
 
     static {
         try {
@@ -37,7 +37,7 @@ public class AutoSender {
 
     private final GoodProvider goodProvider;
 
-    public AutoSender(GoodProvider goodProvider) {
+    public WebChatAutoSender(GoodProvider goodProvider) {
         this.goodProvider = goodProvider;
     }
 
@@ -53,6 +53,7 @@ public class AutoSender {
         }
     }
 
+    @Override
     public void send() {
         List<SimpleGoodInfo> goods = this.goodProvider.provide();
         if (CollectionUtils.isEmpty(goods)) {
@@ -72,7 +73,10 @@ public class AutoSender {
                     groupEle.sendKeys(Keys.ENTER);
 
                     //send images
-                    
+                    sendFileEle.click();
+                    byte[] imgsBytes = driver.pullFile(ConfigProperties.getGoodPicsPath());
+
+                    groupEle.sendKeys(Keys.ENTER);
                 } catch (NoSuchElementException e) {
                     logger.error("no such element by name:{}", group);
                 }
@@ -83,7 +87,7 @@ public class AutoSender {
     }
 
     public static void main(String[] args) throws Exception {
-        AutoSender autoSender = new AutoSender(new GoodProvider());
+        WebChatAutoSender autoSender = new WebChatAutoSender(new GoodProvider());
         autoSender.send();
     }
 

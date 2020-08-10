@@ -13,7 +13,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.Response;
 
-import java.io.*;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +22,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * @author: fei.he
@@ -186,10 +184,10 @@ public class BizAssistant {
 
     public static void main(String[] args) throws Exception {
         //load config
-        Properties properties = ConfigProperties.load();
+        ConfigProperties.load();
 
         //init
-        BizAssistant bizAssistant = new BizAssistant(properties);
+        BizAssistant bizAssistant = new BizAssistant();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> bizAssistant.shutdown()));
     }
