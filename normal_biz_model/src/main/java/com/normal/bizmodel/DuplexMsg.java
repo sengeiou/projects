@@ -8,7 +8,7 @@ import lombok.ToString;
  */
 @Data
 @ToString
-public class RecvResult {
+public class DuplexMsg {
 
     private String code;
 

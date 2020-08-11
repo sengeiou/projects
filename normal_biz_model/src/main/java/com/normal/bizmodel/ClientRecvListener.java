@@ -5,5 +5,8 @@ package com.normal.bizmodel;
  */
 public interface ClientRecvListener {
 
-    void recv(RecvResult rst);
+    String code();
+
+
+    void recv(DuplexMsg rst);
 }

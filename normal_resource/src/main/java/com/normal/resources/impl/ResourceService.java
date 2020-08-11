@@ -1,6 +1,6 @@
 package com.normal.resources.impl;
 
-import com.normal.biz.order.IOrderService;
+import com.normal.bizserver.order.IOrderService;
 import com.normal.bizmodel.Order;
 import com.normal.bizmodel.OrderStatus;
 import com.normal.core.web.CommonErrorMsg;

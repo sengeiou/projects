@@ -6,12 +6,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @MapperScan(basePackages = "com.normal.resources.impl")
-@Import(com.normal.biz.order.Config.class)
+@Import(com.normal.bizserver.Config.class)
 public class Config {
 
     @Bean

@@ -14,7 +14,6 @@ public class ConfigProperties {
 
     private static Properties properties = new Properties();
 
-
     public static void load() throws IOException {
         properties.clear();
         InputStream propertiesInput = ClassLoader.getSystemResourceAsStream("application.properties");
@@ -30,6 +29,22 @@ public class ConfigProperties {
 
 
     public static String getWebchatLocation() {
-        return properties.getProperty("autosend.webchat.location");
+        return getProperty("autosend.webchat.location");
+    }
+
+    public static int getConnectTimeoutMillis() {
+        return Integer.valueOf(getProperty("biz.connect.timeout.millis"));
+    }
+
+    public static String getProperty(String key) {
+        return properties.getProperty(key);
+    }
+
+    public static int getClientWriteIdleSeconds() {
+        return Integer.valueOf(getProperty("biz.client.write.timeout.seconds"));
+    }
+
+    public static String getBizClientConnectUri() {
+        return getProperty("biz.client.wb.connect.uri");
     }
 }

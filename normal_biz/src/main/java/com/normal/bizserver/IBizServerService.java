@@ -1,4 +1,4 @@
-package com.normal.biz.order;
+package com.normal.bizserver;
 
 import com.normal.bizmodel.ServerRecvListener;
 

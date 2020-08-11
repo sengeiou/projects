@@ -1,4 +1,4 @@
-package com.normal.biz.order;
+package com.normal.bizserver.order;
 
 import com.normal.bizmodel.Order;
 import com.normal.core.web.BaseController;

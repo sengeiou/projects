@@ -1,6 +1,7 @@
-package com.normal.biz.order;
+package com.normal.bizserver.order;
 
 
+import com.normal.bizserver.BizProperties;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;

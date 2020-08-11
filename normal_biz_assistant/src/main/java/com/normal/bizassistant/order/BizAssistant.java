@@ -1,29 +1,18 @@
 package com.normal.bizassistant.order;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.normal.bizassistant.ConfigProperties;
 import com.normal.bizmodel.Order;
 import com.normal.bizmodel.OrderStatus;
-import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.timeout.IdleStateHandler;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.Response;
 
-import java.io.*;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * @author: fei.he
@@ -31,24 +20,8 @@ import java.util.stream.Collectors;
 public class BizAssistant {
     public static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BizAssistant.class);
 
-
-    ExecutorService recvExecutorService = new ThreadPoolExecutor(1, 1,
-            0L, TimeUnit.MILLISECONDS,
-            new LinkedBlockingQueue<>());
-
-    ExecutorService workerExecutorService = new ThreadPoolExecutor(1, 1,
-            0L, TimeUnit.MILLISECONDS,
-            new LinkedBlockingQueue<>());
-
     LinkedBlockingQueue<Order> queue = new LinkedBlockingQueue<>();
 
-    EventLoopGroup group;
-    Bootstrap bootstrap;
-    ObjectMapper objectMapper = new ObjectMapper();
-    Channel channel;
-    String ip;
-    int port;
-    Properties properties;
     ChromeDriver driver;
 
     /**
@@ -60,37 +33,6 @@ public class BizAssistant {
 
     public BizAssistant(Properties properties) {
         initDriver();
-        this.ip = properties.getProperty("ip");
-        this.port = Integer.valueOf(properties.getProperty("port"));
-        this.properties = properties;
-
-        recvExecutorService.submit(
-                new Thread("recv-thread") {
-                    @Override
-                    public void run() {
-                        group = new NioEventLoopGroup();
-                        bootstrap = new Bootstrap();
-                        bootstrap.group(group)
-                                .channel(NioSocketChannel.class)
-                                .handler(new ChannelInitializer<Channel>() {
-                                    @Override
-                                    protected void initChannel(Channel ch) throws Exception {
-                                        ch.pipeline().addLast(new IdleStateHandler(Integer.valueOf(properties.getProperty("read.timeout.second")), 0, 0));
-                                        ch.pipeline().addLast(new SimpleChannelInboundHandler<String>() {
-                                            @Override
-                                            protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
-                                                queue.offer(objectMapper.readValue(msg, Order.class));
-                                            }
-                                        });
-                                    }
-                                });
-                    }
-                }
-        );
-
-        for (Integer i = 0; i < Integer.valueOf(properties.getProperty("worker.num")); i++) {
-            workerExecutorService.submit(new Worker(i, queue, driver, properties));
-        }
     }
 
     private void initDriver() {
@@ -100,22 +42,6 @@ public class BizAssistant {
         options.setCapability("acceptSslCerts", true);
         options.setCapability("acceptInsecureCerts", true);
         this.driver = new ChromeDriver(options);
-    }
-
-
-    Channel getChannel() {
-        boolean channelNotValid = this.channel == null || (this.channel != null && !this.channel.isActive());
-        if (channelNotValid) {
-            ChannelFuture channelFuture = bootstrap.connect(ip, port).syncUninterruptibly();
-            this.channel = channelFuture.channel();
-        }
-        return channel;
-    }
-
-    public void shutdown() {
-        group.shutdownGracefully();
-        recvExecutorService.shutdown();
-        workerExecutorService.shutdown();
     }
 
     class Worker extends Thread {
@@ -146,7 +72,6 @@ public class BizAssistant {
                     Map<String, String> rst = new HashMap<>(2);
                     rst.put("ordId", String.valueOf(order.getId()));
                     rst.put("orderStatus", orderStatus.toString());
-                    getChannel().writeAndFlush(rst);
                 } catch (InterruptedException e) {
                     //clear interrupted status
                     Thread.interrupted();
@@ -187,11 +112,9 @@ public class BizAssistant {
     public static void main(String[] args) throws Exception {
         //load config
          ConfigProperties.load();
-
         //init
-        BizAssistant bizAssistant = new BizAssistant();
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> bizAssistant.shutdown()));
+
     }
 
 

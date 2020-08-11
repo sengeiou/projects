@@ -7,8 +7,8 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public interface ServerRecvListener {
 
-    void recv(Object msg, ChannelHandlerContext ctx);
+    void recv(DuplexMsg msg, ChannelHandlerContext ctx);
 
-    String code();
+    String[] codes();
 
 }

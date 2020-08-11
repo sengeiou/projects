@@ -1,7 +1,7 @@
-package com.normal.biz.order;
+package com.normal.bizserver.order;
 
+import com.normal.bizserver.BizProperties;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.Objects;
