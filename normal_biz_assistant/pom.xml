@@ -68,7 +68,11 @@
             <artifactId>java-client</artifactId>
             <version>7.3.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.normal</groupId>
+            <artifactId>taobao-sdk-java-auto-20200808</artifactId>
+            <version>1.0.0</version>
+        </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>

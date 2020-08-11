@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author: fei.he
@@ -111,6 +113,7 @@ public class BizAssistant {
 
     public static void main(String[] args) throws Exception {
         //load config
+        ConfigProperties.load();
          ConfigProperties.load();
         //init
 

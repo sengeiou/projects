@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -46,5 +48,13 @@ public class ConfigProperties {
 
     public static String getBizClientConnectUri() {
         return getProperty("biz.client.wb.connect.uri");
+    }
+
+    public static List<String> getGroups() {
+        return Arrays.asList(properties.getProperty("autosend.groups").split(","));
+    }
+
+    public static String getGoodPicsPath() {
+        return properties.getProperty("autosend.goods.pic.path");
     }
 }
