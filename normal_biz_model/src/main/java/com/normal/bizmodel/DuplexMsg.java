@@ -14,4 +14,8 @@ public class DuplexMsg {
 
     private String data;
 
+    public DuplexMsg(String code, String data) {
+        this.code = code;
+        this.data = data;
+    }
 }

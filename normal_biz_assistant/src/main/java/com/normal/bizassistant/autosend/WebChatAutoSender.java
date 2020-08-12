@@ -1,6 +1,9 @@
 package com.normal.bizassistant.autosend;
 
+import com.normal.bizassistant.BizClient;
 import com.normal.bizassistant.ConfigProperties;
+import com.normal.bizmodel.ClientRecvListener;
+import com.normal.bizmodel.DuplexMsg;
 import io.appium.java_client.windows.WindowsDriver;
 import org.apache.commons.collections.CollectionUtils;
 import org.openqa.selenium.Keys;
@@ -88,6 +91,7 @@ public class WebChatAutoSender implements IAutoSender {
     }
 
     public static void main(String[] args) throws Exception {
+
         WebChatAutoSender autoSender = new WebChatAutoSender(new GoodProvider());
         autoSender.send();
     }

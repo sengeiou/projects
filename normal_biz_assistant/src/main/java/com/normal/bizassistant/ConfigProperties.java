@@ -25,7 +25,7 @@ public class ConfigProperties {
         InputStream jsInput = ClassLoader.getSystemResourceAsStream("index.js");
         BufferedReader bufReader = new BufferedReader(new InputStreamReader(jsInput));
         String jsStr = bufReader.lines().collect(Collectors.joining("\n"));
-        properties.put("js", jsStr);
+        properties.put("biz.client.order.js", jsStr);
         jsInput.close();
     }
 
@@ -35,7 +35,7 @@ public class ConfigProperties {
     }
 
     public static int getConnectTimeoutMillis() {
-        return Integer.valueOf(getProperty("biz.connect.timeout.millis"));
+        return Integer.valueOf(getProperty("biz.client.connect.timeout.millis"));
     }
 
     public static String getProperty(String key) {
@@ -56,5 +56,13 @@ public class ConfigProperties {
 
     public static String getGoodPicsPath() {
         return properties.getProperty("autosend.goods.pic.path");
+    }
+
+    public static String getClientConnectIp() {
+        return properties.getProperty("biz.client.connect.ip");
+    }
+
+    public static int getClientConnectPort() {
+        return Integer.valueOf(properties.getProperty("biz.client.connect.port"));
     }
 }

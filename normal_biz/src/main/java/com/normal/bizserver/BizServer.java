@@ -2,8 +2,8 @@ package com.normal.bizserver;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.normal.bizmodel.DuplexMsg;
-import com.normal.bizmodel.ServerRecvListener;
+import com.normal.bizmodel.*;
+import com.normal.core.utils.Jsons;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
@@ -14,6 +14,7 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
@@ -24,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
+import org.springframework.web.HttpRequestHandler;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -59,19 +61,16 @@ public class BizServer extends SimpleChannelInboundHandler<TextWebSocketFrame> i
         bossGroup = new NioEventLoopGroup();
         workGroup = new NioEventLoopGroup(properties.getWorkThreadNum());
         b.group(bossGroup, workGroup).channel(NioServerSocketChannel.class)
-                .localAddress(new InetSocketAddress(properties.getPort()))
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     public void initChannel(SocketChannel ch) {
-                        ch.pipeline().addLast(
-                                new HttpServerCodec(),
-                                new HttpObjectAggregator(65536),
-                                new WebSocketServerProtocolHandler("/ws"),
-                                new JsonObjectDecoder(),
-                                BizServer.this);
+                        ch.pipeline().addLast(new HttpServerCodec());
+                        ch.pipeline().addLast(new HttpObjectAggregator(65536));
+                        ch.pipeline().addLast(new WebSocketServerProtocolHandler("/websocket"));
+                        ch.pipeline().addLast(BizServer.this);
                     }
                 });
-        b.bind().syncUninterruptibly();
+        b.bind(properties.getPort()).syncUninterruptibly();
 
         logger.info("server started !");
 
@@ -80,18 +79,19 @@ public class BizServer extends SimpleChannelInboundHandler<TextWebSocketFrame> i
 
     @PreDestroy
     public void close() {
+        channelGroup.close();
         bossGroup.shutdownGracefully();
         workGroup.shutdownGracefully();
     }
 
 
     @Override
-    public void dispatch(Object msg) {
+    public void dispatch(DuplexMsg msg) {
         try {
             if (channelGroup.isEmpty()) {
                 throw new RuntimeException("还未有客户端连接");
             }
-            channelGroup.writeAndFlush(objectMapper.writeValueAsString(msg));
+            channelGroup.writeAndFlush(new TextWebSocketFrame(objectMapper.writeValueAsString(msg)));
         } catch (JsonProcessingException e) {
             logger.error("json parse error");
         }
@@ -132,8 +132,13 @@ public class BizServer extends SimpleChannelInboundHandler<TextWebSocketFrame> i
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof WebSocketServerProtocolHandler.HandshakeComplete) {
-            logger.info("server hand shake completed !");
             channelGroup.add(ctx.channel());
+            logger.info("server hand shake completed, add channel");
+
+            Order order = new Order();
+            order.setId(1L);
+            order.setOrderStatus(OrderStatus.NEW);
+            this.dispatch(new DuplexMsg(BizCodes.QUERY_ALIPAY_ORDERS, Jsons.toJson(order)));
         }
         super.userEventTriggered(ctx, evt);
     }
@@ -142,5 +147,11 @@ public class BizServer extends SimpleChannelInboundHandler<TextWebSocketFrame> i
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
         logger.info("channel: {} registered ", ctx.channel());
         super.channelRegistered(ctx);
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        logger.error("server happen exception:{}", cause);
+        ctx.close();
     }
 }

@@ -1,5 +1,6 @@
 package com.normal.bizserver;
 
+import com.normal.bizmodel.DuplexMsg;
 import com.normal.bizmodel.ServerRecvListener;
 
 /**
@@ -7,7 +8,7 @@ import com.normal.bizmodel.ServerRecvListener;
  */
 public interface IBizServerService {
 
-    void dispatch(Object msg);
+    void dispatch(DuplexMsg msg);
 
     void addListener(ServerRecvListener listener);
 
