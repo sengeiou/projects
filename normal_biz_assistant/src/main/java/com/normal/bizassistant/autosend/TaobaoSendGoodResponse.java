@@ -7,6 +7,7 @@ import java.util.List;
 public class TaobaoSendGoodResponse extends TaobaoResponse implements SendGoodResponse {
 
 
+
     @Override
     public String text() {
         return null;
