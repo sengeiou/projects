@@ -1,9 +1,6 @@
 package com.normal.bizassistant.autosend;
 
-import com.normal.bizassistant.BizClient;
 import com.normal.bizassistant.ConfigProperties;
-import com.normal.bizmodel.ClientRecvListener;
-import com.normal.bizmodel.DuplexMsg;
 import io.appium.java_client.windows.WindowsDriver;
 import org.apache.commons.collections.CollectionUtils;
 import org.openqa.selenium.Keys;
@@ -38,27 +35,16 @@ public class WebChatAutoSender implements IAutoSender {
         }
     }
 
-    private final GoodProvider goodProvider;
+    private final IOpenApiService IOpenApiService;
 
-    public WebChatAutoSender(GoodProvider goodProvider) {
-        this.goodProvider = goodProvider;
+    public WebChatAutoSender(IOpenApiService IOpenApiService) {
+        this.IOpenApiService = IOpenApiService;
     }
 
-    static class SimpleGoodInfo {
-        String text;
-        byte[] imgs;
-    }
-
-    static class GoodProvider {
-
-        public List<SimpleGoodInfo> provide() {
-            return null;
-        }
-    }
 
     @Override
     public void send() {
-        List<SimpleGoodInfo> goods = this.goodProvider.provide();
+        List<SimpleGoodInfo> goods = this.IOpenApiService.querySendGoods();
         if (CollectionUtils.isEmpty(goods)) {
             return;
         }
@@ -92,7 +78,7 @@ public class WebChatAutoSender implements IAutoSender {
 
     public static void main(String[] args) throws Exception {
 
-        WebChatAutoSender autoSender = new WebChatAutoSender(new GoodProvider());
+        WebChatAutoSender autoSender = new WebChatAutoSender(new IOpenApiService());
         autoSender.send();
     }
 
