@@ -9,17 +9,39 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.core.env.Environment;
 
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 /**
  * @author: fei.he
  */
-public class WebChatAutoSender implements IAutoSender {
-    private static WindowsDriver driver = null;
+
+@SpringBootApplication
+public class WebChatAutoSender implements CommandLineRunner {
     public static final Logger logger = LoggerFactory.getLogger(WebChatAutoSender.class);
+
+
+    @Autowired
+    IOpenApiService openApiService;
+
+    @Autowired
+    Environment environment;
+
+    private static WindowsDriver driver = null;
+
 
     static {
         try {
@@ -27,7 +49,7 @@ public class WebChatAutoSender implements IAutoSender {
             capabilities.setCapability("app", ConfigProperties.getWebchatLocation());
             capabilities.setCapability("platformName", "Windows");
             capabilities.setCapability("deviceName", "WindowsPC");
-//            capabilities.setCapability("ms:waitForAppLaunch", "5");
+            /*capabilities.setCapability("ms:waitForAppLaunch", "5");*/
             driver = new WindowsDriver(new URL("http://127.0.0.1:4723"), capabilities);
             driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
         } catch (Exception e) {
@@ -35,51 +57,57 @@ public class WebChatAutoSender implements IAutoSender {
         }
     }
 
-    private final IOpenApiService IOpenApiService;
 
-    public WebChatAutoSender(IOpenApiService IOpenApiService) {
-        this.IOpenApiService = IOpenApiService;
+    public static void main(String[] args) throws Exception {
+        SpringApplication.run(WebChatAutoSender.class);
     }
 
-
     @Override
-    public void send() {
-        List<SimpleGoodInfo> goods = this.IOpenApiService.querySendGoods();
-        if (CollectionUtils.isEmpty(goods)) {
-            return;
+    public void run(String... args) throws Exception {
+        Map<String, Object> params = new HashMap<>(1);
+
+        for (int i = 1; ; i++) {
+            params.put("pageNo", i);
+            Iterator<SendGood> goodsIterator = openApiService.querySendGoods(params);
+            if (goodsIterator == null) {
+                logger.info("can not find goods info anymore, pageNo:{}", i);
+                break;
+            }
+            for (; ; ) {
+
+                if (!goodsIterator.hasNext()) {
+                    break;
+                }
+                SendGood good = goodsIterator.next();
+                send(good);
+                Thread.sleep(Long.valueOf(environment.getProperty("autosend.interval.mills")));
+            }
         }
 
-        List<String> groups = null;
-        for (SimpleGoodInfo good : goods) {
-            for (String group : groups) {
-                try {
-                    WebElement groupEle = driver.findElementByName(group);
-                    WebElement sendFileEle = driver.findElementByName("发送文件");
 
-                    //send text
-                    groupEle.click();
-                    groupEle.sendKeys(good.text);
-                    groupEle.sendKeys(Keys.ENTER);
+    }
 
-                    //send images
-                    sendFileEle.click();
-                    byte[] imgsBytes = driver.pullFile(ConfigProperties.getGoodPicsPath());
+    private void send(SendGood good) {
+        String groups = environment.getProperty("autosend.groups");
+        for (String group : groups.split(",")) {
+            try {
+                WebElement groupEle = driver.findElementByName(group);
+                //send text
+                groupEle.click();
+                groupEle.sendKeys(good.getText());
+                groupEle.sendKeys(Keys.ENTER);
 
-                    groupEle.sendKeys(Keys.ENTER);
+                //send images
+                groupEle.click();
 
-                } catch (NoSuchElementException e) {
-                    logger.error("no such element by name:{}", group);
-                }
+                byte[] imgsBytes = driver.pullFile(ConfigProperties.getGoodPicsPath());
 
+                groupEle.sendKeys(Keys.ENTER);
+
+            } catch (NoSuchElementException e) {
+                logger.error("no such element by name:{}", group);
             }
         }
 
     }
-
-    public static void main(String[] args) throws Exception {
-
-        WebChatAutoSender autoSender = new WebChatAutoSender(new IOpenApiService());
-        autoSender.send();
-    }
-
 }

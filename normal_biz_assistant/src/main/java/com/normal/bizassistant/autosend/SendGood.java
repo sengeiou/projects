@@ -1,18 +1,24 @@
 package com.normal.bizassistant.autosend;
 
+import lombok.Data;
+
 import java.util.List;
 
-public interface SendGoodResponse {
+/**
+ * @author fei.he
+ */
+@Data
+public class SendGood {
     /**
      * 商品文案:包含淘口令
      * @return
      */
-    String text();
+   private String text;
 
     /**
-     * 商品图片
+     * 商品图片列表
      * @return
      */
-    List<Byte[]> images();
+    private List<byte[]> images;
 
 }
