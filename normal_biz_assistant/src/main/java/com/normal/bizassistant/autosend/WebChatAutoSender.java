@@ -1,8 +1,6 @@
 package com.normal.bizassistant.autosend;
 
-import com.normal.bizassistant.ConfigProperties;
 import io.appium.java_client.windows.WindowsDriver;
-import org.apache.commons.collections.CollectionUtils;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -13,23 +11,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.core.env.Environment;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 /**
  * @author: fei.he
  */
 
-@SpringBootApplication
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 public class WebChatAutoSender implements CommandLineRunner {
     public static final Logger logger = LoggerFactory.getLogger(WebChatAutoSender.class);
 
@@ -40,34 +36,17 @@ public class WebChatAutoSender implements CommandLineRunner {
     @Autowired
     Environment environment;
 
-    private static WindowsDriver driver = null;
+    private WindowsDriver driver;
 
-
-    static {
-        try {
-            DesiredCapabilities capabilities = new DesiredCapabilities();
-            capabilities.setCapability("app", ConfigProperties.getWebchatLocation());
-            capabilities.setCapability("platformName", "Windows");
-            capabilities.setCapability("deviceName", "WindowsPC");
-            /*capabilities.setCapability("ms:waitForAppLaunch", "5");*/
-            driver = new WindowsDriver(new URL("http://127.0.0.1:4723"), capabilities);
-            driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
-        } catch (Exception e) {
-            logger.error("e:{}", e);
-        }
-    }
-
-
-    public static void main(String[] args) throws Exception {
-        SpringApplication.run(WebChatAutoSender.class);
-    }
 
     @Override
     public void run(String... args) throws Exception {
+        initDriver();
         Map<String, Object> params = new HashMap<>(1);
 
         for (int i = 1; ; i++) {
             params.put("pageNo", i);
+            params.put("materialId", environment.getProperty("autosend.materialid")); //数码家电
             Iterator<SendGood> goodsIterator = openApiService.querySendGoods(params);
             if (goodsIterator == null) {
                 logger.info("can not find goods info anymore, pageNo:{}", i);
@@ -79,11 +58,23 @@ public class WebChatAutoSender implements CommandLineRunner {
                     break;
                 }
                 SendGood good = goodsIterator.next();
+                logger.info("send good: {}", good);
                 send(good);
                 Thread.sleep(Long.valueOf(environment.getProperty("autosend.interval.mills")));
             }
         }
 
+
+    }
+
+    private void initDriver() throws MalformedURLException {
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+        capabilities.setCapability("app", environment.getProperty("autosend.webchat.location"));
+        capabilities.setCapability("platformName", "Windows");
+        capabilities.setCapability("deviceName", "WindowsPC");
+        /*capabilities.setCapability("ms:waitForAppLaunch", "5");*/
+        driver = new WindowsDriver(new URL("http://127.0.0.1:4723"), capabilities);
+        driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
 
     }
 
@@ -97,11 +88,9 @@ public class WebChatAutoSender implements CommandLineRunner {
                 groupEle.sendKeys(good.getText());
                 groupEle.sendKeys(Keys.ENTER);
 
-                //send images
+                //send imagePaths
                 groupEle.click();
-
-                byte[] imgsBytes = driver.pullFile(ConfigProperties.getGoodPicsPath());
-
+                good.getImagePaths().forEach((image) -> groupEle.sendKeys(image));
                 groupEle.sendKeys(Keys.ENTER);
 
             } catch (NoSuchElementException e) {
@@ -109,5 +98,9 @@ public class WebChatAutoSender implements CommandLineRunner {
             }
         }
 
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(WebChatAutoSender.class);
     }
 }

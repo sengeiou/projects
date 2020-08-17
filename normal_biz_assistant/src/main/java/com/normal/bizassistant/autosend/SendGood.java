@@ -1,6 +1,7 @@
 package com.normal.bizassistant.autosend;
 
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -8,6 +9,7 @@ import java.util.List;
  * @author fei.he
  */
 @Data
+@ToString
 public class SendGood {
     /**
      * 商品文案:包含淘口令
@@ -16,9 +18,9 @@ public class SendGood {
    private String text;
 
     /**
-     * 商品图片列表
+     * 商品图片目录列表
      * @return
      */
-    private List<byte[]> images;
+    private List<String> imagePaths;
 
 }

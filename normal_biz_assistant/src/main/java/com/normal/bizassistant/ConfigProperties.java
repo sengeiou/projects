@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -30,10 +28,6 @@ public class ConfigProperties {
     }
 
 
-    public static String getWebchatLocation() {
-        return getProperty("autosend.webchat.location");
-    }
-
     public static int getConnectTimeoutMillis() {
         return Integer.valueOf(getProperty("biz.client.connect.timeout.millis"));
     }
@@ -42,21 +36,11 @@ public class ConfigProperties {
         return properties.getProperty(key);
     }
 
-    public static int getClientWriteIdleSeconds() {
-        return Integer.valueOf(getProperty("biz.client.write.timeout.seconds"));
-    }
-
     public static String getBizClientConnectUri() {
         return getProperty("biz.client.wb.connect.uri");
     }
 
-    public static List<String> getGroups() {
-        return Arrays.asList(properties.getProperty("autosend.groups").split(","));
-    }
 
-    public static String getGoodPicsPath() {
-        return properties.getProperty("autosend.goods.pic.path");
-    }
 
     public static String getClientConnectIp() {
         return properties.getProperty("biz.client.connect.ip");
