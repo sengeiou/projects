@@ -24,7 +24,7 @@
 
         <!-- targetProject:生成PO类的位置 -->
         <javaModelGenerator targetPackage="com.normal.biz.order"
-                            targetProject="F:\projects\normal_biz\src\main\java">
+                            targetProject="F:\projects\normal_biz_assistant\src\main\java">
             <!-- enableSubPackages:是否让schema作为包的后缀 -->
             <property name="enableSubPackages" value="false" />
             <!-- 从数据库返回的值被清理前后的空格 -->
@@ -35,20 +35,20 @@
            若果maven工程是分模块的工程，targetProject="所属模块的名称"，例如：
            targetProject="ecps-manager-mapper"，下同-->
         <sqlMapGenerator targetPackage="mapper"
-                         targetProject="F:\projects\normal_biz\src\main\resources">
+                         targetProject="F:\projects\normal_biz_assistant\src\main\resources">
             <!-- enableSubPackages:是否让schema作为包的后缀 -->
             <property name="enableSubPackages" value="false" />
         </sqlMapGenerator>
         <!-- targetPackage：mapper接口生成的位置 -->
         <javaClientGenerator type="XMLMAPPER"
                              targetPackage="com.normal.biz.order"
-                             targetProject="F:\projects\normal_biz\src\main\java">
+                             targetProject="F:\projects\normal_biz_assistant\src\main\java">
             <!-- enableSubPackages:是否让schema作为包的后缀 -->
             <property name="enableSubPackages" value="false" />
         </javaClientGenerator>
         <!-- 指定数据库表 -->
-        <table tableName="trd_order"
-               domainObjectName="Order"
+        <table tableName="trd_send_good"
+               domainObjectName="SendGood"
                enableCountByExample="false"
                enableUpdateByExample="false"
                enableDeleteByExample="false"

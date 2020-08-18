@@ -1,6 +1,7 @@
 package com.normal.bizassistant.autosend;
 
 import io.appium.java_client.windows.WindowsDriver;
+import org.apache.commons.collections.CollectionUtils;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -18,6 +19,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -25,46 +27,33 @@ import java.util.concurrent.TimeUnit;
  * @author: fei.he
  */
 
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+@SpringBootApplication
 public class WebChatAutoSender implements CommandLineRunner {
+
     public static final Logger logger = LoggerFactory.getLogger(WebChatAutoSender.class);
 
-
     @Autowired
-    IOpenApiService openApiService;
+    AutoSendManager autoSendManager;
 
     @Autowired
     Environment environment;
 
     private WindowsDriver driver;
 
-
     @Override
     public void run(String... args) throws Exception {
         initDriver();
-        Map<String, Object> params = new HashMap<>(1);
 
-        for (int i = 1; ; i++) {
-            params.put("pageNo", i);
-            params.put("materialId", environment.getProperty("autosend.materialid")); //数码家电
-            Iterator<SendGood> goodsIterator = openApiService.querySendGoods(params);
-            if (goodsIterator == null) {
-                logger.info("can not find goods info anymore, pageNo:{}", i);
+        for (;;) {
+            List<SendGood> goods = autoSendManager.querySendGoods();
+            if (CollectionUtils.isEmpty(goods)) {
+                logger.info("no goods anymore exit");
                 break;
             }
-            for (; ; ) {
-
-                if (!goodsIterator.hasNext()) {
-                    break;
-                }
-                SendGood good = goodsIterator.next();
-                logger.info("send good: {}", good);
+            for (SendGood good : goods) {
                 send(good);
-                Thread.sleep(Long.valueOf(environment.getProperty("autosend.interval.mills")));
             }
         }
-
-
     }
 
     private void initDriver() throws MalformedURLException {
@@ -88,11 +77,12 @@ public class WebChatAutoSender implements CommandLineRunner {
                 groupEle.sendKeys(good.getText());
                 groupEle.sendKeys(Keys.ENTER);
 
-                //send imagePaths
+                //send image
                 groupEle.click();
                 good.getImagePaths().forEach((image) -> groupEle.sendKeys(image));
                 groupEle.sendKeys(Keys.ENTER);
 
+                logger.info("good:{} had send", good);
             } catch (NoSuchElementException e) {
                 logger.error("no such element by name:{}", group);
             }

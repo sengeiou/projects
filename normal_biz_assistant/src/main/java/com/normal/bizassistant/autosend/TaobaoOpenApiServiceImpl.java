@@ -30,23 +30,21 @@ public class TaobaoOpenApiServiceImpl implements IOpenApiService {
     @Autowired
     Environment environment;
 
+
     @Override
-    public Iterator<SendGood> querySendGoods(Map<String, Object> params) {
+    public List<SendGood> querySendGoods(Map<String, Object> params) {
 
         TbkDgOptimusMaterialRequest req = new TbkDgOptimusMaterialRequest();
         req.setAdzoneId(Long.valueOf(environment.getProperty("autosend.taobao.adzoneid")));
-        req.setMaterialId(Long.valueOf(String.valueOf(params.get("materialId"))));
+        req.setMaterialId(Long.valueOf(environment.getProperty("autosend.materialid")));
         req.setPageNo(Long.valueOf(String.valueOf(params.get("pageNo"))));
-        req.setPageSize(100L);
+        req.setPageSize(20L);
         TbkDgOptimusMaterialResponse rsp = clientWrapper.execute(req);
         List<TbkDgOptimusMaterialResponse.MapData> resultList = rsp.getResultList();
 
         List<SendGood> goods = resultList.stream()
                 .map(this::map).collect(Collectors.toList());
-        if (CollectionUtils.isEmpty(goods)) {
-            return null;
-        }
-        return goods.iterator();
+        return goods;
     }
 
 
@@ -89,24 +87,30 @@ public class TaobaoOpenApiServiceImpl implements IOpenApiService {
         //save image
         try {
             URL url = new URL("http:" + item.getPictUrl());
-            String goodsPicPath = getGoodsPicPath(item.getPictUrl(), item.getCategoryId());
+            Map<String, String> imageRst = getGoodsPicPath(item.getPictUrl(), item.getCategoryId());
+            String goodsPicPath = imageRst.get("picPath");
             File file = new File(goodsPicPath);
             if (!file.exists()) {
                 Files.download(url, goodsPicPath);
             }
             SendGood good = new SendGood();
+            good.setCategoryId(item.getCategoryId());
             good.setText(genText(item));
-            good.setImagePaths(Arrays.asList(goodsPicPath));
+            good.setImagePaths(Arrays.asList(imageRst.get("picName")));
             return good;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private String getGoodsPicPath(String pictUrl, Long categoryId) {
+    private Map<String, String> getGoodsPicPath(String pictUrl, Long categoryId) {
+        Map<String, String> rst = new HashMap<>();
         for (int j = pictUrl.length() - 1; j > 0; j--) {
             if (pictUrl.charAt(j) == '.') {
-                return environment.getProperty("autosend.image.temp.path") + categoryId + pictUrl.substring(j);
+                String picName = categoryId + pictUrl.substring(j);
+                rst.put("picPath", environment.getProperty("autosend.image.temp.path") + picName);
+                rst.put("picName", picName);
+                return rst;
             }
         }
         return null;
