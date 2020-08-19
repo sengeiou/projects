@@ -9,9 +9,10 @@ import com.taobao.api.response.TbkTpwdCreateResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
@@ -20,7 +21,8 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Service
+@Component
+@Qualifier("taobaoOpenApiService")
 public class TaobaoOpenApiServiceImpl implements IOpenApiService {
     public static final Logger logger = LoggerFactory.getLogger(TaobaoOpenApiServiceImpl.class);
 
@@ -68,7 +70,7 @@ public class TaobaoOpenApiServiceImpl implements IOpenApiService {
         url = url.replaceAll("\\\\", "");
         url = "https:" + url;
         req.setUrl(url);
-        req.setText("领券");
+        req.setText("优惠券领取");
         req.setUserId(environment.getProperty("autosend.taobao.userid"));
         TbkTpwdCreateResponse rsp = clientWrapper.execute(req);
 
@@ -108,7 +110,7 @@ public class TaobaoOpenApiServiceImpl implements IOpenApiService {
         for (int j = pictUrl.length() - 1; j > 0; j--) {
             if (pictUrl.charAt(j) == '.') {
                 String picName = categoryId + pictUrl.substring(j);
-                rst.put("picPath", environment.getProperty("autosend.image.temp.path") + picName);
+                rst.put("picPath", environment.getProperty("autosend.images.path") + picName);
                 rst.put("picName", picName);
                 return rst;
             }

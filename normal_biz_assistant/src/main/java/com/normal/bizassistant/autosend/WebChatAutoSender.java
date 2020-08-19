@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  * @author: fei.he
  */
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.normal.bizassistant"})
 public class WebChatAutoSender implements CommandLineRunner {
 
     public static final Logger logger = LoggerFactory.getLogger(WebChatAutoSender.class);

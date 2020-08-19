@@ -12,4 +12,5 @@ public interface SendGoodMapper {
 
     void batchInsert(List<SendGood> goods);
 
+    List<SendGood> queryUnSendGoods();
 }

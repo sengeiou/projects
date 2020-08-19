@@ -10,11 +10,8 @@ mybatis:
 # auto send
 autosend:
   groups: 文件传输助手
-  image:
-    temp:
-      path: E:/pics/tmp/
   images:
-    path: d:/doc/
+    path: E:/pics/
   interval:
     mills: 600000
     min: 10
@@ -26,7 +23,7 @@ autosend:
     serverurl: http://gw.api.taobao.com/router/rest
     userid: 1309050177
   webchat:
-    location: F:/soft_install/WeChat/WeChat.exe
+    location: E:/soft-install-here/WeChat/WeChat.exe
 #order pay
 biz:
   client:

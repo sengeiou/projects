@@ -13,7 +13,7 @@ import org.springframework.core.env.Environment;
  * @author fei.he
  */
 @Configuration
-@MapperScan(basePackages = "com.normal.bizassistant.autosend")
+@MapperScan(basePackages = {"com.normal.bizassistant"})
 public class AutoSendConfig {
 
     @Autowired
@@ -25,6 +25,7 @@ public class AutoSendConfig {
                 environment.getProperty("autosend.taobao.appkey"),
                 environment.getProperty("autosend.taobao.appsecret"));
     }
+
 
     @Bean
     public ApplicationContextHolder holder() {

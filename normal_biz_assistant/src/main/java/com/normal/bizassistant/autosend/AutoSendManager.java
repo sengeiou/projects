@@ -5,9 +5,12 @@ import com.normal.bizassistant.BizContextService;
 import com.normal.bizassistant.BizContextTypes;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +22,7 @@ import java.util.Map;
 public class AutoSendManager {
 
     @Autowired
+    @Qualifier("taobaoOpenApiService")
     IOpenApiService openApiService;
 
     @Autowired
@@ -30,6 +34,7 @@ public class AutoSendManager {
     @Autowired
     BizContextService bizContextService;
 
+    @Transactional
     public List<SendGood> querySendGoods() {
         List<SendGood> unSendGoods = sendGoodMapper.queryUnSendGoods();
         if (CollectionUtils.isEmpty(unSendGoods)) {
@@ -37,11 +42,19 @@ public class AutoSendManager {
             BizContext context = bizContextService.recoverContext(BizContextTypes.querySendGood);
             if (context == null) {
                 params.put("pageNo", 1);
-            }else {
+                context = new BizContext();
+                context.setType(BizContextTypes.querySendGood);
+                context.setContext("2");
+            } else {
                 String pageNo = context.getContext();
-                params.put("pageNo", Long.valueOf(pageNo));
+                long next = Long.valueOf(pageNo) + 1;
+                params.put("pageNo", next);
+                context.setContext(String.valueOf(next));
             }
-            return openApiService.querySendGoods(params);
+            bizContextService.insert(context);
+            List<SendGood> goods = openApiService.querySendGoods(params);
+            sendGoodMapper.batchInsert(goods);
+            return goods;
         }
         return unSendGoods;
     }
