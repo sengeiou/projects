@@ -1,6 +1,7 @@
 package com.normal.bizassistant.autosend;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -10,7 +11,9 @@ import java.util.List;
 @Mapper
 public interface SendGoodMapper {
 
-    void batchInsert(List<SendGood> goods);
+    void batchInsert(@Param("goods") List<SendGood> goods);
 
     List<SendGood> queryUnSendGoods();
+
+    void updateSendGoodsStatus(Integer id);
 }

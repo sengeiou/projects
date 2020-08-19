@@ -9,7 +9,7 @@ public interface NormalEnum {
 
     String value();
 
-    default  NormalEnum valueOf(int key) {
+    default NormalEnum valueOf(int key) {
         for (NormalEnum item : this.getClass().getEnumConstants()) {
             if (item.key() == key) {
                 return item;

@@ -10,7 +10,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,4 +57,9 @@ public class AutoSendManager {
         }
         return unSendGoods;
     }
+
+    public void updateSendGoodsStatus(Integer id) {
+        sendGoodMapper.updateSendGoodsStatus(id);
+    }
+
 }

@@ -12,10 +12,11 @@ public final class Dates {
     public static String format(long timestamp, String... pattern) {
         Instant instant = Instant.ofEpochMilli(timestamp);
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-        if (pattern == null) {
+        if (pattern.length == 0) {
             return localDateTime.format(formatter);
         }
         return localDateTime.format(DateTimeFormatter.ofPattern(pattern[0]));
     }
+
 
 }

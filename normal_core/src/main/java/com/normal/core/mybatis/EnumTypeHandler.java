@@ -24,16 +24,30 @@ public class EnumTypeHandler implements TypeHandler<NormalEnum> {
 
     @Override
     public NormalEnum getResult(ResultSet rs, String columnName) throws SQLException {
-        return null;
+        return getNormalEnum(rs.getInt(columnName));
     }
 
     @Override
     public NormalEnum getResult(ResultSet rs, int columnIndex) throws SQLException {
+        return getNormalEnum(rs.getInt(columnIndex));
+    }
+
+    private NormalEnum getNormalEnum(int key) throws SQLException {
+        for (NormalEnum item : this.clazz.getEnumConstants()) {
+            if (item.key() == key) {
+                return item;
+            }
+        }
         return null;
     }
 
     @Override
     public NormalEnum getResult(CallableStatement cs, int columnIndex) throws SQLException {
+        for (NormalEnum item : this.clazz.getEnumConstants()) {
+            if (item.key() == cs.getInt(columnIndex)) {
+                return item;
+            }
+        }
         return null;
     }
 }

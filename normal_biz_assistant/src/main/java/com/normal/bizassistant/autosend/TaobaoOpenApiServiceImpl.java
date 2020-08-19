@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
@@ -59,7 +58,7 @@ public class TaobaoOpenApiServiceImpl implements IOpenApiService {
         join(joiner, "【优惠券信息】" + item.getCouponInfo());
         join(joiner, "【券有效截止日期】" + Dates.format(Long.valueOf(item.getCouponEndTime())));
         join(joiner, "【下单口令】" + queryPwd(item.getCouponShareUrl()));
-        join(joiner, "复制这条信息到淘宝即可购买 :)");
+        join(joiner, "复制这条信息到淘宝即可购买  :)");
 
         return joiner.toString();
 

@@ -7,19 +7,25 @@
         <result column="text" jdbcType="VARCHAR" property="text"/>
         <result column="image_paths" jdbcType="VARCHAR" property="imagePaths"
                 typeHandler="com.normal.bizassistant.autosend.ImagePathTypeHandler"/>
-        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="status" jdbcType="INTEGER" property="status"
+                typeHandler="com.normal.core.mybatis.EnumTypeHandler"/>
     </resultMap>
     <sql id="Base_Column_List">
     id, category_id, text, image_paths, status
   </sql>
 
-    <insert id="batchInsert">
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         insert into trd_send_good (category_id, text, image_paths)
         values
         <foreach collection="goods" item="item" separator=",">
-            (#{item.categoryId}, #{item.text}, #{imageStrs})
+            (#{item.categoryId}, #{item.text}, #{item.imageStrs})
         </foreach>
     </insert>
+
+    <update id="updateSendGoodsStatus">
+        update trd_send_good set  status = 1 where id = #{id}
+    </update>
+
     <select id="queryUnSendGoods" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"></include>
