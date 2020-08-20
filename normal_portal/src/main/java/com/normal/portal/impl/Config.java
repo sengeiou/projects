@@ -1,7 +1,7 @@
 package com.normal.portal.impl;
 
-import com.normal.core.mybatis.PageInterceptor;
-import com.normal.core.web.PageTemplateDirectiveModel;
+import com.normal.base.mybatis.PageInterceptor;
+import com.normal.base.web.PageTemplateDirectiveModel;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

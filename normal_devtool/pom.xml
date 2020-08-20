@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>com.normal</groupId>
-            <artifactId>normal_core</artifactId>
+            <artifactId>normal_base</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>

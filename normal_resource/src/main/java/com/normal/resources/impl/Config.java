@@ -1,6 +1,6 @@
 package com.normal.resources.impl;
 
-import com.normal.core.mybatis.PageInterceptor;
+import com.normal.base.mybatis.PageInterceptor;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @MapperScan(basePackages = "com.normal.resources.impl")
-@Import(com.normal.bizserver.Config.class)
+@Import(com.normal.order.Config.class)
 public class Config {
 
     @Bean

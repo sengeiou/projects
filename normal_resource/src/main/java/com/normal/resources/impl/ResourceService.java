@@ -1,10 +1,10 @@
 package com.normal.resources.impl;
 
-import com.normal.bizserver.order.IOrderService;
-import com.normal.bizmodel.Order;
-import com.normal.bizmodel.OrderStatus;
-import com.normal.core.web.CommonErrorMsg;
-import com.normal.core.web.Result;
+import com.normal.order.IOrderService;
+import com.normal.model.order.Order;
+import com.normal.model.order.OrderStatus;
+import com.normal.base.web.CommonErrorMsg;
+import com.normal.base.web.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

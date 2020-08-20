@@ -1,10 +1,10 @@
 package com.normal.portal.impl;
 
-import com.normal.core.mybatis.Page;
-import com.normal.core.mybatis.PageParam;
-import com.normal.core.mybatis.Pages;
-import com.normal.core.web.CommonErrorMsg;
-import com.normal.core.web.Result;
+import com.normal.base.mybatis.Page;
+import com.normal.base.mybatis.PageParam;
+import com.normal.base.mybatis.Pages;
+import com.normal.base.web.CommonErrorMsg;
+import com.normal.base.web.Result;
 import com.youbenzi.mdtool.tool.MDTool;
 import freemarker.template.Configuration;
 import freemarker.template.Template;

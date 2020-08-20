@@ -5,12 +5,15 @@
     <packaging>pom</packaging>
     <modules>
         <module>normal_resource</module>
-        <module>normal_core</module>
+        <module>normal_base</module>
         <module>normal_portal</module>
         <module>normal_devtool</module>
-        <module>normal_biz</module>
-        <module>normal_biz_assistant</module>
-        <module>normal_biz_model</module>
+        <module>normal_order</module>
+        <module>normal_autosend</module>
+        <module>normal_model</module>
+        <module>normal_dao</module>
+        <module>normal_communicate</module>
+        <module>normal_openapi</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -54,25 +57,64 @@
             </dependency>
             <dependency>
                 <groupId>com.normal</groupId>
-                <artifactId>normal_biz_model</artifactId>
+                <artifactId>normal_model</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.normal</groupId>
-                <artifactId>normal_core</artifactId>
+                <artifactId>normal_base</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.normal</groupId>
-                <artifactId>normal_biz</artifactId>
+                <artifactId>normal_openapi</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>io.appium</groupId>
+                <artifactId>java-client</artifactId>
+                <version>7.3.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>7.1.0</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.normal</groupId>
+                <artifactId>normal_order</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.normal</groupId>
+                <artifactId>normal_communicate_client</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.normal</groupId>
+                <artifactId>normal_communicate_server</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.normal</groupId>
+                <artifactId>normal_dao</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.normal</groupId>
+                <artifactId>taobao-sdk-java-auto-20200808</artifactId>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>1.18.8</version>
                 <scope>provided</scope>
-             </dependency>
+            </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-all</artifactId>
@@ -83,9 +125,14 @@
                 <artifactId>okhttp</artifactId>
                 <version>2.7.5</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.11.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
-
 
 
 </project>

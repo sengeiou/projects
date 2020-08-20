@@ -1,9 +1,9 @@
 package com.normal.resources.impl;
 
-import com.normal.core.mybatis.PageParam;
-import com.normal.core.mybatis.Pages;
-import com.normal.core.web.BaseController;
-import com.normal.core.web.Result;
+import com.normal.base.mybatis.PageParam;
+import com.normal.base.mybatis.Pages;
+import com.normal.base.web.BaseController;
+import com.normal.base.web.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

@@ -1,6 +1,6 @@
 package com.normal.resources.impl;
 
-import com.normal.core.mybatis.PageParam;
+import com.normal.base.mybatis.PageParam;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
