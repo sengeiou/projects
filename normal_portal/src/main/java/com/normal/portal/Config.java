@@ -1,4 +1,4 @@
-package com.normal.portal.impl;
+package com.normal.portal;
 
 import com.normal.base.mybatis.PageInterceptor;
 import com.normal.base.web.PageTemplateDirectiveModel;

@@ -19,7 +19,7 @@
         where id = #{id}
     </select>
 
-    <select id="queryResources" parameterType="com.normal.base.mybatis.PageParam" resultMap="BaseResultMap">
+    <select id="queryResources" parameterType="com.normal.model.PageParam" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"></include>
         from trd_resource

@@ -1,4 +1,4 @@
-package com.normal.portal.impl;
+package com.normal.portal;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.normal.portal.impl.PostMapper">
-  <resultMap id="BaseResultMap" type="com.normal.portal.impl.Post">
+<mapper namespace="com.normal.dao.post.PostMapper">
+  <resultMap id="BaseResultMap" type="com.normal.model.post.Post">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="post_title" jdbcType="VARCHAR" property="postTitle" />
     <result column="post_preview" jdbcType="VARCHAR" property="postPreview" />
@@ -34,13 +34,13 @@
     delete from trd_post
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.normal.portal.impl.Post">
+  <insert id="insert" parameterType="com.normal.model.post.Post">
     insert into trd_post (id, post_title, post_preview, 
       update_time)
     values (#{id,jdbcType=INTEGER}, #{postTitle,jdbcType=VARCHAR}, #{postPreview,jdbcType=VARCHAR}, 
       #{updateTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.normal.portal.impl.Post">
+  <insert id="insertSelective" parameterType="com.normal.model.post.Post">
     insert into trd_post
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">

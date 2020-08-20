@@ -1,4 +1,4 @@
-package com.normal.portal.impl;
+package com.normal.model.post;
 
 import java.util.Date;
 

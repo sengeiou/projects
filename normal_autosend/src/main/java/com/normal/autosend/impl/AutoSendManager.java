@@ -1,4 +1,4 @@
-package com.normal.autosend;
+package com.normal.autosend.impl;
 
 import com.normal.base.biz.BizContextService;
 import com.normal.dao.autosend.SendGoodMapper;

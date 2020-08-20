@@ -1,4 +1,4 @@
-package com.normal.base.mybatis;
+package com.normal.model;
 
 import java.util.HashMap;
 

@@ -1,6 +1,7 @@
-package com.normal.portal.impl;
+package com.normal.dao.post;
 
-import com.normal.base.mybatis.PageParam;
+import com.normal.model.PageParam;
+import com.normal.model.post.Post;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

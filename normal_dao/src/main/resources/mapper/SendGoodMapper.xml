@@ -6,7 +6,7 @@
         <result column="category_id" jdbcType="VARCHAR" property="categoryId"/>
         <result column="text" jdbcType="VARCHAR" property="text"/>
         <result column="image_paths" jdbcType="VARCHAR" property="imagePaths"
-                typeHandler="com.normal.autosend.ImagePathTypeHandler"/>
+                typeHandler="com.normal.autosend.impl.ImagePathTypeHandler"/>
         <result column="status" jdbcType="INTEGER" property="status"
                 typeHandler="com.normal.base.mybatis.EnumTypeHandler"/>
     </resultMap>

@@ -1,4 +1,4 @@
-package com.normal.autosend;
+package com.normal.autosend.impl;
 
 import com.normal.base.utils.ApplicationContextHolder;
 import org.apache.ibatis.type.JdbcType;

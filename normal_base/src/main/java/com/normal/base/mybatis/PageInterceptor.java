@@ -1,6 +1,7 @@
 package com.normal.base.mybatis;
 
 import com.normal.base.utils.Refracts;
+import com.normal.model.PageParam;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.logging.Log;

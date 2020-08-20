@@ -1,5 +1,6 @@
 package com.normal.autosend;
 
+import com.normal.autosend.impl.AutoSendManager;
 import com.normal.base.utils.Files;
 import com.normal.model.autosend.SendGood;
 import io.appium.java_client.windows.WindowsDriver;
@@ -21,14 +22,15 @@ import org.springframework.core.env.Environment;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
  * @author: fei.he
  */
-
-@SpringBootApplication(scanBasePackages = {"com.normal.autosend"})
+@SpringBootApplication
 public class App implements CommandLineRunner {
 
     public static final Logger logger = LoggerFactory.getLogger(App.class);
