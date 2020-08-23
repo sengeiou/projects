@@ -21,11 +21,7 @@ import java.util.Map;
  * @author: fei.he
  */
 @Component
-public class AutoSendManager {
-
-    @Autowired
-    @Qualifier("taobaoOpenApiService")
-    IOpenApiService openApiService;
+public class FacadeAutoSendServiceWrapper {
 
     @Autowired
     SendGoodMapper sendGoodMapper;
@@ -35,6 +31,8 @@ public class AutoSendManager {
 
     @Autowired
     BizContextService bizContextService;
+
+
 
     @Transactional
     public List<SendGood> querySendGoods() {

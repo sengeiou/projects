@@ -1,6 +1,6 @@
 package com.normal.autosend;
 
-import com.normal.autosend.impl.AutoSendManager;
+import com.normal.autosend.impl.FacadeAutoSendServiceWrapper;
 import com.normal.base.utils.Files;
 import com.normal.model.autosend.SendGood;
 import io.appium.java_client.windows.WindowsDriver;
@@ -36,7 +36,7 @@ public class App implements CommandLineRunner {
     public static final Logger logger = LoggerFactory.getLogger(App.class);
 
     @Autowired
-    AutoSendManager autoSendManager;
+    FacadeAutoSendServiceWrapper facadeAutoSendServiceWrapper;
 
     @Autowired
     Environment environment;
@@ -47,7 +47,7 @@ public class App implements CommandLineRunner {
     public void run(String... args) throws Exception {
         initDriver();
         for (; ; ) {
-            List<SendGood> goods = autoSendManager.querySendGoods();
+            List<SendGood> goods = facadeAutoSendServiceWrapper.querySendGoods();
             if (CollectionUtils.isEmpty(goods)) {
                 logger.info("no goods anymore exit");
                 break;
@@ -99,7 +99,7 @@ public class App implements CommandLineRunner {
                             .sendKeys(Keys.ENTER)
                             .perform();
                 }
-                autoSendManager.updateSendGoodsStatus(good.getId());
+                facadeAutoSendServiceWrapper.updateSendGoodsStatus(good.getId());
             } catch (NoSuchElementException e) {
                 logger.error("no such element found:{}", e);
             }

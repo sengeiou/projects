@@ -4,6 +4,12 @@
     username: admin
     password: coomhefei123$%^
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 180000
+      connection-test-query: select 1
+
 mybatis:
   mapper-locations: classpath*:/mapper/*.xml
 
@@ -11,13 +17,13 @@ mybatis:
 autosend:
   groups: 文件传输助手
   sendinterval:
-    seconds: 20
+    seconds: 10
   images:
     path: E:/pics/tmp/
   interval:
     mills: 600000
     min: 10
-  materialid: 3759
+  materialid: 28026
   taobao:
     adzoneid: 110670800125
     appkey: 30963536
@@ -25,7 +31,7 @@ autosend:
     serverurl: http://gw.api.taobao.com/router/rest
     userid: 1309050177
   webchat:
-    location: E:/soft-install-here/WeChat/WeChat.exe
+    location: F:/soft_install/WeChat/WeChat.exe
 #order pay
 biz:
   client:

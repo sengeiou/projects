@@ -16,6 +16,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -33,15 +34,24 @@ public class TaobaoOpenApiServiceImpl implements IOpenApiService {
     @Autowired
     Environment environment;
 
+    private Map<String, IGoodsTextGenerator> textGeneratorRegistory = new HashMap<>(20);
+
+
+    @PostConstruct
+    public void init() {
+
+        textGeneratorRegistory.put()
+    }
+
 
     @Override
     public List<SendGood> querySendGoods(Map<String, Object> params) {
 
         TbkDgOptimusMaterialRequest req = new TbkDgOptimusMaterialRequest();
         req.setAdzoneId(Long.valueOf(environment.getProperty("autosend.taobao.adzoneid")));
-        req.setMaterialId(Long.valueOf(environment.getProperty("autosend.materialid")));
+        req.setMaterialId(Long.valueOf(String.valueOf(params.get("materialId"))));
         req.setPageNo(Long.valueOf(String.valueOf(params.get("pageNo"))));
-        req.setPageSize(20L);
+        req.setPageSize(Long.valueOf(String.valueOf(params.get("pageSize"))));
         TbkDgOptimusMaterialResponse rsp = clientWrapper.execute(req);
         List<TbkDgOptimusMaterialResponse.MapData> resultList = rsp.getResultList();
 
@@ -60,7 +70,7 @@ public class TaobaoOpenApiServiceImpl implements IOpenApiService {
         join(joiner, "【优惠券信息】" + item.getCouponInfo());
         join(joiner, "【券有效截止日期】" + Dates.format(Long.valueOf(item.getCouponEndTime())));
         join(joiner, "【下单口令】" + queryPwd(item.getCouponShareUrl()));
-        join(joiner, "复制这条信息到淘宝即可购买  :)");
+        join(joiner, "复制这条信息到淘宝即可购买");
 
         return joiner.toString();
 
@@ -74,7 +84,6 @@ public class TaobaoOpenApiServiceImpl implements IOpenApiService {
         req.setText("优惠券领取");
         req.setUserId(environment.getProperty("autosend.taobao.userid"));
         TbkTpwdCreateResponse rsp = clientWrapper.execute(req);
-
         return rsp.getData().getModel();
     }
 

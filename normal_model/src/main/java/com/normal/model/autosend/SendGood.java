@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author fei.he
@@ -34,4 +35,11 @@ public class SendGood {
      */
     private YesOrNoEnum status;
 
+
+    public String getImageStrs() {
+        if (imagePaths != null) {
+            return imagePaths.stream().collect(Collectors.joining(","));
+        }
+        return null;
+    }
 }
