@@ -1,6 +1,8 @@
 package com.normal.autosend.impl;
 
+import com.normal.base.ContextSetEvent;
 import com.normal.base.biz.BizContextService;
+import com.normal.base.utils.ApplicationContextHolder;
 import com.normal.dao.autosend.SendGoodMapper;
 import com.normal.model.autosend.SendGood;
 import com.normal.model.context.BizContext;
@@ -9,10 +11,14 @@ import com.normal.openapi.IOpenApiService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +27,7 @@ import java.util.Map;
  * @author: fei.he
  */
 @Component
-public class FacadeAutoSendServiceWrapper {
+public class FacadeAutoSendServiceWrapper implements ApplicationListener<ContextSetEvent> {
 
     @Autowired
     SendGoodMapper sendGoodMapper;
@@ -32,35 +38,21 @@ public class FacadeAutoSendServiceWrapper {
     @Autowired
     BizContextService bizContextService;
 
+    Map<String, SendGoodQueryStrategy> strategyRegistory = new HashMap<>(8);
 
 
     @Transactional
     public List<SendGood> querySendGoods() {
-        List<SendGood> unSendGoods = sendGoodMapper.queryUnSendGoods();
-        if (CollectionUtils.isEmpty(unSendGoods)) {
-            Map<String, Object> params = new HashMap<>(1);
-            BizContext context = bizContextService.recoverContext(BizContextTypes.querySendGood);
-            if (context == null) {
-                params.put("pageNo", 1);
-                context = new BizContext();
-                context.setType(BizContextTypes.querySendGood);
-                context.setContext("2");
-            } else {
-                String pageNo = context.getContext();
-                long next = Long.valueOf(pageNo) + 1;
-                params.put("pageNo", next);
-                context.setContext(String.valueOf(next));
-            }
-            bizContextService.insert(context);
-            List<SendGood> goods = openApiService.querySendGoods(params);
-            sendGoodMapper.batchInsert(goods);
-            return goods;
+        String strategyId = environment.getProperty("autosend.strategy");
+        SendGoodQueryStrategy strategy = strategyRegistory.get(strategyId);
+        return strategy.querySendGoods();
+    }
+
+    @Override
+    public void onApplicationEvent(ContextSetEvent event) {
+        List<SendGoodQueryStrategy> strategies = ApplicationContextHolder.getBeans(SendGoodQueryStrategy.class);
+        for (SendGoodQueryStrategy strategy : strategies) {
+            strategyRegistory.put(strategy.strategyId(), strategy);
         }
-        return unSendGoods;
     }
-
-    public void updateSendGoodsStatus(Integer id) {
-        sendGoodMapper.updateSendGoodsStatus(id);
-    }
-
 }

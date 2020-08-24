@@ -2,6 +2,7 @@ package com.normal.dao.context;
 
 import com.normal.model.context.BizContext;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * @author: fei.he
@@ -11,7 +12,9 @@ public interface BizContextMapper {
 
     void insert(BizContext context);
 
-    BizContext queryByType(String id);
+    BizContext queryByTypeKey(String id);
 
     void deleteByType(String id);
+
+    void updateCtxObjByType(@Param("typeKey") String typeKey, @Param("ctxJson")String ctxJson);
 }

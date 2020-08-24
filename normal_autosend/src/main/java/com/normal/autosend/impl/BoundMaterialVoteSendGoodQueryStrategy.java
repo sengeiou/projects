@@ -1,8 +1,11 @@
 package com.normal.autosend.impl;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.normal.base.biz.BizContextService;
+import com.normal.base.utils.Jsons;
 import com.normal.dao.context.BizContextMapper;
 import com.normal.model.autosend.SendGood;
-import com.normal.model.context.BizContext;
 import com.normal.model.context.BizContextTypes;
 import com.normal.openapi.IOpenApiService;
 import lombok.Data;
@@ -17,7 +20,8 @@ import java.util.Map;
  */
 public class BoundMaterialVoteSendGoodQueryStrategy implements SendGoodQueryStrategy {
 
-    private List<String> materialIds;
+    private Context ctx;
+
     private String strategyId;
 
     @Autowired
@@ -26,35 +30,64 @@ public class BoundMaterialVoteSendGoodQueryStrategy implements SendGoodQueryStra
     @Autowired
     BizContextMapper bizContextMapper;
 
+    @Autowired
+    BizContextService bizContextService;
+
+    @Autowired
+    ObjectMapper objectMapper;
+
 
     public BoundMaterialVoteSendGoodQueryStrategy(List<String> materialIds, String strategyId) {
-        this.materialIds = materialIds;
         this.strategyId = strategyId;
+        this.ctx = new Context(materialIds);
     }
 
 
     @Override
     public List<SendGood> querySendGoods() {
-        for (int i = 0; i < materialIds.size(); i++) {
-
-            String materialId = materialIds.get(i);
-            BizContext ctx = bizContextMapper.queryByType(BizContextTypes.querySendGood + "_" + materialId);
-            if (ctx == null) {
-                ctx = new Context();
-            }
-
-            Map<String, Object> param =  ctx.getQueryParam();
-
-            List<SendGood> sendGoods = openApiService.querySendGoods(param);
-
+        Context ctx = bizContextService.getByTypeKey(BizContextTypes.querySendGood, Context.class);
+        if (ctx == null) {
+            ctx = this.ctx;
+            bizContextService.insertCtx(BizContextTypes.querySendGood, ctx);
         }
+        Map<String, Object> param = ctx.getNextParam();
+        bizContextService.updateCtxObjByType(BizContextTypes.querySendGood, Jsons.toJson(ctx));
+        return openApiService.querySendGoods(param);
+    }
+
+    @Override
+    public String strategyId() {
+        return this.strategyId;
     }
 
     @Data
-    static class Context extends BizContext {
-        private int materialIdx;
-        private int pageNo;
+    static class Context {
+        private int materialIdx = -1;
+        private int pageNo = 1;
+        private List<String> materialIds;
 
+        public Context() {
+        }
 
+        public Context(List<String> materialIds) {
+            this.materialIds = materialIds;
+        }
+
+        @JsonIgnore
+        public Map<String, Object> getNextParam() {
+            Map<String, Object> param = new HashMap<>(3);
+            param.put("pageSize", 2);
+            boolean end = materialIdx == materialIds.size() - 1;
+            if (end) {
+                materialIdx = 0;
+                pageNo++;
+            } else {
+                materialIdx++;
+            }
+            param.put("materialId", materialIds.get(materialIdx));
+            param.put("pageNo", pageNo);
+            return param;
+        }
     }
+
 }

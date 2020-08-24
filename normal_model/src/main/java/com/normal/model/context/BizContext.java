@@ -2,6 +2,8 @@ package com.normal.model.context;
 
 import lombok.Data;
 
+import java.util.Map;
+
 /**
  * @author: fei.he
  */
@@ -15,5 +17,7 @@ public class BizContext {
     private String type;
 
     private String context;
+
+
 
 }

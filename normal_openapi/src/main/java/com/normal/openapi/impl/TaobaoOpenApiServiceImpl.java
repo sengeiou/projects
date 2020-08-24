@@ -1,6 +1,5 @@
 package com.normal.openapi.impl;
 
-import com.normal.base.utils.Dates;
 import com.normal.base.utils.Files;
 import com.normal.model.autosend.SendGood;
 import com.normal.openapi.IOpenApiService;
@@ -14,13 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -34,16 +34,6 @@ public class TaobaoOpenApiServiceImpl implements IOpenApiService {
     @Autowired
     Environment environment;
 
-    private Map<String, IGoodsTextGenerator> textGeneratorRegistory = new HashMap<>(20);
-
-
-    @PostConstruct
-    public void init() {
-
-        textGeneratorRegistory.put()
-    }
-
-
     @Override
     public List<SendGood> querySendGoods(Map<String, Object> params) {
 
@@ -55,25 +45,15 @@ public class TaobaoOpenApiServiceImpl implements IOpenApiService {
         TbkDgOptimusMaterialResponse rsp = clientWrapper.execute(req);
         List<TbkDgOptimusMaterialResponse.MapData> resultList = rsp.getResultList();
 
-        List<SendGood> goods = resultList.stream()
-                .map(this::map).collect(Collectors.toList());
+        List<SendGood> goods = convert(resultList, req);
         return goods;
     }
 
 
-    private String genText(TbkDgOptimusMaterialResponse.MapData item) {
-        StringJoiner joiner = new StringJoiner("\n");
-        joiner.add("【商品名称】" + item.getCategoryName());
-        join(joiner, item.getItemDescription());
-        join(joiner, "【原价】" + item.getCouponStartFee());
-        join(joiner, "【优惠减免】" + item.getCouponAmount());
-        join(joiner, "【优惠券信息】" + item.getCouponInfo());
-        join(joiner, "【券有效截止日期】" + Dates.format(Long.valueOf(item.getCouponEndTime())));
-        join(joiner, "【下单口令】" + queryPwd(item.getCouponShareUrl()));
-        join(joiner, "复制这条信息到淘宝即可购买");
-
-        return joiner.toString();
-
+    private String genText(TbkDgOptimusMaterialResponse.MapData item, TbkDgOptimusMaterialRequest req) {
+        Long materialId = req.getMaterialId();
+        IGoodsTextGenerator generator = GoodsTextGeneratorFactory.getTextGenerator(materialId, item, () -> queryPwd(item.getCouponShareUrl()));
+        return generator.text();
     }
 
     private String queryPwd(String url) {
@@ -88,35 +68,32 @@ public class TaobaoOpenApiServiceImpl implements IOpenApiService {
     }
 
 
-    private StringJoiner join(StringJoiner joiner, String subStr) {
-        if (!StringUtils.isEmpty(subStr)) {
-            joiner.add(subStr);
-        }
-        return joiner;
-    }
-
-    private SendGood map(TbkDgOptimusMaterialResponse.MapData item) {
-        //save image
-        try {
-            URL url = new URL("http:" + item.getPictUrl());
-            Map<String, String> imageRst = getGoodsPicPath(item.getPictUrl(), item.getCategoryId());
-            String goodsPicPath = imageRst.get("picPath");
-            File file = new File(goodsPicPath);
-            if (!file.exists()) {
-                Files.download(url, goodsPicPath);
-            }
-            SendGood good = new SendGood();
-            good.setCategoryId(item.getCategoryId());
-            good.setText(genText(item));
-            good.setImagePaths(Arrays.asList(imageRst.get("picName")));
-            return good;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    private List<SendGood> convert(List<TbkDgOptimusMaterialResponse.MapData> items, TbkDgOptimusMaterialRequest req) {
+        return items.stream()
+                .map((item) -> {
+                    //save image
+                    try {
+                        URL url = new URL("http:" + item.getPictUrl());
+                        Map<String, String> imageRst = getGoodsPicPath(item.getPictUrl(), item.getCategoryId());
+                        String goodsPicPath = imageRst.get("picPath");
+                        File file = new File(goodsPicPath);
+                        if (!file.exists()) {
+                            Files.download(url, goodsPicPath);
+                        }
+                        SendGood good = new SendGood();
+                        good.setCategoryId(item.getCategoryId());
+                        good.setText(genText(item, req));
+                        good.setImagePaths(Arrays.asList(imageRst.get("picPath")));
+                        return good;
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
     private Map<String, String> getGoodsPicPath(String pictUrl, Long categoryId) {
-        Map<String, String> rst = new HashMap<>();
+        Map<String, String> rst = new HashMap<>(2);
         for (int j = pictUrl.length() - 1; j > 0; j--) {
             if (pictUrl.charAt(j) == '.') {
                 String picName = categoryId + pictUrl.substring(j);
@@ -127,6 +104,4 @@ public class TaobaoOpenApiServiceImpl implements IOpenApiService {
         }
         return null;
     }
-
-
 }

@@ -89,22 +89,21 @@ public class App implements CommandLineRunner {
                     actions.sendKeys(iterator.next());
                 }
                 actions.sendKeys(Keys.ENTER).perform();
-
+                logger.info("send text for good id :{}", good.getCategoryId());
                 //send images
                 for (String imagePath : good.getImagePaths()) {
                     Files.ctrlC(new File(imagePath));
-
+                    logger.info("copy image from path: {}", imagePath);
                     actions.sendKeys(groupEle, Keys.CONTROL, "v")
                             .keyUp(Keys.CONTROL)
                             .sendKeys(Keys.ENTER)
                             .perform();
                 }
-                facadeAutoSendServiceWrapper.updateSendGoodsStatus(good.getId());
-            } catch (NoSuchElementException e) {
+
+             } catch (NoSuchElementException e) {
                 logger.error("no such element found:{}", e);
             }
         }
-
     }
 
     public static void main(String[] args) {

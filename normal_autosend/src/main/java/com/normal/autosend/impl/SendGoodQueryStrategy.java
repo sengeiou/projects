@@ -7,4 +7,6 @@ import java.util.List;
 public interface SendGoodQueryStrategy {
 
     List<SendGood> querySendGoods();
+
+    String strategyId();
 }
