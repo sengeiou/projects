@@ -8,4 +8,5 @@ import java.util.Map;
 public interface IOpenApiService {
 
     List<SendGood> querySendGoods(Map<String, Object> params);
+
 }

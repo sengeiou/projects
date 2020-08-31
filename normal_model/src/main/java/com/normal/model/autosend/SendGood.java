@@ -24,6 +24,7 @@ public class SendGood {
      */
    private String text;
 
+
     /**
      * 商品图片目录列表
      * @return
