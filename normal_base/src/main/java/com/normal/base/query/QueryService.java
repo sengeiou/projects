@@ -1,9 +1,9 @@
 package com.normal.base.query;
 
-import org.apache.ibatis.session.ResultContext;
-import org.apache.ibatis.session.ResultHandler;
-import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author: fei.he
@@ -11,15 +11,50 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class QueryService {
 
     @Autowired
-    private SqlSession sqlSession;
+    private QueryMapper queryMapper;
 
-    public <T> T query(QuerySql sql, Class<T> clazz) {
-           sqlSession.select(sql.toString(), new ResultHandler() {
-            @Override
-            public void handleResult(ResultContext context) {
-             }
+    public <T> T query(QuerySql querySql, Class<T> clazz) {
+        List<Map<String, Object>> rst = queryMapper.query(querySql);
 
-        });
+        if (rst.isEmpty()) {
+            return null;
+        }
 
+        Map<String, Object> item = rst.get(0);
+        if (isSimpleClazz(clazz)) {
+            String itemValue = (String) item.get(querySql.getSimpleColumnAlias());
+            if (String.class.equals(clazz)) {
+                return clazz.cast(itemValue);
+            }
+            if (Integer.class.equals(clazz) || int.class.equals(clazz)) {
+                return (T) Integer.valueOf(itemValue);
+            }
+            if (Long.class.equals(clazz) || long.class.equals(clazz)) {
+                return (T) Long.valueOf(itemValue);
+            }
+            if (Boolean.class.equals(clazz) || boolean.class.equals(clazz)) {
+                return (T) Boolean.valueOf(itemValue);
+            }
+            if (Float.class.equals(clazz) || float.class.equals(clazz)) {
+                return (T) Float.valueOf(itemValue);
+            }
+            if (Double.class.equals(clazz) || double.class.equals(clazz)) {
+                return (T) Double.valueOf(itemValue);
+            }
+        }
+
+        if (Map.class.isAssignableFrom(clazz)) {
+            return clazz.cast(item);
+        }
+
+        if (List.class.isAssignableFrom(clazz)) {
+            return clazz.cast(rst);
+        }
+
+        throw new UnsupportedOperationException("查询服务不支持该类型返回值: clazz: " + clazz.getName());
+    }
+
+    private <T> boolean isSimpleClazz(Class<T> clazz) {
+        return clazz.isPrimitive() || clazz.equals(String.class);
     }
 }
