@@ -3,7 +3,11 @@ package com.normal.shop;
 import com.normal.base.query.QueryService;
 import com.normal.base.query.QuerySql;
 import com.normal.base.web.Result;
+import com.normal.model.PageParam;
+import com.normal.model.openapi.PageOpenApiGoodQueryParam;
+import com.normal.openapi.IOpenApiService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +24,10 @@ public class HomePageController {
     @Autowired
     private QueryService queryService;
 
+    @Autowired
+    @Qualifier("taobaoOpenApiService")
+    private IOpenApiService openApiService;
+
     @GetMapping("listBanner")
     public Result listBanner() {
         QuerySql sql = QuerySql.newInstance()
@@ -29,15 +37,11 @@ public class HomePageController {
         return Result.success(queryService.query(sql, List.class));
     }
 
-    /**
-     * 实时热销
-     * @return
-     */
-    @GetMapping("ssrx")
-    public Result ssrx() {
 
+    @GetMapping("customGoods")
+    public Result customGoods(PageOpenApiGoodQueryParam param) {
+        return Result.success(openApiService.pageCustomeQueryGoods(param));
     }
-
 
 
 }

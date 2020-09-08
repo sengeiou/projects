@@ -1,7 +1,12 @@
 package com.normal.openapi.impl;
 
 import com.normal.base.utils.Files;
+import com.normal.model.BizDictEnums;
 import com.normal.model.autosend.SendGood;
+import com.normal.model.openapi.OpenApiParam;
+import com.normal.model.openapi.PageOpenApiGoodQueryParam;
+import com.normal.model.shop.ItemGood;
+import com.normal.model.shop.ListGood;
 import com.normal.openapi.IOpenApiService;
 import com.taobao.api.request.TbkDgOptimusMaterialRequest;
 import com.taobao.api.request.TbkTpwdCreateRequest;
@@ -26,6 +31,7 @@ import java.util.stream.Collectors;
 @Component
 @Qualifier("taobaoOpenApiService")
 public class TaobaoOpenApiServiceImpl implements IOpenApiService {
+
     public static final Logger logger = LoggerFactory.getLogger(TaobaoOpenApiServiceImpl.class);
 
     @Autowired
@@ -37,16 +43,46 @@ public class TaobaoOpenApiServiceImpl implements IOpenApiService {
     @Override
     public List<SendGood> querySendGoods(Map<String, Object> params) {
 
-        TbkDgOptimusMaterialRequest req = new TbkDgOptimusMaterialRequest();
-        req.setAdzoneId(Long.valueOf(environment.getProperty("autosend.taobao.adzoneid")));
-        req.setMaterialId(Long.valueOf(String.valueOf(params.get("materialId"))));
-        req.setPageNo(Long.valueOf(String.valueOf(params.get("pageNo"))));
-        req.setPageSize(Long.valueOf(String.valueOf(params.get("pageSize"))));
+        TbkDgOptimusMaterialRequest req = toReqParam(params);
         TbkDgOptimusMaterialResponse rsp = clientWrapper.execute(req);
         List<TbkDgOptimusMaterialResponse.MapData> resultList = rsp.getResultList();
 
-        List<SendGood> goods = convert(resultList, req);
+        List<SendGood> goods = toSendGood(resultList, req);
         return goods;
+    }
+
+    private TbkDgOptimusMaterialRequest toReqParam(Map<String, Object> params) {
+        TbkDgOptimusMaterialRequest req = new TbkDgOptimusMaterialRequest();
+        req.setAdzoneId(Long.valueOf(environment.getProperty("autosend.taobao.adzoneid")));
+        Object materialId = params.get("materialId");
+        if (materialId != null) {
+            req.setMaterialId(Long.valueOf(String.valueOf(materialId)));
+        }
+        req.setPageNo(Long.valueOf(String.valueOf(params.get("pageNo"))));
+        req.setPageSize(Long.valueOf(String.valueOf(params.get("pageSize"))));
+        return req;
+    }
+
+    @Override
+    public List<ListGood> pageCustomeQueryGoods(PageOpenApiGoodQueryParam param) {
+        param.check();
+        TbkDgOptimusMaterialRequest req = toReqParam(param);
+        //淘宝个性化推荐
+        req.setMaterialId(Long.valueOf(BizDictEnums.OTHER_CXHTJ.key()));
+        TbkDgOptimusMaterialResponse rsp = clientWrapper.execute(req);
+        List<TbkDgOptimusMaterialResponse.MapData> resultList = rsp.getResultList();
+        return toListGoods(resultList);
+    }
+
+    private List<ListGood> toListGoods(List<TbkDgOptimusMaterialResponse.MapData> rawGoods) {
+        rawGoods.stream()
+                .map()
+    }
+
+
+    @Override
+    public ItemGood queryItemGood(OpenApiParam param) {
+        return null;
     }
 
 
@@ -68,7 +104,7 @@ public class TaobaoOpenApiServiceImpl implements IOpenApiService {
     }
 
 
-    private List<SendGood> convert(List<TbkDgOptimusMaterialResponse.MapData> items, TbkDgOptimusMaterialRequest req) {
+    private List<SendGood> toSendGood(List<TbkDgOptimusMaterialResponse.MapData> items, TbkDgOptimusMaterialRequest req) {
         return items.stream()
                 .map((item) -> {
                     //save image
@@ -104,4 +140,6 @@ public class TaobaoOpenApiServiceImpl implements IOpenApiService {
         }
         return null;
     }
+
+
 }

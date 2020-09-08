@@ -30,7 +30,7 @@ public class TaobaoClientWrapper {
         try {
             rsp = taobaoClient.execute(req);
         } catch (ApiException e) {
-            logger.error("e: {}", e);
+            throw new RuntimeException(e);
         }
         return rsp;
     }

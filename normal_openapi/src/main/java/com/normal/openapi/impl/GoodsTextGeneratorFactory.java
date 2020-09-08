@@ -1,7 +1,7 @@
 package com.normal.openapi.impl;
 
 import com.normal.base.utils.Dates;
-import com.normal.model.openapi.TaobaoMaterialIds;
+import com.normal.model.BizDictEnums;
 import com.taobao.api.response.TbkDgOptimusMaterialResponse;
 import org.springframework.util.StringUtils;
 
@@ -14,11 +14,11 @@ import java.util.function.Supplier;
 public class GoodsTextGeneratorFactory {
 
     public static IGoodsTextGenerator getTextGenerator(Long materialId, TbkDgOptimusMaterialResponse.MapData item, Supplier<String> pwdSupplier) {
-        String type = TaobaoMaterialIds.typeOf(String.valueOf(materialId));
+        int type = BizDictEnums.ofKey(String.valueOf(materialId)).getType();
         //大额券
-        if (type.equals("DEQ")) {
+        if (type == BizDictEnums.DEQ_ZH.getType()) {
             return new Generator4DEQ(item, pwdSupplier);
-        }else {
+        } else {
             return new BaseGenerator(item, pwdSupplier);
         }
     }
@@ -78,7 +78,7 @@ public class GoodsTextGeneratorFactory {
         }
     }
 
-    private static class BaseGenerator extends AbstractTextGenerator{
+    private static class BaseGenerator extends AbstractTextGenerator {
 
         public BaseGenerator(TbkDgOptimusMaterialResponse.MapData item, Supplier<String> pwdSupplier) {
             super(item, pwdSupplier);
