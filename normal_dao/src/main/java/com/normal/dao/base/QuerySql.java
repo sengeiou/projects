@@ -1,4 +1,4 @@
-package com.normal.base.query;
+package com.normal.dao.base;
 
 import java.util.*;
 import java.util.stream.Collectors;

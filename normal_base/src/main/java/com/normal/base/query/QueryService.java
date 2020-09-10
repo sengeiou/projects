@@ -1,5 +1,7 @@
 package com.normal.base.query;
 
+import com.normal.dao.base.QueryMapper;
+import com.normal.dao.base.QuerySql;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;

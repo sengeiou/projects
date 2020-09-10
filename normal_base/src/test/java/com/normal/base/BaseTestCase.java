@@ -1,8 +1,8 @@
 package com.normal.base;
 
-import com.normal.base.query.QueryMapper;
+import com.normal.dao.base.QueryMapper;
 import com.normal.base.query.QueryService;
-import com.normal.base.query.QuerySql;
+import com.normal.dao.base.QuerySql;
 import org.apache.ibatis.session.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;

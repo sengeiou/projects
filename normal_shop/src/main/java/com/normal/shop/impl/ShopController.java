@@ -1,7 +1,7 @@
-package com.normal.shop;
+package com.normal.shop.impl;
 
 import com.normal.base.query.QueryService;
-import com.normal.base.query.QuerySql;
+import com.normal.dao.base.QuerySql;
 import com.normal.base.web.Result;
 import com.normal.model.BizDictEnums;
 import com.normal.model.openapi.DefaultPageOpenApiQueryParam;

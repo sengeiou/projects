@@ -1,4 +1,4 @@
-package com.normal.base.query;
+package com.normal.dao.base;
 
 import org.apache.ibatis.annotations.*;
 
