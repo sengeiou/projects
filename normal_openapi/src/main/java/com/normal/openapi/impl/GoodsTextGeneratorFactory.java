@@ -13,10 +13,9 @@ import java.util.function.Supplier;
  */
 public class GoodsTextGeneratorFactory {
 
-    public static IGoodsTextGenerator getTextGenerator(Long materialId, TbkDgOptimusMaterialResponse.MapData item, Supplier<String> pwdSupplier) {
-        int type = BizDictEnums.ofKey(String.valueOf(materialId)).getType();
+    public static IGoodsTextGenerator getTextGenerator(String materialId, TbkDgOptimusMaterialResponse.MapData item, Supplier<String> pwdSupplier) {
         //大额券
-        if (type == BizDictEnums.DEQ_ZH.getType()) {
+        if (BizDictEnums.DEQ_ZH.key().equals(materialId)) {
             return new Generator4DEQ(item, pwdSupplier);
         } else {
             return new BaseGenerator(item, pwdSupplier);

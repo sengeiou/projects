@@ -10,8 +10,12 @@ public class CouponInfo {
 
     private String  couponAmt;
     /**
-     * 有效区间
+     * 有效日期区间
      */
     private String  validateDate;
 
+    public CouponInfo(String couponAmt, String validateDate) {
+        this.couponAmt = couponAmt;
+        this.validateDate = validateDate;
+    }
 }

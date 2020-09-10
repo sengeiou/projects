@@ -8,6 +8,8 @@ import lombok.Data;
 @Data
 public class ListGood {
 
+    private Long  itemId;
+
     private String goodTitle;
 
     /**

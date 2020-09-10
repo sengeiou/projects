@@ -2,13 +2,25 @@ package com.normal.base.mybatis;
 
 import java.util.List;
 
+/**
+ * @author fei.he
+ */
 public class Page<T> {
 
     private int pageNo = 1;
     private int pageSize = 15;
-    private int totalRecord;
-    private int totalPage;
+    private long totalRecord;
+    private long totalPage;
     private List<T> results;
+
+    public Page() {
+    }
+
+    public Page(List<T> results, int pageNo, Long totalCount) {
+        this.results = results;
+        this.pageNo = pageNo;
+        setTotalRecord(totalCount);
+    }
 
     public int getPageNo() {
         return pageNo;
@@ -26,21 +38,21 @@ public class Page<T> {
         this.pageSize = pageSize;
     }
 
-    public int getTotalRecord() {
+    public long getTotalRecord() {
         return totalRecord;
     }
 
-    public void setTotalRecord(int totalRecord) {
+    public void setTotalRecord(long totalRecord) {
         this.totalRecord = totalRecord;
-        int totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : totalRecord / pageSize + 1;
+        long totalPage = totalRecord % pageSize == 0 ? totalRecord / pageSize : totalRecord / pageSize + 1;
         this.setTotalPage(totalPage);
     }
 
-    public int getTotalPage() {
+    public long getTotalPage() {
         return totalPage;
     }
 
-    public void setTotalPage(int totalPage) {
+    public void setTotalPage(long totalPage) {
         this.totalPage = totalPage;
     }
 

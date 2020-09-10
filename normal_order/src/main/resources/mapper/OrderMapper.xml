@@ -6,7 +6,7 @@
     <result column="refer_id" jdbcType="INTEGER" property="referId" />
     <result column="price" jdbcType="DECIMAL" property="price" />
     <result column="num" jdbcType="INTEGER" property="num" />
-    <result column="order_status" jdbcType="TINYINT"  property="orderStatus" typeHandler="com.normal.base.mybatis.EnumTypeHandler"/>
+    <result column="order_status" jdbcType="VARCHAR"  property="orderStatus" typeHandler="com.normal.base.mybatis.EnumTypeHandler"/>
     <result column="create_date_time" jdbcType="TIMESTAMP" property="createDateTime" />
     <result column="update_date_time" jdbcType="TIMESTAMP" property="updateDateTime" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />

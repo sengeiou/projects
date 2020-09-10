@@ -5,13 +5,13 @@ package com.normal.model;
  */
 public interface NormalEnum {
 
-    int key();
+    String key();
 
     String value();
 
     default NormalEnum valueOf(int key) {
         for (NormalEnum item : this.getClass().getEnumConstants()) {
-            if (item.key() == key) {
+            if (item.key().equals( key)) {
                 return item;
             }
         }

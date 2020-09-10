@@ -19,7 +19,7 @@ public enum BizDictEnums implements NormalEnum {
     OTHER_JHSMJ(3, "32366", "聚划算满减"),
     OTHER_TMCSMJ(3, "27160", "天猫满减"),
     OTHER_XSTJ(3, "13256", "相似推荐"),
-    OTHER_CXHTJ(3, "17004", "个性化推荐"),
+    OTHER_GXHTJ(3, "17004", "个性化推荐"),
 
     HQZB_ZH(4, "3756", "好券直播-综合"),
     HQZB_XBPS(4, "3762", "好券直播-鞋包配饰"),
@@ -71,7 +71,26 @@ public enum BizDictEnums implements NormalEnum {
     BKTM_JHSRM(8, "31371", "爆款特卖-聚划算热卖"),
     BKTM_TTTM(8, "31362", "爆款特卖-天天特卖"),
     BKTM_TH(8, "4094", "爆款特卖-特惠"),
+    BKTM_SSRX_ZH(8, "28026", "爆款特卖-实时热销-综合"),
+    BKTM_SSRX_FS(8, "28029", "爆款特卖-实时热销-大服饰"),
+    BKTM_SSRX_KX(8, "28027", "爆款特卖-实时热销-大快消"),
+    BKTM_SSRX_DQMJ(8, "28028", "爆款特卖-实时热销-电器美家"),
 
+    /**
+     * 商品查询类型
+     */
+    DEFAULT_QUERY_TYPE(9, "13366", "高佣综合查询"),
+    QUERY_SSRX(9, "28026", "实时热销"),
+    QUERY_GXHTJ(9, "17004", "个性化推荐查询"),
+    QUERY_XGTJ(9, "13256", "相关推荐查询"),
+    QUERY_GJZ(9, "4", "根据关键字查询"),
+
+    /**
+     * 排序类型
+     */
+    DEFAULT_ORDER_BY(10, "tk_rate", "淘客佣金比例"),
+    ORDER_BY_SELLNUM(10, "total_sales", "销量"),
+    ORDER_BY_JIAGE(10, "price", "价格"),
 
     ;
 
@@ -90,8 +109,8 @@ public enum BizDictEnums implements NormalEnum {
     }
 
     @Override
-    public int key() {
-        return Integer.valueOf(key);
+    public String key() {
+        return key;
     }
 
     @Override
@@ -121,6 +140,7 @@ public enum BizDictEnums implements NormalEnum {
     public static BizDictEnums ofKey(String key) {
         return keyMapCache.get(key);
     }
+
 
 }
 

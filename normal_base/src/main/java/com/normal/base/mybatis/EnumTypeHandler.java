@@ -19,22 +19,22 @@ public class EnumTypeHandler implements TypeHandler<NormalEnum> {
 
     @Override
     public void setParameter(PreparedStatement ps, int i, NormalEnum parameter, JdbcType jdbcType) throws SQLException {
-        ps.setInt(i, parameter.key());
+        ps.setObject(i, parameter.key());
     }
 
     @Override
     public NormalEnum getResult(ResultSet rs, String columnName) throws SQLException {
-        return getNormalEnum(rs.getInt(columnName));
+        return getNormalEnum(rs.getString(columnName));
     }
 
     @Override
     public NormalEnum getResult(ResultSet rs, int columnIndex) throws SQLException {
-        return getNormalEnum(rs.getInt(columnIndex));
+        return getNormalEnum(rs.getString(columnIndex));
     }
 
-    private NormalEnum getNormalEnum(int key) throws SQLException {
+    private NormalEnum getNormalEnum(String key) {
         for (NormalEnum item : this.clazz.getEnumConstants()) {
-            if (item.key() == key) {
+            if (item.key().equals(key)) {
                 return item;
             }
         }
@@ -44,7 +44,7 @@ public class EnumTypeHandler implements TypeHandler<NormalEnum> {
     @Override
     public NormalEnum getResult(CallableStatement cs, int columnIndex) throws SQLException {
         for (NormalEnum item : this.clazz.getEnumConstants()) {
-            if (item.key() == cs.getInt(columnIndex)) {
+            if (item.key().equals(cs.getString(columnIndex))) {
                 return item;
             }
         }
