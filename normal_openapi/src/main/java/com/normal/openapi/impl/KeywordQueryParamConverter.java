@@ -1,20 +1,14 @@
 package com.normal.openapi.impl;
 
-import com.normal.base.utils.Dates;
 import com.normal.model.BizDictEnums;
 import com.normal.model.openapi.DefaultPageOpenApiQueryParam;
-import com.normal.model.shop.CouponInfo;
 import com.normal.model.shop.ListGood;
-import com.normal.model.shop.OfferInfo;
 import com.taobao.api.request.TbkDgMaterialOptionalRequest;
-import com.taobao.api.request.TbkDgOptimusMaterialRequest;
 import com.taobao.api.response.TbkDgMaterialOptionalResponse;
-import com.taobao.api.response.TbkDgOptimusMaterialResponse;
 import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -26,17 +20,24 @@ public class KeywordQueryParamConverter implements ParamConvertor<DefaultPageOpe
 
     public KeywordQueryParamConverter(Environment environment) {
         this.environment = environment;
+
     }
 
     @Override
     public TbkDgMaterialOptionalRequest toOpenReq(DefaultPageOpenApiQueryParam myReqParam) {
         TbkDgMaterialOptionalRequest req = new TbkDgMaterialOptionalRequest();
-        req.setAdzoneId(Long.valueOf(environment.getProperty("autosend.taobao.adzoneid")));
-        req.setQ((String) myReqParam.getOrDefault("keyword", ""));
+        req.setAdzoneId(Long.valueOf(environment.getProperty("openapi.taobao.adzoneid")));
+        Object keyword = myReqParam.get("keyword");
+        if (StringUtils.isEmpty(keyword)) {
+            throw new IllegalArgumentException("查询关键字不可为空");
+        }
+        req.setQ((String) keyword);
         //无线平台
         req.setPlatform(2L);
         //排序
         req.setSort(myReqParam.getTaobaoSort());
+        //个性化推荐
+        req.setMaterialId(Long.valueOf(BizDictEnums.OTHER_GXHTJ.key()));
         req.setPageNo(Long.valueOf(String.valueOf(myReqParam.get("pageNo"))));
         req.setPageSize(Long.valueOf(String.valueOf(myReqParam.get("pageSize"))));
         return req;
@@ -46,23 +47,7 @@ public class KeywordQueryParamConverter implements ParamConvertor<DefaultPageOpe
     public List<ListGood> toMyRes(TbkDgMaterialOptionalResponse openBackParam) {
         List<TbkDgMaterialOptionalResponse.MapData> rawGoods = openBackParam.getResultList();
         List<ListGood> list = rawGoods.stream()
-                .map((item) -> {
-                    ListGood good = new ListGood();
-                    good.setGoodTitle(item.getTitle());
-                    good.setItemId(item.getItemId());
-                    good.setDirect(false);
-                    good.setCurrPrice(item.getReservePrice());
-                    good.setOriginalPrice(item.getOrigPrice());
-                    if (!StringUtils.isEmpty(item.getCouponInfo())) {
-                        good.setOfferInfo(new OfferInfo(item.getCouponInfo()));
-                    } else {
-                        String validateRange = Dates.format(Long.valueOf(item.getCouponStartTime())) + "~" + Dates.format(Long.valueOf(item.getCouponEndTime()));
-                        good.setOfferInfo(new OfferInfo(new CouponInfo(String.valueOf(item.getCouponAmount()), validateRange)));
-                    }
-                    good.setImage("http:" + item.getPictUrl());
-                    good.setSellNum(String.valueOf(item.getSellNum()));
-                    return good;
-                })
+                .map((item) -> new TaobaoListGoodConvertFunction(item).convert())
                 .collect(Collectors.toList());
         return list;
     }

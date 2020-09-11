@@ -28,8 +28,8 @@ public class GoodsDetailQueryParamConverter implements ParamConvertor<String, Tb
         itemGood.setItemId(item.getNumIid());
         itemGood.setDirect(false);
         itemGood.setGoodTitle(item.getTitle());
-        itemGood.setImage("http:" + item.getPictUrl());
-
+        itemGood.setImage(item.getPictUrl());
+        itemGood.setSellNum(String.valueOf(item.getVolume()));
         itemGood.setImages(item.getSmallImages()
                 .stream()
                 .map((image) -> "http:" + image)

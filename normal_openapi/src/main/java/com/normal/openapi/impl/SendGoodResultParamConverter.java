@@ -74,7 +74,7 @@ public class SendGoodResultParamConverter implements ParamConvertor<Map<String, 
         for (int j = pictUrl.length() - 1; j > 0; j--) {
             if (pictUrl.charAt(j) == '.') {
                 String picName = categoryId + pictUrl.substring(j);
-                rst.put("picPath", environment.getProperty("autosend.images.path") + picName);
+                rst.put("picPath", environment.getProperty("openapi.images.path") + picName);
                 rst.put("picName", picName);
                 return rst;
             }
@@ -95,7 +95,7 @@ public class SendGoodResultParamConverter implements ParamConvertor<Map<String, 
         url = "https:" + url;
         req.setUrl(url);
         req.setText("优惠券领取");
-        req.setUserId(environment.getProperty("autosend.taobao.userid"));
+        req.setUserId(environment.getProperty("openapi.taobao.userid"));
         TbkTpwdCreateResponse rsp = clientWrapper.execute(req);
         return rsp.getData().getModel();
     }

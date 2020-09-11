@@ -2,6 +2,8 @@ package com.normal.model.shop;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @author: fei.he
  */
@@ -41,4 +43,6 @@ public class ListGood {
      * 是否直接领券
      */
     private boolean direct = false;
+
+    private List<String> images;
 }

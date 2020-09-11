@@ -6,31 +6,31 @@ public class PageParam extends HashMap<String, Object> {
 
     public PageParam() {
         super();
-        put("pageNo", 0);
-        put("pageSize", 15);
-        put("offset", 0);
+        put("pageNo", 0L);
+        put("pageSize", 15L);
+        put("offset", 0L);
     }
 
-    public void setPageNo(int pageNo) {
+    public void setPageNo(long pageNo) {
         this.put("pageNo", pageNo);
     }
 
-    public int getPageNo() {
-        return (int) get("pageNo");
+    public long getPageNo() {
+        return Long.valueOf(String.valueOf(get("pageNo")));
     }
 
-    public void setPageSize(int pageSize) {
+    public void setPageSize(long pageSize) {
         this.put("pageSize", pageSize);
     }
 
-    public int getPageSize() {
-        return (int) get("pageSize");
+    public long getPageSize() {
+        return Long.valueOf(String.valueOf(get("pageSize")));
     }
 
     @Override
     public Object get(Object key) {
         if ("offset".equals(key)) {
-            return  getPageNo() * getPageSize();
+            return getPageNo() * getPageSize();
         }
         return super.get(key);
     }

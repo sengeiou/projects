@@ -11,5 +11,5 @@ import java.util.List;
 public class ItemGood extends ListGood{
 
 
-    private List<String> images;
+
 }

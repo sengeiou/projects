@@ -26,7 +26,7 @@ public class Config {
 
     @Bean
     public SendGoodQueryStrategy sendGoodQueryStrategy() {
-        List<String> materials = Arrays.asList(environment.getProperty("autosend.taobao.materialids").split(","));
+        List<String> materials = Arrays.asList(environment.getProperty("autosend.materialids").split(","));
         return new BoundMaterialVoteSendGoodQueryStrategy(materials, "boundMaterialVote");
     }
 }

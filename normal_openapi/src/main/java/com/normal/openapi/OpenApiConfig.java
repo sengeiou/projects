@@ -20,8 +20,8 @@ public class OpenApiConfig {
 
     @Bean
     public TaobaoClient taobaoClient() {
-        return new DefaultTaobaoClient(environment.getProperty("autosend.taobao.serverurl"),
-                environment.getProperty("autosend.taobao.appkey"),
-                environment.getProperty("autosend.taobao.appsecret"));
+        return new DefaultTaobaoClient(environment.getProperty("openapi.taobao.serverurl"),
+                environment.getProperty("openapi.taobao.appkey"),
+                environment.getProperty("openapi.taobao.appsecret"));
     }
 }

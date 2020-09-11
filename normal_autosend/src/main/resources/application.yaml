@@ -21,16 +21,20 @@ autosend:
   images:
     path: E:/pics/tmp/
   strategy: boundMaterialVote
+  webchat:
+    location: E:/soft-install-here/WeChat/WeChat.exe
+  materialids: 13369,31362,31371,4094,3756,3786,13366
 
+# open api
+openapi:
   taobao:
     adzoneid: 110670800125
     appkey: 30963536
     appsecret: 8da2478ae2d25c96ebde05cf3f522e7f
     serverurl: http://gw.api.taobao.com/router/rest
     userid: 1309050177
-    materialids: 13369,31362,31371,4094,3756,3786,13366
-  webchat:
-    location: E:/soft-install-here/WeChat/WeChat.exe
+
+
 #order pay
 biz:
   client:

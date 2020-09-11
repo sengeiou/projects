@@ -59,7 +59,7 @@ public class TaobaoOpenApiServiceImpl implements IOpenApiService {
     @Override
     public Page<ListGood> pageQueryGoods(DefaultPageOpenApiQueryParam param) {
         BizDictEnums queryType = param.getQueryType();
-        if (BizDictEnums.QUERY_GJZ.equals(queryType) || BizDictEnums.QUERY_GXHTJ.equals(queryType)) {
+        if (BizDictEnums.QUERY_GJZ.equals(queryType)) {
             return queryByGjz(param);
         } else {
             return queryByMaterialId(param);
@@ -75,7 +75,7 @@ public class TaobaoOpenApiServiceImpl implements IOpenApiService {
     private Page<ListGood> queryByGjz(DefaultPageOpenApiQueryParam param) {
         if (param.getOrderBy() == null) {
             param.withOrderBy(BizDictEnums.DEFAULT_ORDER_BY)
-                    .withAsc(false);
+                    .withOrderDirect(BizDictEnums.COMMON_DES);
         }
         TbkDgMaterialOptionalRequest req = keywordQueryParamConverter.toOpenReq(param);
         TbkDgMaterialOptionalResponse res = clientWrapper.execute(req);
@@ -91,7 +91,7 @@ public class TaobaoOpenApiServiceImpl implements IOpenApiService {
     private Page<ListGood> queryByMaterialId(DefaultPageOpenApiQueryParam param) {
         if (param.getQueryType() == null) {
             param.withQueryType(BizDictEnums.DEFAULT_QUERY_TYPE)
-                    .withAsc(false);
+                    .withOrderDirect(BizDictEnums.COMMON_DES);
         }
         TbkDgOptimusMaterialRequest req = materialParamConverter.toOpenReq(param);
         TbkDgOptimusMaterialResponse res = clientWrapper.execute(req);

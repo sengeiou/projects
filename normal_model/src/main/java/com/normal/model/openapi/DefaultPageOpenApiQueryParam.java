@@ -16,7 +16,8 @@ public class DefaultPageOpenApiQueryParam extends PageParam {
         super();
         put(queryTypeKey, BizDictEnums.DEFAULT_QUERY_TYPE);
         put(orderByKey, BizDictEnums.DEFAULT_ORDER_BY);
-        put(ascKey, BizDictEnums.COMMON_YES);
+        put(ascKey, BizDictEnums.COMMON_DES);
+        put("pageSize", 5);
     }
 
     public static DefaultPageOpenApiQueryParam newInstance() {
@@ -39,8 +40,11 @@ public class DefaultPageOpenApiQueryParam extends PageParam {
         return this;
     }
 
-    public DefaultPageOpenApiQueryParam withAsc(boolean asc) {
-        this.put(ascKey, asc ? "_asc" : "_des");
+    public DefaultPageOpenApiQueryParam withOrderDirect(BizDictEnums orderDirect) {
+        if (orderDirect != BizDictEnums.COMMON_ASC && orderDirect != BizDictEnums.COMMON_DES) {
+            throw new IllegalArgumentException("不支持排序方向类型:" + orderDirect);
+        }
+        this.put(ascKey, orderDirect);
         return this;
     }
 
@@ -57,11 +61,11 @@ public class DefaultPageOpenApiQueryParam extends PageParam {
         return (BizDictEnums) get(orderByKey);
     }
 
-    public String getAsc() {
-        return (String) get(orderByKey);
+    public BizDictEnums getAsc() {
+        return (BizDictEnums) get(orderByKey);
     }
 
     public String getTaobaoSort() {
-        return getOrderBy().key() + getAsc();
+        return getOrderBy().key() + getAsc().key();
     }
 }

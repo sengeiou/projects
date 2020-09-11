@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
 
 public final class Dates {
 
-    private static final   DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final   DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public static String format(long timestamp, String... pattern) {
         Instant instant = Instant.ofEpochMilli(timestamp);

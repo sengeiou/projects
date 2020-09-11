@@ -7,7 +7,7 @@ import java.util.List;
  */
 public class Page<T> {
 
-    private int pageNo = 1;
+    private long pageNo = 1;
     private int pageSize = 15;
     private long totalRecord;
     private long totalPage;
@@ -16,17 +16,20 @@ public class Page<T> {
     public Page() {
     }
 
-    public Page(List<T> results, int pageNo, Long totalCount) {
+    public Page(List<T> results, long pageNo, Long totalCount) {
         this.results = results;
         this.pageNo = pageNo;
+        if (totalCount == null) {
+            return;
+        }
         setTotalRecord(totalCount);
     }
 
-    public int getPageNo() {
+    public long getPageNo() {
         return pageNo;
     }
 
-    public void setPageNo(int pageNo) {
+    public void setPageNo(long pageNo) {
         this.pageNo = pageNo;
     }
 
