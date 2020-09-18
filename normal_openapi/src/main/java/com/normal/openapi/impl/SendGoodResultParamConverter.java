@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 /**
  * @author: fei.he
  */
-public class SendGoodResultParamConverter implements ParamConvertor<Map<String, Object>, TbkDgOptimusMaterialRequest, TbkDgOptimusMaterialResponse, List<SendGood>> {
+public class SendGoodResultParamConverter implements ParamConverter<Map<String, Object>, TbkDgOptimusMaterialRequest, TbkDgOptimusMaterialResponse, List<SendGood>> {
 
     private Environment environment;
 

@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 /**
  * @author: fei.he
  */
-public class GoodsDetailQueryParamConverter implements ParamConvertor<String, TbkItemInfoGetRequest, TbkItemInfoGetResponse, ItemGood> {
+public class GoodsDetailQueryParamConverter implements ParamConverter<String, TbkItemInfoGetRequest, TbkItemInfoGetResponse, ItemGood> {
 
 
     @Override

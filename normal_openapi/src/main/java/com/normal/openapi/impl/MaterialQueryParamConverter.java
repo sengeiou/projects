@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * @author: fei.he
  */
-public class MaterialQueryParamConverter implements ParamConvertor<Map<String, Object>, TbkDgOptimusMaterialRequest, TbkDgOptimusMaterialResponse, List<ListGood>> {
+public class MaterialQueryParamConverter implements ParamConverter<Map<String, Object>, TbkDgOptimusMaterialRequest, TbkDgOptimusMaterialResponse, List<ListGood>> {
 
     private Environment environment;
 

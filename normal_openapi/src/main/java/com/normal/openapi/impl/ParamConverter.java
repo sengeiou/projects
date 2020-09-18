@@ -4,7 +4,7 @@ package com.normal.openapi.impl;
 /**
  * @author: fei.he
  */
-public interface ParamConvertor<MR, OR, OB, MB> {
+public interface ParamConverter<MR, OR, OB, MB> {
 
     OR toOpenReq(MR myReqParam);
 

@@ -100,7 +100,9 @@ public class ShopController {
                 BizDictEnums.GYQ_ZH,
                 BizDictEnums.DEQ_ZH,
                 BizDictEnums.PPQ_ZH,
-                BizDictEnums.HQZB_ZH
+                BizDictEnums.HQZB_ZH,
+                BizDictEnums.OTHER_GDFL
+
         )) {
             GoodCat root = new GoodCat(parent);
             for (BizDictEnums child : BizDictEnums.getValuesByType(parent.getType())) {

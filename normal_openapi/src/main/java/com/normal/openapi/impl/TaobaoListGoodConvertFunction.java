@@ -10,8 +10,10 @@ import com.taobao.api.response.TbkDgOptimusMaterialResponse;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -20,7 +22,7 @@ import java.util.stream.Collectors;
 public class TaobaoListGoodConvertFunction {
 
     private GoodListAdapter goodListAdapter;
-
+    private static final    Pattern numPattern = Pattern.compile("[0-9]*");
 
     public TaobaoListGoodConvertFunction(TaobaoObject rawObj) {
         this.goodListAdapter = new GoodListAdapter(rawObj);
@@ -34,17 +36,15 @@ public class TaobaoListGoodConvertFunction {
         good.setDirect(false);
         good.setCurrPrice(getCurrPrice(goodListAdapter));
         good.setOriginalPrice(getOriginalPrice(goodListAdapter));
-        if (StringUtils.isEmpty(goodListAdapter.getCouponAmount()) && goodListAdapter.getCouponAmount() != 0L) {
-            good.setOfferInfo(new OfferInfo(getStrOfferInfo(goodListAdapter)));
-        } else {
+        if (!StringUtils.isEmpty(goodListAdapter.getCouponAmount()) && goodListAdapter.getCouponAmount() != 0L) {
             StringJoiner joiner = new StringJoiner("~");
-            if (!StringUtils.isEmpty(goodListAdapter.getCouponStartTime())) {
-                joiner.add(Dates.format(Long.valueOf(goodListAdapter.getCouponStartTime())));
-            }
-            if (!StringUtils.isEmpty(goodListAdapter.getCouponEndTime())) {
-                joiner.add(Dates.format(Long.valueOf(goodListAdapter.getCouponEndTime())));
-            }
+            String couponStartTime = goodListAdapter.getCouponStartTime();
+            joinCouponValidTime(joiner, couponStartTime);
+            String couponEndTime = goodListAdapter.getCouponEndTime();
+            joinCouponValidTime(joiner, couponEndTime);
             good.setOfferInfo(new OfferInfo(new CouponInfo(String.valueOf(goodListAdapter.getCouponAmount()), joiner.toString())));
+        } else {
+            good.setOfferInfo(new OfferInfo(getStrOfferInfo(goodListAdapter)));
         }
         good.setImage("http:" + goodListAdapter.getPictUrl());
         if (!StringUtils.isEmpty(goodListAdapter.getSellNum())) {
@@ -58,6 +58,16 @@ public class TaobaoListGoodConvertFunction {
                 .map((image) -> "http:" + image)
                 .collect(Collectors.toList()));
         return good;
+    }
+
+    private void joinCouponValidTime(StringJoiner joiner, String couponStartTime) {
+        if (!StringUtils.isEmpty(couponStartTime)) {
+            if (numPattern.matcher(couponStartTime).matches()) {
+                joiner.add(Dates.format(Long.valueOf(couponStartTime)));
+            }else {
+                joiner.add(couponStartTime);
+            }
+        }
     }
 
     static class GoodListAdapter {
@@ -101,11 +111,17 @@ public class TaobaoListGoodConvertFunction {
         }
 
         public List<String> getSmallImages() {
+            List<String> smallImages = null;
             if (materialData != null) {
-                return materialData.getSmallImages();
+                smallImages = materialData.getSmallImages();
             } else {
-                return optionalData.getSmallImages();
+                smallImages =  optionalData.getSmallImages();
             }
+
+            if (smallImages == null) {
+                smallImages = Arrays.asList(getPictUrl());
+            }
+            return smallImages;
         }
 
         public Long getVolume() {
@@ -120,7 +136,11 @@ public class TaobaoListGoodConvertFunction {
             if (materialData != null) {
                 return materialData.getCouponAmount();
             } else {
-                return Long.valueOf(optionalData.getCouponAmount());
+                if (optionalData.getCouponAmount() != null) {
+                    return Long.valueOf(optionalData.getCouponAmount());
+                }else{
+                    return null;
+                }
             }
         }
 
@@ -222,7 +242,7 @@ public class TaobaoListGoodConvertFunction {
             rst.append(item.getItemDescription());
         }
         if (!StringUtils.isEmpty(item.getZkFinalPrice())) {
-            rst.append(" 折扣价【").append(item.getZkFinalPrice()).append("】");
+            rst.append(" 折扣价【").append(getCurrPrice(item)).append("】");
         }
         return rst.toString();
     }

@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 /**
  * @author: fei.he
  */
-public class KeywordQueryParamConverter implements ParamConvertor<DefaultPageOpenApiQueryParam, TbkDgMaterialOptionalRequest, TbkDgMaterialOptionalResponse, List<ListGood>> {
+public class KeywordQueryParamConverter implements ParamConverter<DefaultPageOpenApiQueryParam, TbkDgMaterialOptionalRequest, TbkDgMaterialOptionalResponse, List<ListGood>> {
 
     private Environment environment;
 
