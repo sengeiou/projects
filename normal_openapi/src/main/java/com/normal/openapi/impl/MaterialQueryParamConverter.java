@@ -4,10 +4,13 @@ import com.normal.model.openapi.DefaultPageOpenApiQueryParam;
 import com.normal.model.shop.ListGood;
 import com.taobao.api.request.TbkDgOptimusMaterialRequest;
 import com.taobao.api.response.TbkDgOptimusMaterialResponse;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.core.env.Environment;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -26,12 +29,14 @@ public class MaterialQueryParamConverter implements ParamConverter<Map<String, O
         TbkDgOptimusMaterialRequest req = new TbkDgOptimusMaterialRequest();
         req.setAdzoneId(Long.valueOf(environment.getProperty("openapi.taobao.adzoneid")));
         Object materialId = myReqParam.get("materialId");
-        if (materialId != null) {
-            req.setMaterialId(Long.valueOf(String.valueOf(materialId)));
-        }
         if (myReqParam instanceof DefaultPageOpenApiQueryParam) {
             req.setMaterialId(Long.valueOf(((DefaultPageOpenApiQueryParam) myReqParam).getQueryType().key()));
+        }else {
+            if (Objects.nonNull(materialId)  && !StringUtils.isEmpty(materialId)) {
+                req.setMaterialId(Long.valueOf(String.valueOf(materialId)));
+            }
         }
+
         req.setPageNo(Long.valueOf(String.valueOf(myReqParam.get("pageNo"))));
         req.setPageSize(Long.valueOf(String.valueOf(myReqParam.get("pageSize"))));
         return req;
