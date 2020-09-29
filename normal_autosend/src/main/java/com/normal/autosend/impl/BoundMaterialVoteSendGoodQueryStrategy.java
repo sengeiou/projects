@@ -6,11 +6,17 @@ import com.normal.base.biz.BizContextService;
 import com.normal.base.utils.Jsons;
 import com.normal.dao.context.BizContextMapper;
 import com.normal.model.autosend.SendGood;
+import com.normal.model.context.BizContext;
 import com.normal.model.context.BizContextTypes;
 import com.normal.openapi.IOpenApiService;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,12 +48,16 @@ public class BoundMaterialVoteSendGoodQueryStrategy implements SendGoodQueryStra
         this.ctx = new Context(materialIds);
     }
 
-
     @Override
     public List<SendGood> querySendGoods() {
         Context ctx = bizContextService.getByTypeKey(BizContextTypes.querySendGood, Context.class);
         if (ctx == null) {
             ctx = this.ctx;
+            bizContextService.insertCtx(BizContextTypes.querySendGood, ctx);
+        }
+        if (ctx != null && ctx.isExpire()) {
+            ctx = this.ctx;
+            bizContextService.deleteContext(BizContextTypes.querySendGood);
             bizContextService.insertCtx(BizContextTypes.querySendGood, ctx);
         }
         Map<String, Object> param = ctx.getNextParam();
@@ -66,11 +76,14 @@ public class BoundMaterialVoteSendGoodQueryStrategy implements SendGoodQueryStra
         private int pageNo = 1;
         private List<String> materialIds;
 
+        private long timestamp;
+
         public Context() {
         }
 
         public Context(List<String> materialIds) {
             this.materialIds = materialIds;
+            this.timestamp = System.currentTimeMillis();
         }
 
         @JsonIgnore
@@ -87,6 +100,12 @@ public class BoundMaterialVoteSendGoodQueryStrategy implements SendGoodQueryStra
             param.put("materialId", materialIds.get(materialIdx));
             param.put("pageNo", pageNo);
             return param;
+        }
+        @JsonIgnore
+        public boolean isExpire() {
+            int dayOfMonth = LocalDateTime.ofInstant(Instant.ofEpochMilli(this.timestamp), ZoneOffset.ofHours(8)).getDayOfMonth();
+            int nowDayOfMonth = LocalDateTime.now().getDayOfMonth();
+            return nowDayOfMonth - dayOfMonth > 0;
         }
     }
 

@@ -43,6 +43,10 @@ public class BizContextService {
         return bizContext;
     }
 
+    public void deleteContext(String type){
+        bizContextMapper.deleteByType(type);
+    }
+
     public <T> Optional<T> loadCtxObj(String ctx, Class<T> clazz) {
         try {
             if (StringUtils.isEmpty(ctx)) {
