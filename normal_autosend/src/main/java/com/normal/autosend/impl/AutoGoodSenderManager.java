@@ -1,7 +1,15 @@
 package com.normal.autosend.impl;
 
 import com.normal.base.utils.Files;
+import com.normal.dao.context.BizContextMapper;
+import com.normal.model.BizCodes;
+import com.normal.model.BizDictEnums;
+import com.normal.model.autosend.DailyNoticeItem;
 import com.normal.model.autosend.SendGood;
+import com.normal.model.context.BizContextTypes;
+import com.normal.model.openapi.DefaultPageOpenApiQueryParam;
+import com.normal.model.openapi.OpenApiEvent;
+import com.normal.openapi.IOpenApiService;
 import io.appium.java_client.windows.WindowsDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -12,10 +20,10 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -28,6 +36,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -36,11 +45,15 @@ import java.util.function.Function;
  * @author: fei.he
  */
 @Component
-public class AutoGoodSenderManager {
+public class AutoGoodSenderManager implements ApplicationListener<OpenApiEvent> {
     public static final Logger logger = LoggerFactory.getLogger(AutoGoodSenderManager.class);
 
-    private ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(
-            3
+    private ScheduledExecutorService dailyExecutor = new ScheduledThreadPoolExecutor(
+            1
+    );
+
+    private ScheduledExecutorService periodExecutor = new ScheduledThreadPoolExecutor(
+            1
     );
 
     @Autowired
@@ -49,34 +62,63 @@ public class AutoGoodSenderManager {
     @Autowired
     FacadeAutoSendServiceWrapper facadeAutoSendServiceWrapper;
 
+    @Autowired
+    BizContextMapper bizContextMapper;
+
+    @Autowired
+    IOpenApiService openApiService;
+
     private WindowsDriver driver;
 
     private LinkedList<SendGood> dailyGoodList = new LinkedList<>();
 
-    @PostConstruct
+    ScheduledFuture currPeriodFuture;
+
+    ScheduledFuture currDailyFuture;
+
     public void init() throws MalformedURLException {
         this.initDriver();
         this.initTask();
     }
 
+
     private void initTask() {
-        Long periodSecond = Long.valueOf(environment.getProperty("autosend.sendinterval.seconds"));
+        Long periodSecond = getPeriodSeconds();
         // 每日任务
-        executorService.scheduleAtFixedRate(() -> {
-            String notices = facadeAutoSendServiceWrapper.queryNotices();
-            sendDailyNotices(notices);
-        }, getInitalDelaySecond(), TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
+        long initialDelaySecond = getInitialDelaySecond();
+
+        currDailyFuture = dailyExecutor.scheduleAtFixedRate(() -> {
+            dailyTask();
+        }, initialDelaySecond, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
 
         //固定任务
-        executorService.schedule(() -> {
-            if (dailyGoodList.poll() == null) {
-                List<SendGood> goods = facadeAutoSendServiceWrapper.querySendGoods();
-                for (SendGood good : goods) {
-                    dailyGoodList.offer(good);
-                }
+        currPeriodFuture = periodExecutor.scheduleAtFixedRate(() -> {
+            periodTask();
+    }, 0L, periodSecond, TimeUnit.SECONDS);
+}
+
+    private Long getPeriodSeconds() {
+        return Long.valueOf(environment.getProperty("autosend.sendinterval.seconds"));
+    }
+
+    private synchronized void periodTask() {
+        SendGood item = dailyGoodList.poll();
+        logger.info("----peroid task --- good: {}");
+
+        if (item == null) {
+            List<SendGood> goods = facadeAutoSendServiceWrapper.querySendGoods();
+            for (SendGood good : goods) {
+
+                dailyGoodList.offer(good);
             }
-            sendGood(dailyGoodList.poll());
-        }, periodSecond, TimeUnit.SECONDS);
+        }
+        sendGood(item == null ? dailyGoodList.poll() : item);
+    }
+
+    private synchronized void dailyTask() {
+        DefaultPageOpenApiQueryParam param = DefaultPageOpenApiQueryParam.newInstance().withQueryType(BizDictEnums.OTHER_XPKSP);
+        List<DailyNoticeItem> rsts = openApiService.queryDailyGoods(param);
+        sendDailyNotices(rsts);
     }
 
 
@@ -91,39 +133,73 @@ public class AutoGoodSenderManager {
 
     }
 
-    private long getInitalDelaySecond() {
+    private static long getInitialDelaySecond() {
         LocalDate now = LocalDate.now();
-        now.plusDays(1);
-        LocalDateTime towMorning = LocalDateTime.of(now, LocalTime.of(8, 30));
+        LocalDate tow = now.plusDays(1);
+        LocalDateTime towMorning = LocalDateTime.of(tow, LocalTime.of(8, 30));
         Duration duration = Duration.between(LocalDateTime.now(), towMorning);
         return duration.getSeconds();
     }
 
-    public synchronized void sendDailyNotices(String notices) {
-         doSend(group -> {
-             WebElement groupEle = driver.findElement(By.name(group));
-             groupEle.sendKeys(notices);
-             groupEle.sendKeys(Keys.ENTER);
-             return null;
-         });
+
+    private void sendText(Actions actions, String textWithEnter, WebElement groupEle) {
+        Iterator<String> iterator = Arrays.asList(textWithEnter.split("\n"))
+                .iterator();
+        String textItem = iterator.next();
+        actions.sendKeys(groupEle, textItem);
+
+        for (; iterator.hasNext(); ) {
+            actions.sendKeys(Keys.SHIFT, Keys.ENTER)
+                    .keyUp(Keys.SHIFT);
+            actions.sendKeys(iterator.next());
+        }
+        actions.sendKeys(Keys.ENTER).perform();
     }
 
-    public synchronized void sendGood(SendGood good) {
+    /**
+     * 发送每日消息
+     *
+     * @param notices
+     */
+    public void sendDailyNotices(List<DailyNoticeItem> notices) {
         org.openqa.selenium.interactions.Actions actions = new Actions(driver);
         doSend(group -> {
             WebElement groupEle = driver.findElement(By.name(group));
-            //sendGood text
-            Iterator<String> iterator = Arrays.asList(good.getText().split("\n"))
-                    .iterator();
-            String textItem = iterator.next();
-            actions.sendKeys(groupEle, textItem);
+            actions.sendKeys("♡♡♡今日优惠推荐♡♡♡").sendKeys(Keys.ENTER).perform();
 
-            for (; iterator.hasNext(); ) {
-                actions.sendKeys(Keys.SHIFT, Keys.ENTER)
-                        .keyUp(Keys.SHIFT);
-                actions.sendKeys(iterator.next());
+            for (DailyNoticeItem notice : notices) {
+                Iterator<String> iterator = Arrays.asList(notice.getText().split("\n")).iterator();
+                for (; iterator.hasNext(); ) {
+                    actions.sendKeys(Keys.SHIFT, Keys.ENTER)
+                            .keyUp(Keys.SHIFT);
+                    String next = iterator.next();
+                    actions.sendKeys(next);
+                }
+                Files.ctrlC(new File(notice.getImagePath()));
+                actions.sendKeys(groupEle, Keys.CONTROL, "v")
+                        .keyUp(Keys.CONTROL)
+                        .sendKeys(Keys.ENTER)
+                        .perform();
+
             }
-            actions.sendKeys(Keys.ENTER).perform();
+            return null;
+        });
+    }
+
+    /**
+     * 间隔发送商品信息
+     *
+     * @param good
+     */
+    public void sendGood(SendGood good) {
+        if (good == null) {
+            logger.error(" good 为空");
+            return;
+        }
+        org.openqa.selenium.interactions.Actions actions = new Actions(driver);
+        doSend(group -> {
+            WebElement groupEle = driver.findElement(By.name(group));
+            sendText(actions, good.getText(), groupEle);
             logger.info("sendGood text for good id :{}", good.getCategoryId());
             //sendGood images
             for (String imagePath : good.getImagePaths()) {
@@ -149,4 +225,16 @@ public class AutoGoodSenderManager {
         }
     }
 
+    @Override
+    public void onApplicationEvent(OpenApiEvent openApiEvent) {
+        //查询出错, 删除查询上下文, 从头开始查
+        if (BizCodes.OPEN_API_ERRORCODE_50001.equals(openApiEvent.getSource())) {
+            bizContextMapper.deleteByType(BizContextTypes.querySendGood);
+            logger.info("查询出错, 删除查询上下文, 从头开始查");
+            if (currPeriodFuture != null) {
+                currPeriodFuture.cancel(false);
+                periodExecutor.scheduleAtFixedRate(this::periodTask, 0L, getPeriodSeconds(), TimeUnit.SECONDS);
+            }
+        }
+    }
 }

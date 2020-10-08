@@ -4,6 +4,7 @@ import com.normal.base.ContextSetEvent;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationEvent;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,5 +42,10 @@ public class ApplicationContextHolder implements ApplicationContextAware {
 
     public static ApplicationContext getContext() {
         return context;
+    }
+
+
+    public static void publishEvent(ApplicationEvent event) {
+        context.publishEvent(event);
     }
 }

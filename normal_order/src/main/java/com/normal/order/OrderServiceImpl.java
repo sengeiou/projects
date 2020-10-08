@@ -59,10 +59,10 @@ public class OrderServiceImpl implements IOrderService, ServerRecvListener {
         Order order = null;
         try {
             order = objectMapper.readValue(msg.getData(), Order.class);
-            if (msg.getCode().equals(BizCodes.PAID_FINISHED)) {
+            if (msg.getCode().equals(BizCodes.ORDER_PAID_FINISHED)) {
                 orderMapper.updateOrderStatus(order.getId(), OrderStatus.PAIED);
             }
-            if (msg.getCode().equals(BizCodes.PAID_TIMEOUT)) {
+            if (msg.getCode().equals(BizCodes.ORDER_PAID_TIMEOUT)) {
                 orderMapper.updateOrderStatus(order.getId(), OrderStatus.TIMEOUT);
             }
         } catch (JsonProcessingException e) {
@@ -73,7 +73,7 @@ public class OrderServiceImpl implements IOrderService, ServerRecvListener {
 
     @Override
     public String[] codes() {
-        return new String[]{BizCodes.PAID_TIMEOUT, BizCodes.PAID_FINISHED};
+        return new String[]{BizCodes.ORDER_PAID_TIMEOUT, BizCodes.ORDER_PAID_FINISHED};
     }
 
 

@@ -23,7 +23,8 @@ public enum BizDictEnums implements NormalEnum {
 
     OTHER_XSTJ(3, "13256", "相似推荐"),
     OTHER_GXHTJ(3, "17004", "个性化推荐"),
-    OTHER_GDFL(3, "xxx", "更多分类"),
+    OTHER_XPK(3, "31519", "选品库"),
+    OTHER_XPKSP(3, "31539", "选品库商品"),
 
     
     HQZB_ZH(4, "3756", "好券直播"),

@@ -107,8 +107,13 @@
             </dependency>
             <dependency>
                 <groupId>com.normal</groupId>
-                <artifactId>taobao-sdk-java-auto-20200808</artifactId>
+                <artifactId>taobao-sdk-java-auto-20201008</artifactId>
                 <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>5.2.6.RELEASE</version>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>
@@ -131,6 +136,11 @@
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>2.11.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>3.9</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

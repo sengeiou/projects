@@ -3,8 +3,14 @@ package com.normal.autosend.impl;
 import com.normal.base.ContextSetEvent;
 import com.normal.base.biz.BizContextService;
 import com.normal.base.utils.ApplicationContextHolder;
+import com.normal.model.BizDictEnums;
+import com.normal.model.autosend.DailyNoticeItem;
 import com.normal.model.autosend.SendGood;
+import com.normal.model.openapi.DefaultPageOpenApiQueryParam;
+import com.normal.model.shop.ListGood;
+import com.normal.model.shop.OfferInfo;
 import com.normal.openapi.IOpenApiService;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.Environment;
@@ -14,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 /**
  * @author: fei.he
@@ -29,8 +36,6 @@ public class FacadeAutoSendServiceWrapper implements ApplicationListener<Context
 
     Map<String, SendGoodQueryStrategy> strategyRegistory = new HashMap<>(8);
 
-    @Autowired
-    private IOpenApiService openApiService;
 
     @Transactional
     public List<SendGood> querySendGoods() {
@@ -38,10 +43,9 @@ public class FacadeAutoSendServiceWrapper implements ApplicationListener<Context
         SendGoodQueryStrategy strategy = strategyRegistory.get(strategyId);
         return strategy.querySendGoods();
     }
-    //todo
-    public String queryNotices() {
-        return "每日通知:\n 1. xxx 优惠 9:20 开启 \n 2. ddd 优惠开启";
-    }
+
+
+
 
     @Override
     public void onApplicationEvent(ContextSetEvent event) {

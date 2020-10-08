@@ -44,5 +44,13 @@ public class ListGood {
      */
     private boolean direct = false;
 
+    /**
+     * 淘口令:淘宝客用
+     */
+    private String pwd;
+
+    /**
+     * 子图片列表
+     */
     private List<String> images;
 }

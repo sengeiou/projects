@@ -86,14 +86,14 @@ public class OrderPayAssistant {
             @Override
             public String[] codes() {
                 return new String[]{
-                        BizCodes.QUERY_ALIPAY_ORDERS
+                        BizCodes.ORDER_QUERY_ALIPAY_ORDERS
                 };
             }
 
             @Override
             public void recv(DuplexMsg rst) {
                 OrderPayAssistant assistant = new OrderPayAssistant();
-                if (BizCodes.QUERY_ALIPAY_ORDERS.equals(rst.getCode())) {
+                if (BizCodes.ORDER_QUERY_ALIPAY_ORDERS.equals(rst.getCode())) {
 
                     Order order = Jsons.toObj(rst.getData(), Order.class);
 //                    OrderStatus orderStatus = assistant.queryPaidUntilTimeout(order);

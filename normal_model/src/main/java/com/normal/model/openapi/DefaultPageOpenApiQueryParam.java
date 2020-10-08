@@ -25,9 +25,6 @@ public class DefaultPageOpenApiQueryParam extends PageParam {
     }
 
     public DefaultPageOpenApiQueryParam withQueryType(BizDictEnums queryType) {
-        if (queryType.getType() != BizDictEnums.DEFAULT_QUERY_TYPE.getType()) {
-            throw new IllegalArgumentException("不支持查询类型:" + queryType);
-        }
         this.put(queryTypeKey, queryType);
         return this;
     }
