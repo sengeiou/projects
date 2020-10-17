@@ -48,7 +48,7 @@ public class OrderServiceImpl implements IOrderService, ServerRecvListener {
     }
 
     @Override
-    public Result queryOrder(long id) {
+    public Result<Order> queryOrder(long id) {
         Order order = orderMapper.selectByPrimaryKey(Long.valueOf(id).intValue());
         return Result.success(order);
     }

@@ -1,0 +1,5 @@
+biz:
+  client:
+    connect:
+      timeout:
+        millis: 5000

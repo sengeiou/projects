@@ -1,11 +1,14 @@
 package com.normal.base.query;
 
+import com.normal.base.utils.Objs;
 import com.normal.dao.base.QueryMapper;
 import com.normal.dao.base.QuerySql;
+import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author: fei.he
@@ -15,8 +18,28 @@ public class QueryService {
     @Autowired
     private QueryMapper queryMapper;
 
-    public <T> T query(QuerySql querySql, Class<T> clazz) {
-        List<Map<String, Object>> rst = queryMapper.query(querySql);
+    @Autowired
+    SqlSession sqlSession;
+
+    public <T> List<T> queryList(QuerySql querySql, Class<T> itemClazz){
+        List<Map<String, Object>> rst = queryMapper.query(querySql.toString());
+
+        if(rst == null  &&  rst.isEmpty()){
+            return null;
+        }
+
+        if (Map.class.isAssignableFrom(itemClazz)) {
+            return (List<T>) rst;
+        }
+
+        return rst.stream()
+                .map((item) -> Objs.toObj(item, itemClazz))
+                .collect(Collectors.toList());
+    }
+
+
+    public <T> T querySingle(QuerySql querySql, Class<T> clazz) {
+        List<Map<String, Object>> rst = queryMapper.query(querySql.toString());
 
         if (rst.isEmpty()) {
             return null;
@@ -43,16 +66,11 @@ public class QueryService {
             if (Double.class.equals(clazz) || double.class.equals(clazz)) {
                 return (T) Double.valueOf(itemValue);
             }
-        }
 
-        if (Map.class.isAssignableFrom(clazz)) {
-            return clazz.cast(item);
+            if (Map.class.isAssignableFrom(clazz)) {
+                return clazz.cast(item);
+            }
         }
-
-        if (List.class.isAssignableFrom(clazz)) {
-            return clazz.cast(rst);
-        }
-
         throw new UnsupportedOperationException("查询服务不支持该类型返回值: clazz: " + clazz.getName());
     }
 

@@ -1,5 +1,7 @@
 package com.normal.dao.base;
 
+import org.springframework.util.StringUtils;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -11,6 +13,8 @@ public class QuerySql {
     private List<String> columnAlias = new ArrayList<>(2);
     private String table;
     private Map<String, String> eqConds = new HashMap<>(8);
+    private List<String> strConds = new ArrayList<>();
+    private String orderBy;
 
     private QuerySql() {
     }
@@ -54,18 +58,32 @@ public class QuerySql {
         eqConds.put(condColumn, condValue);
         return this;
     }
+    public QuerySql withStrCond(String strCond) {
+        strConds.add(strCond);
+        return this;
+    }
 
+    public QuerySql withOrderBy(String orderBy) {
+        this.orderBy = orderBy;
+        return this;
+    }
 
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer("select ")
                 .append(getSelectColumns())
                 .append(" from ")
-                .append(table);
+                .append(table).append(" where 1=1 ");
 
         if (!eqConds.entrySet().isEmpty()) {
-            sb.append(" where ")
-                    .append(eqConds.entrySet().stream().map((entry) -> entry.getKey() + " = '" + entry.getValue() + "'").collect(Collectors.joining(" and")));
+            sb.append(eqConds.entrySet().stream().map((entry) -> entry.getKey() + " = '" + entry.getValue() + "'").collect(Collectors.joining(" and")));
+        }
+
+        for (String condItem : strConds) {
+            sb.append(" and ").append(condItem);
+        }
+        if (!StringUtils.isEmpty(orderBy)) {
+            sb.append(" ").append(orderBy);
         }
         return sb.toString();
     }

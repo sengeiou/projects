@@ -4,16 +4,21 @@
         "F:\projects\normal_base\src\main\java\com\normal\core\mybatis\mybatis-generator-config_1_0.dtd">
 <generatorConfiguration>
     <!--mysql 连接数据库jar 这里选择自己本地位置-->
-    <classPathEntry location="E:\MavenRepo\mysql\mysql-connector-java\8.0.19\mysql-connector-java-8.0.19.jar" />
+    <!--<classPathEntry location="E:\MavenRepo\mysql\mysql-connector-java\8.0.19\mysql-connector-java-8.0.19.jar" />-->
+    <classPathEntry location="E:\MavenRepo\com\oracle\ojdbc6\11.2.0.4.0\ojdbc6-11.2.0.4.0.jar" />
     <context id="testTables" targetRuntime="MyBatis3">
         <commentGenerator>
             <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
             <property name="suppressAllComments" value="true" />
         </commentGenerator>
         <!--数据库连接的信息：驱动类、连接地址、用户名、密码 -->
-        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+        <!--<jdbcConnection driverClass="com.mysql.jdbc.Driver"
                         connectionURL="jdbc:mysql://122.152.217.99:3306/normal_resource?useUnicode=true&amp;characterEncoding=utf-8" userId="admin"
                         password="coomhefei123$%^">
+        </jdbcConnection>-->
+        <jdbcConnection driverClass="oracle.jdbc.driver.OracleDriver"
+                        connectionURL="jdbc:oracle:thin:@localhost:1521:zhonghang" userId="xir_trd"
+                        password="Aa0123456789">
         </jdbcConnection>
 
         <!-- 默认false，把JDBC DECIMAL 和 NUMERIC 类型解析为 Integer，为 true时把JDBC DECIMAL 和
@@ -23,8 +28,8 @@
         </javaTypeResolver>
 
         <!-- targetProject:生成PO类的位置 -->
-        <javaModelGenerator targetPackage="com.normal.biz.order"
-                            targetProject="F:\projects\normal_autosend\src\main\java">
+        <javaModelGenerator targetPackage="com.xquant.platform.component.itf.cfets.common.api.dto.quote.irs"
+                            targetProject="F:\projects\normal_devtool\src\main\java\com\normal\devtool\codegenerate">
             <!-- enableSubPackages:是否让schema作为包的后缀 -->
             <property name="enableSubPackages" value="false" />
             <!-- 从数据库返回的值被清理前后的空格 -->
@@ -35,28 +40,28 @@
            若果maven工程是分模块的工程，targetProject="所属模块的名称"，例如：
            targetProject="ecps-manager-mapper"，下同-->
         <sqlMapGenerator targetPackage="mapper"
-                         targetProject="F:\projects\normal_autosend\src\main\resources">
+                         targetProject="F:\projects\normal_devtool\src\main\java\com\normal\devtool\codegenerate">
             <!-- enableSubPackages:是否让schema作为包的后缀 -->
             <property name="enableSubPackages" value="false" />
         </sqlMapGenerator>
         <!-- targetPackage：mapper接口生成的位置 -->
         <javaClientGenerator type="XMLMAPPER"
-                             targetPackage="com.normal.biz.order"
-                             targetProject="F:\projects\normal_autosend\src\main\java">
+                             targetPackage="com.xquant.platform.component.itf.cfets.common.api.dto.quote.irs"
+                             targetProject="F:\projects\normal_devtool\src\main\java\com\normal\devtool\codegenerate">
             <!-- enableSubPackages:是否让schema作为包的后缀 -->
             <property name="enableSubPackages" value="false" />
         </javaClientGenerator>
         <!-- 指定数据库表 -->
-        <table tableName="trd_send_good"
-               domainObjectName="SendGood"
+        <table tableName="ttrd_cfets_trade_irs_leg"
+               domainObjectName="IrsTradeLeg"
                enableCountByExample="false"
                enableUpdateByExample="false"
                enableDeleteByExample="false"
                enableSelectByExample="false"
                selectByExampleQueryId="false"
                enableUpdateByPrimaryKey="false"
-
         >
+            <property name="useActualColumnNames" value="false"></property>
         </table>
     </context>
 </generatorConfiguration>

@@ -5,6 +5,7 @@ import com.normal.openapi.impl.ParamConverter;
 import com.taobao.api.request.TbkItemInfoGetRequest;
 import com.taobao.api.response.TbkItemInfoGetResponse;
 
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -23,7 +24,7 @@ public class TaoBaoGoodsDetailQueryParamConverter implements ParamConverter<Stri
     }
 
     @Override
-    public ItemGood toMyRes(TbkItemInfoGetResponse openBackParam) {
+    public ItemGood toMyRes(TbkItemInfoGetResponse openBackParam, String itemId) {
         TbkItemInfoGetResponse.NTbkItem item = openBackParam.getResults().get(0);
         ItemGood itemGood = new ItemGood();
         itemGood.setItemId(item.getNumIid());

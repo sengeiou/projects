@@ -22,4 +22,7 @@ public class BaseConfig {
     public ApplicationContextHolder holder() {
         return new ApplicationContextHolder();
     }
+
+
+
 }

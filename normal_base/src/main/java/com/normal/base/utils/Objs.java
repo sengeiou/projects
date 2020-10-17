@@ -5,13 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+
 /**
  * @author: fei.he
  */
-public final class Jsons {
+public final class Objs {
     final static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    public static final Logger logger = LoggerFactory.getLogger(Jsons.class);
+    public static final Logger logger = LoggerFactory.getLogger(Objs.class);
 
     public static String toJson(Object obj) {
         try {
@@ -28,4 +30,9 @@ public final class Jsons {
             throw new RuntimeException(e);
         }
     }
+
+    public static <T> T toObj(Map<String, Object> map, Class<T> clazz) {
+        return OBJECT_MAPPER.convertValue(map, clazz);
+    }
+
 }

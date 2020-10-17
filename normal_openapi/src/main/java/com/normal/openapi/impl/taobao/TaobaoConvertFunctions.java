@@ -2,17 +2,15 @@ package com.normal.openapi.impl.taobao;
 
 import com.normal.base.utils.Dates;
 import com.normal.base.utils.Files;
-import com.normal.model.BizCodes;
 import com.normal.model.BizDictEnums;
 import com.normal.model.autosend.DailyNoticeItem;
 import com.normal.model.shop.CouponInfo;
 import com.normal.model.shop.ListGood;
 import com.normal.model.shop.OfferInfo;
+import com.normal.openapi.impl.ClientWrapper;
 import com.taobao.api.TaobaoObject;
-import com.taobao.api.request.TbkTpwdCreateRequest;
 import com.taobao.api.response.TbkDgMaterialOptionalResponse;
 import com.taobao.api.response.TbkDgOptimusMaterialResponse;
-import com.taobao.api.response.TbkTpwdCreateResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
@@ -79,7 +77,7 @@ public class TaobaoConvertFunctions {
     }
 
 
-    public DailyNoticeItem covertDailyNoticeItem(TaobaoClientWrapper clientWrapper, Environment environment) {
+    public DailyNoticeItem covertDailyNoticeItem(ClientWrapper clientWrapper, Environment environment) {
         DailyNoticeItem noticeItem = new DailyNoticeItem();
         StringJoiner joiner = new StringJoiner("\n");
         joiner.add("商品: " + goodListAdapter.getTitle());
@@ -92,7 +90,7 @@ public class TaobaoConvertFunctions {
         } else {
             pwdUrl = goodListAdapter.getClickUrl();
         }
-        joiner.add("淘口令: " + clientWrapper.queryPwd(pwdUrl));
+        joiner.add("淘口令: " + clientWrapper.queryTbPwd(pwdUrl));
         OfferInfo offerInfo = getOfferInfo();
         if (BizDictEnums.OFFER_TYPE_YHQ.equals(offerInfo.getOfferType())) {
             joiner.add("优惠券: " + offerInfo.getCouponInfo().getCouponAmt());

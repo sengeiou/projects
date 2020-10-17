@@ -3,7 +3,7 @@ package com.normal.communicate.server;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.normal.model.*;
-import com.normal.base.utils.Jsons;
+import com.normal.base.utils.Objs;
 import com.normal.model.communicate.DuplexMsg;
 import com.normal.model.order.Order;
 import com.normal.model.order.OrderStatus;
@@ -137,7 +137,7 @@ public class BizServer extends SimpleChannelInboundHandler<TextWebSocketFrame> i
             Order order = new Order();
             order.setId(1L);
             order.setOrderStatus(OrderStatus.NEW);
-            this.dispatch(new DuplexMsg(BizCodes.ORDER_QUERY_ALIPAY_ORDERS, Jsons.toJson(order)));
+            this.dispatch(new DuplexMsg(BizCodes.ORDER_QUERY_ALIPAY_ORDERS, Objs.toJson(order)));
         }
         super.userEventTriggered(ctx, evt);
     }

@@ -1,6 +1,7 @@
 package com.normal.openapi.impl.taobao;
 
 import com.normal.model.autosend.SendGood;
+import com.normal.openapi.impl.ClientWrapper;
 import com.normal.openapi.impl.GoodsTextGeneratorFactory;
 import com.normal.openapi.impl.IGoodsTextGenerator;
 import com.normal.openapi.impl.ParamConverter;
@@ -23,13 +24,13 @@ public class TaoBaoSendGoodResultParamConverter implements ParamConverter<Map<St
 
     private Environment environment;
 
-    TaobaoClientWrapper taoBaoClientWrapper;
+    ClientWrapper taoBaoClientWrapper;
 
     TaoBaoMaterialQueryParamConverter paramConverter;
 
     volatile Map<String, Object> myReqParam = new HashMap<>(1);
 
-    public TaoBaoSendGoodResultParamConverter(Environment environment, TaobaoClientWrapper taoBaoClientWrapper, TaoBaoMaterialQueryParamConverter paramConverter) {
+    public TaoBaoSendGoodResultParamConverter(Environment environment, ClientWrapper taoBaoClientWrapper, TaoBaoMaterialQueryParamConverter paramConverter) {
         this.environment = environment;
         this.taoBaoClientWrapper = taoBaoClientWrapper;
         this.paramConverter = paramConverter;
@@ -43,7 +44,7 @@ public class TaoBaoSendGoodResultParamConverter implements ParamConverter<Map<St
     }
 
     @Override
-    public List<SendGood> toMyRes(TbkDgOptimusMaterialResponse openBackParam) {
+    public List<SendGood> toMyRes(TbkDgOptimusMaterialResponse openBackParam, Map<String, Object> myReqParam) {
         List<TbkDgOptimusMaterialResponse.MapData> items = openBackParam.getResultList();
         return items.stream()
                 .map((item) -> {
@@ -68,7 +69,7 @@ public class TaoBaoSendGoodResultParamConverter implements ParamConverter<Map<St
 
     private String genText(TbkDgOptimusMaterialResponse.MapData item) {
         String materialId = (String) this.myReqParam.get("materialId");
-        IGoodsTextGenerator generator = GoodsTextGeneratorFactory.getTextGenerator(materialId, item, () -> taoBaoClientWrapper.queryPwd(item.getCouponShareUrl()));
+        IGoodsTextGenerator generator = GoodsTextGeneratorFactory.getTextGenerator(materialId, item, () -> taoBaoClientWrapper.queryTbPwd(item.getCouponShareUrl()));
         return generator.text();
     }
 

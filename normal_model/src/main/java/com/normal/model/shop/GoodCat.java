@@ -1,14 +1,7 @@
 package com.normal.model.shop;
 
-import com.normal.model.BizDictEnums;
-import jdk.nashorn.internal.objects.annotations.Constructor;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.beans.PropertyVetoException;
-import java.security.PrivateKey;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author: fei.he
@@ -16,27 +9,17 @@ import java.util.List;
 @Data
 public class GoodCat {
 
-    private Vo self;
+    private int id;
 
-    private List<Vo> children = new ArrayList<>(1);
+    /**
+     * 引用的平台类目标识, tb->materialId, pdd->tbMaterialId
+     */
+    private String referId;
 
+    private String name;
 
-    public GoodCat(BizDictEnums self) {
-        this.self = new Vo(self);
-    }
-
-    public void addChild(BizDictEnums child) {
-        this.children.add(new Vo(child));
-    }
-
-    @Data
-    public static class Vo{
-        private String materialId;
-        private String name;
-
-        public Vo(BizDictEnums dictEnum) {
-            this.materialId = dictEnum.key();
-            this.name = dictEnum.value();
-        }
-    }
-}
+    /**
+     * tb or pdd
+     */
+    private String platform;
+ }

@@ -2,6 +2,7 @@ package com.normal.openapi.impl.taobao;
 
 import com.normal.model.autosend.DailyNoticeItem;
 import com.normal.model.openapi.DefaultPageOpenApiQueryParam;
+import com.normal.openapi.impl.ClientWrapper;
 import com.normal.openapi.impl.ParamConverter;
 import com.taobao.api.request.TbkDgOptimusMaterialRequest;
 import com.taobao.api.response.TbkDgOptimusMaterialResponse;
@@ -18,9 +19,9 @@ public class TaoBaoDailyNoticeQueryParamConverter implements ParamConverter<Map<
 
     private Environment environment;
 
-    private TaobaoClientWrapper clientWrapper;
+    private ClientWrapper clientWrapper;
 
-    public TaoBaoDailyNoticeQueryParamConverter(Environment environment, TaobaoClientWrapper clientWrapper) {
+    public TaoBaoDailyNoticeQueryParamConverter(Environment environment, ClientWrapper clientWrapper) {
         this.environment = environment;
         this.clientWrapper = clientWrapper;
     }
@@ -30,7 +31,7 @@ public class TaoBaoDailyNoticeQueryParamConverter implements ParamConverter<Map<
         TbkDgOptimusMaterialRequest req = new TbkDgOptimusMaterialRequest();
         req.setAdzoneId(Long.valueOf(environment.getProperty("openapi.taobao.adzoneid")));
         if (myReqParam instanceof DefaultPageOpenApiQueryParam) {
-            req.setMaterialId(Long.valueOf(((DefaultPageOpenApiQueryParam) myReqParam).getQueryType().key()));
+            req.setMaterialId(Long.valueOf(((DefaultPageOpenApiQueryParam) myReqParam).getTbMaterialId()));
         }
         req.setPageNo(Long.valueOf(String.valueOf(myReqParam.get("pageNo"))));
         req.setPageSize(10L);
@@ -39,7 +40,7 @@ public class TaoBaoDailyNoticeQueryParamConverter implements ParamConverter<Map<
     }
 
     @Override
-    public List<DailyNoticeItem> toMyRes(TbkDgOptimusMaterialResponse openBackParam) {
+    public List<DailyNoticeItem> toMyRes(TbkDgOptimusMaterialResponse openBackParam ,Map<String, Object> myReqParam) {
 
         List<TbkDgOptimusMaterialResponse.MapData> rawGoods = openBackParam.getResultList();
         return rawGoods.stream()

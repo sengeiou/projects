@@ -36,7 +36,7 @@ public class TaoBaoKeywordQueryParamConverter implements ParamConverter<DefaultP
         //无线平台
         req.setPlatform(2L);
         //排序
-        req.setSort(myReqParam.getTaobaoSort());
+        req.setSort(myReqParam.getTbSort());
         //个性化推荐
         req.setMaterialId(Long.valueOf(BizDictEnums.OTHER_GXHTJ.key()));
         req.setPageNo(Long.valueOf(String.valueOf(myReqParam.get("pageNo"))));
@@ -45,7 +45,7 @@ public class TaoBaoKeywordQueryParamConverter implements ParamConverter<DefaultP
     }
 
     @Override
-    public List<ListGood> toMyRes(TbkDgMaterialOptionalResponse openBackParam) {
+    public List<ListGood> toMyRes(TbkDgMaterialOptionalResponse openBackParam, DefaultPageOpenApiQueryParam myReqParam) {
         List<TbkDgMaterialOptionalResponse.MapData> rawGoods = openBackParam.getResultList();
         List<ListGood> list = rawGoods.stream()
                 .map((item) -> new TaobaoConvertFunctions(item).convertListGood())

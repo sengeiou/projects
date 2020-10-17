@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @EnableConfigurationProperties(BizProperties.class)
-@MapperScan(basePackages ="com.normal.bizserver.order")
 public class Config {
 
     @Bean

@@ -1,8 +1,12 @@
-package com.normal.openapi.impl.taobao;
+package com.normal.openapi.impl;
 
+import com.normal.base.NormalRuntimeException;
 import com.normal.base.utils.ApplicationContextHolder;
 import com.normal.model.BizCodes;
 import com.normal.model.openapi.OpenApiEvent;
+import com.pdd.pop.sdk.http.PopBaseHttpRequest;
+import com.pdd.pop.sdk.http.PopBaseHttpResponse;
+import com.pdd.pop.sdk.http.PopHttpClient;
 import com.taobao.api.*;
 import com.taobao.api.request.TbkTpwdCreateRequest;
 import com.taobao.api.response.TbkTpwdCreateResponse;
@@ -17,25 +21,32 @@ import org.springframework.util.StringUtils;
  * @author: fei.he
  */
 @Component
-public class TaobaoClientWrapper {
+public class ClientWrapper {
 
-    public static final Logger logger = LoggerFactory.getLogger(TaobaoClientWrapper.class);
+    public static final Logger logger = LoggerFactory.getLogger(ClientWrapper.class);
 
     @Autowired
     TaobaoClient taobaoClient;
 
     @Autowired
+    PopHttpClient popHttpClient;
+
+    @Autowired
     Environment environment;
 
-    public <T extends TaobaoResponse> T execute(TaobaoRequestAdapter<T> req) {
-        return doExecute(req);
+    public <T extends PopBaseHttpResponse> T pddExecute(PopBaseHttpRequest<T> req) {
+        try {
+            return popHttpClient.syncInvoke(req);
+        } catch (Exception e) {
+            throw new NormalRuntimeException(e);
+        }
     }
 
-    public <T extends TaobaoResponse> T execute(TaobaoRequest<T> req) {
-        return doExecute(req);
+    public <T extends TaobaoResponse> T tbExecute(TaobaoRequest<T> req) {
+        return tbDoExecute(req);
     }
 
-    private <T extends TaobaoResponse> T doExecute(TaobaoRequest<T> req) {
+    private <T extends TaobaoResponse> T tbDoExecute(TaobaoRequest<T> req) {
         T rsp = null;
         try {
             rsp = taobaoClient.execute(req);
@@ -53,14 +64,14 @@ public class TaobaoClientWrapper {
     }
 
 
-    public String queryPwd(String url) {
+    public String queryTbPwd(String url) {
         TbkTpwdCreateRequest req = new TbkTpwdCreateRequest();
         url = url.replaceAll("\\\\", "");
         url = "https:" + url;
         req.setUrl(url);
         req.setText("优惠券领取");
         req.setUserId(environment.getProperty("openapi.taobao.userid"));
-        TbkTpwdCreateResponse rsp = execute(req);
+        TbkTpwdCreateResponse rsp = tbExecute(req);
         return rsp.getData().getPasswordSimple();
     }
 

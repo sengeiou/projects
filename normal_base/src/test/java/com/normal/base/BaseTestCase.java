@@ -45,12 +45,12 @@ public class BaseTestCase {
     public void testQueryMapper() throws Exception{
         init();
         QuerySql sql = QuerySql.newInstance()
-                .fromTable("trd_shop_banner")
-                .column("material_id")
-                .column("image")
-                .withEqCond("id", "1");
+                .fromTable("trd_shop_config_banner")
+                .column("title")
+                .column("background")
+                .column("refer");
 
-        List<Map<String, Object>> rst = mapper.query(sql);
+        List<Map<String, Object>> rst = mapper.query(sql.toString());
         rst.stream().forEach((item) -> {
             for (Map.Entry<String, Object> entry : item.entrySet()) {
                 logger.info("key: {}, value:{}", entry.getKey(), entry.getValue());
@@ -71,7 +71,7 @@ public class BaseTestCase {
         queryMapper.setAccessible(true);
         queryMapper.set(queryService, this.mapper);
 
-        Map materialId = queryService.query(sql, Map.class);
+        Map materialId = queryService.querySingle(sql, Map.class);
         logger.info("materialId: {}", materialId);
 
     }

@@ -1,7 +1,7 @@
 package com.normal.communicate.client;
 
 import com.normal.model.communicate.DuplexMsg;
-import com.normal.base.utils.Jsons;
+import com.normal.base.utils.Objs;
 import io.netty.channel.*;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
@@ -79,7 +79,7 @@ public class BizClientHandler extends SimpleChannelInboundHandler<Object> implem
             if (!StringUtils.isEmpty(text)) {
                 return;
             }
-            DuplexMsg recvMsg = Jsons.toObj(text, DuplexMsg.class);
+            DuplexMsg recvMsg = Objs.toObj(text, DuplexMsg.class);
 
             ClientRecvListener clientRecvListener = clientRecvRegistry.get(recvMsg.getCode());
             if (clientRecvListener == null) {
@@ -109,7 +109,7 @@ public class BizClientHandler extends SimpleChannelInboundHandler<Object> implem
         if (channelGroup.isEmpty()) {
             throw new RuntimeException(" client channel group empty can not send msg!");
         }
-        channelGroup.writeAndFlush(new TextWebSocketFrame(Jsons.toJson(msg)));
+        channelGroup.writeAndFlush(new TextWebSocketFrame(Objs.toJson(msg)));
     }
 
     @Override

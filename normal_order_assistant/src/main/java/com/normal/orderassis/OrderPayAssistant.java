@@ -1,10 +1,10 @@
-package com.normal.order;
+package com.normal.orderassis;
 
 import com.normal.communicate.client.BizClient;
 import com.normal.communicate.client.BizClientHandler;
 import com.normal.communicate.client.ClientRecvListener;
 import com.normal.communicate.client.ConfigProperties;
-import com.normal.base.utils.Jsons;
+import com.normal.base.utils.Objs;
 import com.normal.model.*;
 import com.normal.model.communicate.DuplexMsg;
 import com.normal.model.order.Order;
@@ -19,12 +19,13 @@ import java.util.Map;
 
 /**
  * @author: fei.he
+ * 查询支付情况
  */
 public class OrderPayAssistant {
+
     public static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(OrderPayAssistant.class);
 
     ChromeDriver driver;
-
 
     /**
      * just for unit test
@@ -45,16 +46,16 @@ public class OrderPayAssistant {
 
     public OrderStatus queryPaidUntilTimeout(Order order) {
         for (; ; ) {
-            boolean expire = LocalDateTime.now().isAfter(order.getValidDateTime().plusSeconds(Long.valueOf(ConfigProperties.getProperty("biz.client.query.interval")) / 1000));
+            boolean expire = LocalDateTime.now().isAfter(order.getValidDateTime().plusSeconds(Long.valueOf(ConfigProperties.getProperty("biz.client.querySingle.interval")) / 1000));
             if (expire) {
                 return OrderStatus.TIMEOUT;
             }
             try {
-                Thread.sleep(Long.valueOf(ConfigProperties.getProperty("biz.client.query.interval")));
+                Thread.sleep(Long.valueOf(ConfigProperties.getProperty("biz.client.querySingle.interval")));
             } catch (InterruptedException e) {
                 Thread.interrupted();
             }
-            driver.get(ConfigProperties.getProperty("biz.client.alipay.order.query.url"));
+            driver.get(ConfigProperties.getProperty("biz.client.alipay.order.querySingle.url"));
             Response response = (Response) driver.executeScript(ConfigProperties.getProperty("biz.client.order.js"));
             if (response == null) {
                 logger.error("js exe error, return rst is null");
@@ -92,14 +93,14 @@ public class OrderPayAssistant {
 
             @Override
             public void recv(DuplexMsg rst) {
+                logger.info("recv msg from server: {}", rst);
                 OrderPayAssistant assistant = new OrderPayAssistant();
                 if (BizCodes.ORDER_QUERY_ALIPAY_ORDERS.equals(rst.getCode())) {
 
-                    Order order = Jsons.toObj(rst.getData(), Order.class);
-//                    OrderStatus orderStatus = assistant.queryPaidUntilTimeout(order);
-                    order.setOrderStatus(OrderStatus.PAIED);
-                    logger.info("recv server msg:{}", rst);
-                    bizClientHandler.send(new DuplexMsg(BizCodes.ORDER_STATUS_RECV, Jsons.toJson(order)));
+                    Order order = Objs.toObj(rst.getData(), Order.class);
+                    OrderStatus orderStatus = assistant.queryPaidUntilTimeout(order);
+                    order.setOrderStatus(orderStatus);
+                    bizClientHandler.send(new DuplexMsg(BizCodes.ORDER_STATUS_RECV, Objs.toJson(order)));
                 }
 
             }

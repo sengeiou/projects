@@ -21,4 +21,6 @@ public  interface BizCodes {
      * open api 常量
      */
     String OPEN_API_ERRORCODE_50001= "50001";
+
+    String CATS_CACHE_KEY = "key$1";
 }

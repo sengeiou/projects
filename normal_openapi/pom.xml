@@ -18,6 +18,10 @@
             <artifactId>taobao-sdk-java-auto-20201008</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.pdd</groupId>
+            <artifactId>pop-sdk</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.normal</groupId>
             <artifactId>normal_model</artifactId>
         </dependency>
@@ -25,6 +29,7 @@
             <groupId>com.normal</groupId>
             <artifactId>normal_base</artifactId>
         </dependency>
+
     </dependencies>
 
 </project>

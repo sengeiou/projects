@@ -15,6 +15,7 @@
         <module>normal_communicate</module>
         <module>normal_openapi</module>
         <module>normal_shop</module>
+        <module>normal_order_assistant</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -141,6 +142,11 @@
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-ooxml</artifactId>
                 <version>3.9</version>
+            </dependency>
+            <dependency>
+                <groupId>com.pdd</groupId>
+                <artifactId>pop-sdk</artifactId>
+                <version>1.9.55</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

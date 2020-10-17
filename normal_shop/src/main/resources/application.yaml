@@ -12,6 +12,8 @@
 
 mybatis:
   mapper-locations: classpath*:/mapper/*.xml
+  configuration:
+    call-setters-on-nulls: true
 
 # open api config
 openapi:
@@ -24,5 +26,10 @@ openapi:
     materialids: 13369,31362,31371,4094,3756,3786,13366
     images:
       path: E:/pics/tmp/
+  pdd:
+    pid: 11136444_175955262
+    appkey: 66acc0f56ee545c48ff7748c10d4f871
+    appsecret: 68cd9546b762345ad9dd5725a5f00edcf9912076
+
 
 

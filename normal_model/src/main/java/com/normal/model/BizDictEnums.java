@@ -1,7 +1,5 @@
 package com.normal.model;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +17,7 @@ public enum BizDictEnums implements NormalEnum {
     COMMON_NO(2, "1", "否"),
     COMMON_ASC(2, "_asc", "升序"),
     COMMON_DES(2, "_des", "降序"),
+
 
 
     OTHER_XSTJ(3, "13256", "相似推荐"),
@@ -102,7 +101,25 @@ public enum BizDictEnums implements NormalEnum {
     ORDER_BY_SELLNUM(10, "total_sales", "销量"),
     ORDER_BY_JIAGE(10, "price", "价格"),
 
+    /**
+     * banner 类型
+     */
+    BANNER_TYPE_PAGE(11, "banner_page", "引用第三方的banner"),
+
+    /**
+     * 平台类型
+     */
+    PLATFORM_TB(12, "tb", "tb"),
+    PLATFORM_PDD(12, "pdd", "pdd"),
+
+
+    /**
+     * 配置活动类型
+     */
+    ACTIVITY_TYPE_COLL(13, "coll", "coll"),
+    ACTIVITY_TYPE_BANNER(13, "banner", "banner"),
     ;
+
 
     private int type;
     private String key;

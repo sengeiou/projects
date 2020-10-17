@@ -12,8 +12,6 @@ import java.util.Map;
 
 public interface IOpenApiService {
 
-    List<SendGood> querySendGoods(Map<String, Object> params);
-
     /**
      * 查商品列表
      * @param param
@@ -27,16 +25,6 @@ public interface IOpenApiService {
      * @return
      */
     ItemGood queryItemGood(String itemId);
-
-
-    /**
-     * 选品库每日推荐产品查询
-     * @param params
-     * @return
-     */
-    List<DailyNoticeItem> queryDailyGoods(Map<String, Object> params);
-
-
 
 
 }

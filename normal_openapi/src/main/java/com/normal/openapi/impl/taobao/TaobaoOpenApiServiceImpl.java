@@ -7,7 +7,9 @@ import com.normal.model.autosend.SendGood;
 import com.normal.model.openapi.DefaultPageOpenApiQueryParam;
 import com.normal.model.shop.ItemGood;
 import com.normal.model.shop.ListGood;
+import com.normal.openapi.IAutoSendGoodsQueryService;
 import com.normal.openapi.IOpenApiService;
+import com.normal.openapi.impl.ClientWrapper;
 import com.taobao.api.request.TbkDgMaterialOptionalRequest;
 import com.taobao.api.request.TbkDgOptimusMaterialRequest;
 import com.taobao.api.request.TbkItemInfoGetRequest;
@@ -22,16 +24,17 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author fei.he
  */
 @Component
 @Qualifier("taobaoOpenApiService")
-public class TaobaoOpenApiServiceImpl implements IOpenApiService {
+public class TaobaoOpenApiServiceImpl implements IOpenApiService, IAutoSendGoodsQueryService {
 
     @Autowired
-    TaobaoClientWrapper clientWrapper;
+    ClientWrapper clientWrapper;
 
     @Autowired
     Environment environment;
@@ -55,15 +58,15 @@ public class TaobaoOpenApiServiceImpl implements IOpenApiService {
     @Override
     public List<SendGood> querySendGoods(Map<String, Object> params) {
         TbkDgOptimusMaterialRequest req = sendGoodResultParamConverter.toOpenReq(params);
-        TbkDgOptimusMaterialResponse res = clientWrapper.execute(req);
-        return sendGoodResultParamConverter.toMyRes(res);
+        TbkDgOptimusMaterialResponse res = clientWrapper.tbExecute(req);
+        return sendGoodResultParamConverter.toMyRes(res, params);
     }
 
 
     @Override
     public Page<ListGood> pageQueryGoods(DefaultPageOpenApiQueryParam param) {
-        BizDictEnums queryType = param.getQueryType();
-        if (BizDictEnums.QUERY_GJZ.equals(queryType)) {
+        String queryType = param.getTbMaterialId();
+        if (BizDictEnums.QUERY_GJZ.key().equals(queryType)) {
             return queryByGjz(param);
         } else {
             return queryByMaterialId(param);
@@ -77,13 +80,13 @@ public class TaobaoOpenApiServiceImpl implements IOpenApiService {
      * @return
      */
     private Page<ListGood> queryByGjz(DefaultPageOpenApiQueryParam param) {
-        if (param.getOrderBy() == null) {
-            param.withOrderBy(BizDictEnums.DEFAULT_ORDER_BY)
-                    .withOrderDirect(BizDictEnums.COMMON_DES);
+        if (param.getTbOrderBy() == null) {
+            param.setTbOrderBy(BizDictEnums.DEFAULT_ORDER_BY)
+                    .setTbOrderDirect(BizDictEnums.COMMON_DES);
         }
         TbkDgMaterialOptionalRequest req = keywordQueryParamConverter.toOpenReq(param);
-        TbkDgMaterialOptionalResponse res = clientWrapper.execute(req);
-        return new Page<>(keywordQueryParamConverter.toMyRes(res), param.getPageNo(), res.getTotalResults());
+        TbkDgMaterialOptionalResponse res = clientWrapper.tbExecute(req);
+        return new Page<>(keywordQueryParamConverter.toMyRes(res, param), param.getPageNo(), res.getTotalResults());
     }
 
     /**
@@ -93,27 +96,24 @@ public class TaobaoOpenApiServiceImpl implements IOpenApiService {
      * @return
      */
     private Page<ListGood> queryByMaterialId(DefaultPageOpenApiQueryParam param) {
-        if (param.getQueryType() == null) {
-            param.withQueryType(BizDictEnums.DEFAULT_QUERY_TYPE)
-                    .withOrderDirect(BizDictEnums.COMMON_DES);
-        }
+        Objects.requireNonNull(param.getTbMaterialId());
         TbkDgOptimusMaterialRequest req = materialParamConverter.toOpenReq(param);
-        TbkDgOptimusMaterialResponse res = clientWrapper.execute(req);
-        return new Page<>(materialParamConverter.toMyRes(res), param.getPageNo(), res.getTotalCount());
+        TbkDgOptimusMaterialResponse res = clientWrapper.tbExecute(req);
+        return new Page<>(materialParamConverter.toMyRes(res, param), param.getPageNo(), res.getTotalCount());
     }
 
     @Override
     public ItemGood queryItemGood(String itemId) {
         TbkItemInfoGetRequest req = goodsDetailQueryParamConverter.toOpenReq(itemId);
-        TbkItemInfoGetResponse res = clientWrapper.execute(req);
-        return goodsDetailQueryParamConverter.toMyRes(res);
+        TbkItemInfoGetResponse res = clientWrapper.tbExecute(req);
+        return goodsDetailQueryParamConverter.toMyRes(res, itemId);
     }
 
     @Override
     public List<DailyNoticeItem> queryDailyGoods(Map<String, Object> params) {
         TbkDgOptimusMaterialRequest req = dailyNoticeQueryParamConverter.toOpenReq(params);
-        TbkDgOptimusMaterialResponse res = clientWrapper.execute(req);
-        return dailyNoticeQueryParamConverter.toMyRes(res);
+        TbkDgOptimusMaterialResponse res = clientWrapper.tbExecute(req);
+        return dailyNoticeQueryParamConverter.toMyRes(res, params);
     }
 
 

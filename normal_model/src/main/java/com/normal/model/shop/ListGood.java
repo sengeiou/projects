@@ -47,7 +47,7 @@ public class ListGood {
     /**
      * 淘口令:淘宝客用
      */
-    private String pwd;
+    private String tbPwd;
 
     /**
      * 子图片列表

@@ -1,16 +1,20 @@
 package com.normal.base;
 
-import com.normal.base.web.CommonErrorMsg;
+/**
+ * @author: fei.he
+ */
+public class NormalException extends  Exception {
 
-public class NormalException extends RuntimeException {
-    private CommonErrorMsg errorMsg;
 
-    public NormalException(String message, CommonErrorMsg errorMsg) {
+    public NormalException(String message) {
         super(message);
-        this.errorMsg = errorMsg;
     }
 
-    public CommonErrorMsg getErrorMsg() {
-        return errorMsg;
+    public NormalException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public NormalException(Throwable cause) {
+        super(cause);
     }
 }

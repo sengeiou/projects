@@ -33,6 +33,9 @@ public class SimplePriceGenerator implements PriceGenerator {
         }
     }
 
+    /**
+     * 添加时间戳
+     */
     static class PriceWrapper {
         private double price;
         private long currMillis;

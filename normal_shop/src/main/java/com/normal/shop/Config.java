@@ -1,6 +1,8 @@
 package com.normal.shop;
 
 import com.normal.base.BaseConfig;
+import com.normal.base.cache.Cache;
+import com.normal.base.cache.HashMapCache;
 import com.normal.base.query.QueryService;
 import com.normal.openapi.OpenApiConfig;
 import com.normal.openapi.impl.OpenApiMethodArgumentResolver;
@@ -28,6 +30,10 @@ public class Config implements WebMvcConfigurer {
         return new QueryService();
     }
 
+    @Bean
+    public Cache cache() {
+        return new  HashMapCache(100);
+    }
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {

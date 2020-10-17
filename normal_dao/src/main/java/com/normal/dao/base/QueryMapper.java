@@ -11,7 +11,7 @@ import java.util.Map;
 @Mapper
 public interface QueryMapper {
 
-    @SelectProvider(type = QuerySqlProvider.class, method = "sql")
-    List<Map<String, Object>> query(@Param("querySql") QuerySql querySql);
+    @Select("${querySql}")
+    List<Map<String, Object>> query(@Param("querySql") String querySql);
 
 }

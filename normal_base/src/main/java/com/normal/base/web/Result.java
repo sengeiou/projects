@@ -8,14 +8,14 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class Result {
+public class Result<T> {
 
     private String code;
     private String msg;
     private boolean success;
-    private Object data;
+    private T data;
 
-    private Result(String code, String msg, boolean success, Object data) {
+    private Result(String code, String msg, boolean success, T data) {
         this.code = code;
         this.msg = msg;
         this.success = success;

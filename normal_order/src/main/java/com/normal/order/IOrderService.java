@@ -10,6 +10,6 @@ public interface IOrderService {
 
     Result createOrder(Order order);
 
-    Result queryOrder(long id);
+    Result<Order> queryOrder(long id);
 
 }

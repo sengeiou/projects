@@ -2,7 +2,7 @@ package com.normal.base.biz;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.normal.base.utils.Jsons;
+import com.normal.base.utils.Objs;
 import com.normal.dao.context.BizContextMapper;
 import com.normal.model.context.BizContext;
 import org.slf4j.Logger;
@@ -33,7 +33,7 @@ public class BizContextService {
     public void insertCtx(String typeKey, Object ctx) {
         BizContext bizContext = new BizContext();
         bizContext.setType(typeKey);
-        bizContext.setContext(Jsons.toJson(ctx));
+        bizContext.setContext(Objs.toJson(ctx));
         bizContextMapper.insert(bizContext);
     }
 
