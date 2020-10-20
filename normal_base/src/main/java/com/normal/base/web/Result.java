@@ -30,6 +30,10 @@ public class Result<T> {
         return new Result("200", null, true, null);
     }
 
+    public static Result fail(String msg) {
+        return new Result("-20001", msg, false, null);
+    }
+
     public static Result fail(String code, String msg) {
         return new Result(code, msg, false, null);
     }

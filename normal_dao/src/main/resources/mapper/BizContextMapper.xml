@@ -11,21 +11,21 @@
   </sql>
 
     <insert id="insert" parameterType="com.normal.model.context.BizContext">
-    insert into trd_context (type, context)
+    insert into trd_common_context (type, context)
      values (#{type}, #{context})
   </insert>
     <update id="updateCtxObjByType">
-    update trd_context set  context = #{ctxJson}
+    update trd_common_context set  context = #{ctxJson}
     where type = #{typeKey}
   </update>
 
     <delete id="deleteByType">
-    delete from trd_context where type = #{type}
+    delete from trd_common_context where type = #{type}
   </delete>
     <select id="queryByTypeKey" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from trd_context
+        from trd_common_context
         where type = #{type}
     </select>
 

@@ -4,56 +4,58 @@
         "F:\projects\normal_base\src\main\java\com\normal\core\mybatis\mybatis-generator-config_1_0.dtd">
 <generatorConfiguration>
     <!--mysql 连接数据库jar 这里选择自己本地位置-->
-    <!--<classPathEntry location="E:\MavenRepo\mysql\mysql-connector-java\8.0.19\mysql-connector-java-8.0.19.jar" />-->
-    <classPathEntry location="E:\MavenRepo\com\oracle\ojdbc6\11.2.0.4.0\ojdbc6-11.2.0.4.0.jar" />
+    <classPathEntry location="E:\MavenRepo\mysql\mysql-connector-java\8.0.19\mysql-connector-java-8.0.19.jar"/>
+    <!--<classPathEntry location="E:\MavenRepo\com\oracle\ojdbc6\11.2.0.4.0\ojdbc6-11.2.0.4.0.jar" />-->
     <context id="testTables" targetRuntime="MyBatis3">
         <commentGenerator>
             <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
-            <property name="suppressAllComments" value="true" />
+            <property name="suppressAllComments" value="true"/>
         </commentGenerator>
         <!--数据库连接的信息：驱动类、连接地址、用户名、密码 -->
-        <!--<jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://122.152.217.99:3306/normal_resource?useUnicode=true&amp;characterEncoding=utf-8" userId="admin"
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://122.152.217.99:3306/normal_resource?useUnicode=true&amp;characterEncoding=utf-8"
+                        userId="admin"
                         password="coomhefei123$%^">
-        </jdbcConnection>-->
-        <jdbcConnection driverClass="oracle.jdbc.driver.OracleDriver"
+        </jdbcConnection>
+        <!--<jdbcConnection driverClass="oracle.jdbc.driver.OracleDriver"
                         connectionURL="jdbc:oracle:thin:@localhost:1521:zhonghang" userId="xir_trd"
                         password="Aa0123456789">
-        </jdbcConnection>
+        </jdbcConnection>-->
 
         <!-- 默认false，把JDBC DECIMAL 和 NUMERIC 类型解析为 Integer，为 true时把JDBC DECIMAL 和
            NUMERIC 类型解析为java.math.BigDecimal -->
         <javaTypeResolver>
-            <property name="forceBigDecimals" value="true" />
+            <property name="forceBigDecimals" value="true"/>
         </javaTypeResolver>
 
         <!-- targetProject:生成PO类的位置 -->
-        <javaModelGenerator targetPackage="com.xquant.platform.component.itf.cfets.common.api.dto.quote.irs"
-                            targetProject="F:\projects\normal_devtool\src\main\java\com\normal\devtool\codegenerate">
+        <javaModelGenerator targetPackage="com.normal.model.user"
+                            targetProject="F:\projects\normal_model\src\main\java">
             <!-- enableSubPackages:是否让schema作为包的后缀 -->
-            <property name="enableSubPackages" value="false" />
+            <property name="enableSubPackages" value="false"/>
             <!-- 从数据库返回的值被清理前后的空格 -->
-            <property name="trimStrings" value="true" />
+            <property name="trimStrings" value="true"/>
         </javaModelGenerator>
         <!-- targetProject:mapper映射文件生成的位置
            如果maven工程只是单独的一个工程，targetProject="F:\projects\normal_portal\src\main\java"
            若果maven工程是分模块的工程，targetProject="所属模块的名称"，例如：
            targetProject="ecps-manager-mapper"，下同-->
         <sqlMapGenerator targetPackage="mapper"
-                         targetProject="F:\projects\normal_devtool\src\main\java\com\normal\devtool\codegenerate">
+                         targetProject="F:\projects\normal_dao\src\main\resources">
             <!-- enableSubPackages:是否让schema作为包的后缀 -->
-            <property name="enableSubPackages" value="false" />
+            <property name="enableSubPackages" value="false"/>
         </sqlMapGenerator>
         <!-- targetPackage：mapper接口生成的位置 -->
         <javaClientGenerator type="XMLMAPPER"
-                             targetPackage="com.xquant.platform.component.itf.cfets.common.api.dto.quote.irs"
-                             targetProject="F:\projects\normal_devtool\src\main\java\com\normal\devtool\codegenerate">
+
+                             targetPackage="com.normal.dao.user"
+                             targetProject="F:\projects\normal_dao\src\main\java">
             <!-- enableSubPackages:是否让schema作为包的后缀 -->
-            <property name="enableSubPackages" value="false" />
+            <property name="enableSubPackages" value="false"/>
         </javaClientGenerator>
         <!-- 指定数据库表 -->
-        <table tableName="ttrd_cfets_trade_irs_leg"
-               domainObjectName="IrsTradeLeg"
+        <table tableName="trd_common_user"
+               domainObjectName="User"
                enableCountByExample="false"
                enableUpdateByExample="false"
                enableDeleteByExample="false"

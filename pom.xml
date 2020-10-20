@@ -16,6 +16,7 @@
         <module>normal_openapi</module>
         <module>normal_shop</module>
         <module>normal_order_assistant</module>
+        <module>normal_user</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

@@ -23,7 +23,7 @@ public class ShopTests {
 
     @Test
     public void test() throws Exception {
-       /* PddDdkCmsPromUrlGenerateRequest request = new PddDdkCmsPromUrlGenerateRequest();
+        PddDdkCmsPromUrlGenerateRequest request = new PddDdkCmsPromUrlGenerateRequest();
         request.setChannelType(2);
         request.setGenerateMobile(false);
         request.setGenerateSchemaUrl(false);
@@ -35,11 +35,11 @@ public class ShopTests {
         request.setPIdList(pIdList);
         request.setGenerateWeApp(false);
         PddDdkCmsPromUrlGenerateResponse response = client.syncInvoke(request);
-        System.out.println(JsonUtil.transferToJson(response));*/
+        System.out.println(JsonUtil.transferToJson(response));
 
-        PddGoodsCatsGetRequest request = new PddGoodsCatsGetRequest();
+       /* PddGoodsCatsGetRequest request = new PddGoodsCatsGetRequest();
         request.setParentCatId(0L);
         PddGoodsCatsGetResponse response = client.syncInvoke(request);
-        System.out.println(JsonUtil.transferToJson(response));
+        System.out.println(JsonUtil.transferToJson(response));*/
     }
 }
