@@ -20,16 +20,16 @@
     from trd_common_user
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from trd_common_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
   <select id="selectByPhone" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from trd_common_user
     where phone = #{phone}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from trd_common_user
-    where id = #{id,jdbcType=INTEGER}
-  </delete>
 
   <insert id="insertSelective" parameterType="com.normal.model.user.User">
     insert into trd_common_user
@@ -86,4 +86,32 @@
       </if>
     </trim>
   </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.normal.model.user.User">
+    update trd_common_user
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null">
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=CHAR},
+      </if>
+      <if test="pwd != null">
+        pwd = #{pwd,jdbcType=VARCHAR},
+      </if>
+      <if test="platform != null">
+        platform = #{platform,jdbcType=CHAR},
+      </if>
+      <if test="score != null">
+        score = #{score,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=DATE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
 </mapper>

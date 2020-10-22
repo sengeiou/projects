@@ -1,7 +1,7 @@
 package com.normal.user;
 
 import com.normal.base.utils.Digests;
-import com.normal.base.web.CommonErrorMsg;
+import com.normal.base.utils.Tokens;
 import com.normal.base.web.Result;
 import com.normal.dao.user.UserMapper;
 import com.normal.model.user.User;
@@ -30,7 +30,10 @@ public class UserServiceImpl implements UserService {
     }
 
     private String genToken(User user) {
-        return null;
+        Tokens tokens = new Tokens();
+        tokens.addPayload("phone", user.getPhone());
+
+        return tokens.gen();
     }
 
     @Override
@@ -48,11 +51,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Result modifyPwd(String newPwd, String verifyCode) {
+        //todo
         return null;
     }
 
     @Override
-    public Result queryUser(Integer userId) {
-        return Result.success(userMapper.selectByPrimaryKey(userId));
+    public Result queryUser(String token) {
+        Tokens tokens = new Tokens();
+        String userId = tokens.getPayloadItem(token, "userId");
+        return Result.success(userMapper.selectByPrimaryKey(Integer.valueOf(userId)));
+    }
+
+    @Override
+    public Result updateUser(User user) {
+        int count = userMapper.updateByPrimaryKeySelective(user);
+        return count == 1 ? Result.success() : Result.fail("更新失败");
     }
 }

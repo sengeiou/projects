@@ -2,6 +2,7 @@ package com.normal.shop.impl;
 
 import com.normal.base.web.Result;
 import com.normal.model.openapi.DefaultPageOpenApiQueryParam;
+import com.normal.model.openapi.TbOpenApiQueryParam;
 import com.normal.openapi.impl.OpenApiQueryParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +30,7 @@ public class ShopController {
     }
 
     @GetMapping("pageQueryRecommendGoods")
-    public Result pageQueryRecommendGoods(@OpenApiQueryParam DefaultPageOpenApiQueryParam param) {
+    public Result pageQueryRecommendGoods(@OpenApiQueryParam TbOpenApiQueryParam param) {
         return Result.success(shopService.pageQueryRecommendGoods(param));
     }
 

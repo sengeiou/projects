@@ -7,8 +7,8 @@ import com.normal.base.utils.Objs;
 import com.normal.dao.context.BizContextMapper;
 import com.normal.model.autosend.SendGood;
 import com.normal.model.context.BizContextTypes;
-import com.normal.openapi.IAutoSendGoodsQueryService;
-import com.normal.openapi.IOpenApiService;
+import com.normal.model.openapi.TbOpenApiQueryParam;
+import com.normal.openapi.impl.OpenApiManager;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -28,11 +28,6 @@ public class BoundMaterialVoteSendGoodQueryStrategy implements SendGoodQueryStra
 
     private String strategyId;
 
-    @Autowired
-    private IOpenApiService openApiService;
-
-    @Autowired
-    private IAutoSendGoodsQueryService autoSendGoodsQueryService;
 
     @Autowired
     BizContextMapper bizContextMapper;
@@ -43,6 +38,8 @@ public class BoundMaterialVoteSendGoodQueryStrategy implements SendGoodQueryStra
     @Autowired
     ObjectMapper objectMapper;
 
+    @Autowired
+    OpenApiManager openApiManager;
 
     public BoundMaterialVoteSendGoodQueryStrategy(List<String> materialIds, String strategyId) {
         this.strategyId = strategyId;
@@ -61,9 +58,9 @@ public class BoundMaterialVoteSendGoodQueryStrategy implements SendGoodQueryStra
             bizContextService.deleteContext(BizContextTypes.querySendGood);
             bizContextService.insertCtx(BizContextTypes.querySendGood, ctx);
         }
-        Map<String, Object> param = ctx.getNextParam();
+        TbOpenApiQueryParam param = ctx.getNextParam();
         bizContextService.updateCtxObjByType(BizContextTypes.querySendGood, Objs.toJson(ctx));
-        return autoSendGoodsQueryService.querySendGoods(param);
+        return openApiManager.tbQuerySendGoods(param);
     }
 
     @Override
@@ -88,8 +85,8 @@ public class BoundMaterialVoteSendGoodQueryStrategy implements SendGoodQueryStra
         }
 
         @JsonIgnore
-        public Map<String, Object> getNextParam() {
-            Map<String, Object> param = new HashMap<>(3);
+        public TbOpenApiQueryParam getNextParam() {
+            TbOpenApiQueryParam param = new TbOpenApiQueryParam();
             param.put("pageSize", 2);
             boolean end = materialIdx == materialIds.size() - 1;
             if (end) {

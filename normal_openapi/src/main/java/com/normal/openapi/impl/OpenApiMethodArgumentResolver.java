@@ -20,7 +20,7 @@ public class OpenApiMethodArgumentResolver implements HandlerMethodArgumentResol
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        DefaultPageOpenApiQueryParam param = DefaultPageOpenApiQueryParam.newInstance();
+        DefaultPageOpenApiQueryParam param = new DefaultPageOpenApiQueryParam();
         Iterator<String> parameterNames = webRequest.getParameterNames();
         for (; parameterNames.hasNext(); ) {
             String next = parameterNames.next();

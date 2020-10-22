@@ -5,9 +5,9 @@ public enum CommonErrorMsg {
 
     RUNTIME_ERROR("-1000", "运行时异常"),
     AUTH_ERROR("-1002", "无权限"),
-
-    ILLEGE_ARG("-1001", "参数非法"),
-    ILLEGE_STATE("-1002", "状态非法");
+    AUTH_EXPIRE("-1003", "token 过期"),
+    ILLEGE_ARG("-1004", "参数非法"),
+    ILLEGE_STATE("-1005", "状态非法");
 
     private final String code;
 

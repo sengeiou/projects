@@ -6,11 +6,12 @@ import com.normal.dao.base.QuerySql;
 import com.normal.model.BizCodes;
 import com.normal.model.BizDictEnums;
 import com.normal.model.openapi.DefaultPageOpenApiQueryParam;
+import com.normal.model.openapi.PddOpenApiQueryParam;
+import com.normal.model.openapi.TbOpenApiQueryParam;
 import com.normal.model.shop.GoodCat;
 import com.normal.model.shop.ListGood;
-import com.normal.openapi.IOpenApiService;
+import com.normal.openapi.impl.OpenApiManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -31,12 +32,7 @@ public class ShopService {
     Cache cache;
 
     @Autowired
-    @Qualifier("taobaoOpenApiService")
-    private IOpenApiService taobaoOpenApiService;
-
-    @Autowired
-    @Qualifier("pddOpenApiService")
-    private IOpenApiService pddOpenApiService;
+    OpenApiManager openApiManager;
 
     /**
      * 查询所有的类目
@@ -62,13 +58,17 @@ public class ShopService {
     }
 
     public List<ListGood> pageQueryByCat(DefaultPageOpenApiQueryParam param) {
-        Objects.requireNonNull(param.get(DefaultPageOpenApiQueryParam.catId));
-        return pageQueryGoods(param);
-    }
-
-    public List<ListGood> pageQueryByKeyword(DefaultPageOpenApiQueryParam param) {
-        Objects.requireNonNull(param.get(DefaultPageOpenApiQueryParam.keyword));
-        return pageQueryGoods(param);
+        Objects.requireNonNull(param.getCatId());
+        Objects.requireNonNull(param.getPlatform(), "平台参数不可为空");
+        if (BizDictEnums.PLATFORM_TB.key().equals(param.getPlatform())) {
+            TbOpenApiQueryParam tbParam = new TbOpenApiQueryParam(param);
+            tbParam.setTbMaterialId(tbParam.getCatId());
+            return openApiManager.tbQueryByMaterialId(tbParam).getResults();
+        }
+        if (BizDictEnums.PLATFORM_PDD.key().equals(param.getPlatform())) {
+            return openApiManager.pddPageQueryGoods(new PddOpenApiQueryParam(param)).getResults();
+        }
+        throw new IllegalArgumentException("平台参数未知");
     }
 
 
@@ -102,33 +102,10 @@ public class ShopService {
     }
 
 
-    public List<ListGood> pageQueryRecommendGoods(DefaultPageOpenApiQueryParam param) {
-        param.setTbMaterialId(BizDictEnums.QUERY_CNXH.key());
-        return tbPageQuery(param);
+    public List<ListGood> pageQueryRecommendGoods(TbOpenApiQueryParam param) {
+        param.setTbMaterialId(Long.valueOf(BizDictEnums.QUERY_CNXH.key()));
+        return openApiManager.tbQueryByMaterialId(param).getResults();
     }
-
-
-    private List<ListGood> pageQueryGoods(DefaultPageOpenApiQueryParam param) {
-
-        if (BizDictEnums.PLATFORM_TB.key().equals(param.getPlatform())) {
-            return tbPageQuery(param);
-        }
-        if (BizDictEnums.PLATFORM_PDD.key().equals(param.getPlatform())) {
-            return pddPageQuery(param);
-        }
-        throw new IllegalArgumentException("参数错误" + param.getPlatform());
-    }
-
-
-    private List<ListGood> pddPageQuery(DefaultPageOpenApiQueryParam param) {
-        return pddOpenApiService.pageQueryGoods(param).getResults();
-    }
-
-    private List<ListGood> tbPageQuery(DefaultPageOpenApiQueryParam param) {
-        return taobaoOpenApiService.pageQueryGoods(param).getResults();
-    }
-
-
 
 
 }

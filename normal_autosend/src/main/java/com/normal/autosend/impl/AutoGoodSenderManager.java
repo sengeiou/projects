@@ -7,10 +7,9 @@ import com.normal.model.BizDictEnums;
 import com.normal.model.autosend.DailyNoticeItem;
 import com.normal.model.autosend.SendGood;
 import com.normal.model.context.BizContextTypes;
-import com.normal.model.openapi.DefaultPageOpenApiQueryParam;
 import com.normal.model.openapi.OpenApiEvent;
-import com.normal.openapi.IAutoSendGoodsQueryService;
-import com.normal.openapi.IOpenApiService;
+import com.normal.model.openapi.TbOpenApiQueryParam;
+import com.normal.openapi.impl.OpenApiManager;
 import io.appium.java_client.windows.WindowsDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -21,7 +20,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -68,11 +66,7 @@ public class AutoGoodSenderManager implements ApplicationListener<OpenApiEvent> 
     BizContextMapper bizContextMapper;
 
     @Autowired
-    @Qualifier("taobaoOpenApiService")
-    IOpenApiService openApiService;
-
-    @Autowired
-    IAutoSendGoodsQueryService autoSendGoodsQueryService;
+    OpenApiManager openApiManager;
 
     private WindowsDriver driver;
 
@@ -122,8 +116,8 @@ public class AutoGoodSenderManager implements ApplicationListener<OpenApiEvent> 
     }
 
     private synchronized void dailyTask() {
-        DefaultPageOpenApiQueryParam param = DefaultPageOpenApiQueryParam.newInstance().setTbMaterialId(BizDictEnums.OTHER_XPKSP.key());
-        List<DailyNoticeItem> rsts = autoSendGoodsQueryService.queryDailyGoods(param);
+        TbOpenApiQueryParam param = new TbOpenApiQueryParam().setTbMaterialId(Long.valueOf(BizDictEnums.OTHER_XPKSP.key()));
+        List<DailyNoticeItem> rsts = openApiManager.tbQueryDailyGoods(param);
         sendDailyNotices(rsts);
     }
 

@@ -14,7 +14,10 @@ public interface UserService {
 
     Result modifyPwd(String newPwd, String verifyCode);
 
-    Result queryUser(Integer userId);
+    Result queryUser(String token);
+
+    Result updateUser(User user);
+
 
 
 }

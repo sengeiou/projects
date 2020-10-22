@@ -2,6 +2,7 @@ package com.normal.openapi.impl.taobao;
 
 import com.normal.model.BizDictEnums;
 import com.normal.model.openapi.DefaultPageOpenApiQueryParam;
+import com.normal.model.openapi.TbOpenApiQueryParam;
 import com.normal.model.shop.ListGood;
 import com.normal.openapi.impl.ParamConverter;
 import com.taobao.api.request.TbkDgMaterialOptionalRequest;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 /**
  * @author: fei.he
  */
-public class TaoBaoKeywordQueryParamConverter implements ParamConverter<DefaultPageOpenApiQueryParam, TbkDgMaterialOptionalRequest, TbkDgMaterialOptionalResponse, List<ListGood>> {
+public class TaoBaoKeywordQueryParamConverter implements ParamConverter<TbOpenApiQueryParam, TbkDgMaterialOptionalRequest, TbkDgMaterialOptionalResponse, List<ListGood>> {
 
     private Environment environment;
 
@@ -25,7 +26,7 @@ public class TaoBaoKeywordQueryParamConverter implements ParamConverter<DefaultP
     }
 
     @Override
-    public TbkDgMaterialOptionalRequest toOpenReq(DefaultPageOpenApiQueryParam myReqParam) {
+    public TbkDgMaterialOptionalRequest toOpenReq(TbOpenApiQueryParam myReqParam) {
         TbkDgMaterialOptionalRequest req = new TbkDgMaterialOptionalRequest();
         req.setAdzoneId(Long.valueOf(environment.getProperty("openapi.taobao.adzoneid")));
         Object keyword = myReqParam.get("keyword");
@@ -45,7 +46,7 @@ public class TaoBaoKeywordQueryParamConverter implements ParamConverter<DefaultP
     }
 
     @Override
-    public List<ListGood> toMyRes(TbkDgMaterialOptionalResponse openBackParam, DefaultPageOpenApiQueryParam myReqParam) {
+    public List<ListGood> toMyRes(TbkDgMaterialOptionalResponse openBackParam, TbOpenApiQueryParam myReqParam) {
         List<TbkDgMaterialOptionalResponse.MapData> rawGoods = openBackParam.getResultList();
         List<ListGood> list = rawGoods.stream()
                 .map((item) -> new TaobaoConvertFunctions(item).convertListGood())

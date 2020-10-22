@@ -2,6 +2,7 @@ package com.normal.openapi.impl.taobao;
 
 import com.normal.model.autosend.DailyNoticeItem;
 import com.normal.model.openapi.DefaultPageOpenApiQueryParam;
+import com.normal.model.openapi.TbOpenApiQueryParam;
 import com.normal.openapi.impl.ClientWrapper;
 import com.normal.openapi.impl.ParamConverter;
 import com.taobao.api.request.TbkDgOptimusMaterialRequest;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 /**
  * @author: fei.he
  */
-public class TaoBaoDailyNoticeQueryParamConverter implements ParamConverter<Map<String, Object>, TbkDgOptimusMaterialRequest, TbkDgOptimusMaterialResponse, List<DailyNoticeItem>> {
+public class TaoBaoDailyNoticeQueryParamConverter implements ParamConverter<TbOpenApiQueryParam, TbkDgOptimusMaterialRequest, TbkDgOptimusMaterialResponse, List<DailyNoticeItem>> {
 
     private Environment environment;
 
@@ -27,12 +28,10 @@ public class TaoBaoDailyNoticeQueryParamConverter implements ParamConverter<Map<
     }
 
     @Override
-    public TbkDgOptimusMaterialRequest toOpenReq(Map<String, Object> myReqParam) {
+    public TbkDgOptimusMaterialRequest toOpenReq(TbOpenApiQueryParam myReqParam) {
         TbkDgOptimusMaterialRequest req = new TbkDgOptimusMaterialRequest();
         req.setAdzoneId(Long.valueOf(environment.getProperty("openapi.taobao.adzoneid")));
-        if (myReqParam instanceof DefaultPageOpenApiQueryParam) {
-            req.setMaterialId(Long.valueOf(((DefaultPageOpenApiQueryParam) myReqParam).getTbMaterialId()));
-        }
+        req.setMaterialId(myReqParam.getTbMaterialId());
         req.setPageNo(Long.valueOf(String.valueOf(myReqParam.get("pageNo"))));
         req.setPageSize(10L);
         req.setFavoritesId(environment.getProperty("autosend.favoritesId"));
@@ -40,7 +39,7 @@ public class TaoBaoDailyNoticeQueryParamConverter implements ParamConverter<Map<
     }
 
     @Override
-    public List<DailyNoticeItem> toMyRes(TbkDgOptimusMaterialResponse openBackParam ,Map<String, Object> myReqParam) {
+    public List<DailyNoticeItem> toMyRes(TbkDgOptimusMaterialResponse openBackParam ,TbOpenApiQueryParam myReqParam) {
 
         List<TbkDgOptimusMaterialResponse.MapData> rawGoods = openBackParam.getResultList();
         return rawGoods.stream()

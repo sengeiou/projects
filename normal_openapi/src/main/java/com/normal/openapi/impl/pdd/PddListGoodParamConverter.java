@@ -2,6 +2,7 @@ package com.normal.openapi.impl.pdd;
 
 import com.normal.base.mybatis.Page;
 import com.normal.model.openapi.DefaultPageOpenApiQueryParam;
+import com.normal.model.openapi.PddOpenApiQueryParam;
 import com.normal.model.shop.CouponInfo;
 import com.normal.model.shop.ListGood;
 import com.normal.model.shop.OfferInfo;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
  * @author: fei.he
  */
 @Component
-public class PddListGoodParamConverter implements ParamConverter<DefaultPageOpenApiQueryParam, PddDdkGoodsSearchRequest, PddDdkGoodsSearchResponse, Page<ListGood>> {
+public class PddListGoodParamConverter implements ParamConverter<PddOpenApiQueryParam, PddDdkGoodsSearchRequest, PddDdkGoodsSearchResponse, Page<ListGood>> {
 
     @Autowired
     private ClientWrapper clientWrapper;
@@ -33,14 +34,14 @@ public class PddListGoodParamConverter implements ParamConverter<DefaultPageOpen
     private Environment environment;
 
     @Override
-    public PddDdkGoodsSearchRequest toOpenReq(DefaultPageOpenApiQueryParam myReqParam) {
+    public PddDdkGoodsSearchRequest toOpenReq(PddOpenApiQueryParam myReqParam) {
         PddDdkGoodsSearchRequest req = new PddDdkGoodsSearchRequest();
-        req.setCatId(myReqParam.getValue(DefaultPageOpenApiQueryParam.catId, Long.class));
-        String keyword = myReqParam.getValue(DefaultPageOpenApiQueryParam.keyword, String.class);
+        req.setCatId(myReqParam.getCatId());
+        String keyword = myReqParam.getValue(PddOpenApiQueryParam.keyword, String.class);
         if (StringUtils.isEmpty(keyword)) {
             req.setKeyword(keyword);
         }
-        Integer sortType = myReqParam.getValue(DefaultPageOpenApiQueryParam.pddSort, Integer.class);
+        Integer sortType = myReqParam.getValue(PddOpenApiQueryParam.sort, Integer.class);
         sortType = sortType == null ? 0 : sortType;
         req.setSortType(sortType);
         req.setPage(Long.valueOf(myReqParam.getPageNo()).intValue());
@@ -49,7 +50,7 @@ public class PddListGoodParamConverter implements ParamConverter<DefaultPageOpen
     }
 
     @Override
-    public Page<ListGood> toMyRes(PddDdkGoodsSearchResponse openBackParam, DefaultPageOpenApiQueryParam myReqParam) {
+    public Page<ListGood> toMyRes(PddDdkGoodsSearchResponse openBackParam, PddOpenApiQueryParam myReqParam) {
         PddDdkGoodsSearchResponse.GoodsSearchResponse rsp = openBackParam.getGoodsSearchResponse();
         List<Long> goodIds = rsp.getGoodsList().stream()
                 .map(item -> item.getGoodsId()).collect(Collectors.toList());
@@ -76,7 +77,11 @@ public class PddListGoodParamConverter implements ParamConverter<DefaultPageOpen
                         good.setCurrPrice(String.valueOf((Long.valueOf(originalPrice) - discount)));
                         good.setImage(detail.getGoodsImageUrl());
                         good.setSellNum(detail.getSalesTip());
-                        good.setOfferInfo(new OfferInfo(new CouponInfo(String.valueOf(discount), "")));
+                        if (discount == 0L) {
+                            good.setOfferInfo(new OfferInfo("只售" + detail.getMinNormalPrice() / 100 + "元"));
+                        } else {
+                            good.setOfferInfo(new OfferInfo(new CouponInfo(String.valueOf(discount), "")));
+                        }
                         return good;
                     })
                     .collect(Collectors.toList());

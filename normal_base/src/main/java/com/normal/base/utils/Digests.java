@@ -8,10 +8,9 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
-import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
+import java.security.SecureRandom;
 
 /**
  * @author: fei.he
@@ -19,7 +18,23 @@ import java.util.Base64;
 public class Digests {
     public static final Logger logger = LoggerFactory.getLogger(Digests.class);
 
-    final static String secretKey = "q0vhqIMtNtyT2ecXieB34g==";
+    static SecretKeySpec key;
+    static Cipher cipher;
+
+    static {
+        try {
+            String seed = "H9F*$_xiW~";
+            KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+            SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+            random.setSeed(seed.getBytes());
+            keyGen.init(128, random);
+            SecretKey secretKey = keyGen.generateKey();
+            key = new SecretKeySpec(secretKey.getEncoded(), "AES");
+            cipher = Cipher.getInstance("AES");
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+    }
 
     public static String md5(String input) {
         MessageDigest md = null;
@@ -34,31 +49,60 @@ public class Digests {
     }
 
 
-    public static String aesEncode(String value) {
-        for (int i = 0; i < 3; i++) {
-            byte[] encode = Base64.getUrlEncoder().encode((value + secretKey).getBytes());
-            value = new String(encode);
+    /**
+     * 将二进制转换成16进制
+     *
+     * @param buf
+     * @return
+     */
+    private static String parseByte2HexStr(byte buf[]) {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < buf.length; i++) {
+            String hex = Integer.toHexString(buf[i] & 0xFF);
+            if (hex.length() == 1) {
+                hex = '0' + hex;
+            }
+            sb.append(hex.toUpperCase());
         }
-        return value;
+        return sb.toString();
     }
 
-    public static String aesDecode(String value) {
-        for (int i = 0; i < 3; i++) {
-            byte[] encode = Base64.getUrlDecoder().decode(value.getBytes());
-            value = new String(encode);
+    /**
+     * 将16进制转换为二进制
+     *
+     * @param hexStr
+     * @return
+     */
+    private static byte[] parseHexStr2Byte(String hexStr) {
+        if (hexStr.length() < 1) {
+            return null;
         }
-        return value;
+        byte[] result = new byte[hexStr.length() / 2];
+        for (int i = 0; i < hexStr.length() / 2; i++) {
+            int high = Integer.parseInt(hexStr.substring(i * 2, i * 2 + 1), 16);
+            int low = Integer.parseInt(hexStr.substring(i * 2 + 1, i * 2 + 2), 16);
+            result[i] = (byte) (high * 16 + low);
+        }
+        return result;
     }
 
-    public static void main(String[] args) throws Exception {
-      /*  SecretKey secretKey = KeyGenerator.getInstance("AES").generateKey();
-// get base64 encoded version of the key
-        String encodedKey = Base64.getEncoder().encodeToString(secretKey.getEncoded());
-        System.out.println(encodedKey);
-        //q0vhqIMtNtyT2ecXieB34g==*/
+    public static String encrypt(String raw) {
+        try {
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+            return parseByte2HexStr(cipher.doFinal(raw.getBytes()));
+        } catch (Exception e) {
+            logger.error("e:{}", e);
+        }
+        throw new RuntimeException("加密失败");
+    }
 
-        String encode = aesEncode("name=hefei;phone=17816872538");
-        String decode = aesDecode(encode);
-        System.out.println(encode + "\n " + decode);
+    public static String decrypt(String decryptStr) {
+        try {
+            cipher.init(Cipher.DECRYPT_MODE, key);
+            return new String(cipher.doFinal(parseHexStr2Byte(decryptStr)));
+        } catch (Exception e) {
+            logger.error("e:{}", e);
+        }
+        throw new RuntimeException("解密失败");
     }
 }

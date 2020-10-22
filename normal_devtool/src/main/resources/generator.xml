@@ -61,7 +61,7 @@
                enableDeleteByExample="false"
                enableSelectByExample="false"
                selectByExampleQueryId="false"
-               enableUpdateByPrimaryKey="false"
+               enableUpdateByPrimaryKey="true"
         >
             <property name="useActualColumnNames" value="false"></property>
         </table>

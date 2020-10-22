@@ -1,6 +1,7 @@
 package com.normal.openapi.impl.taobao;
 
 import com.normal.model.autosend.SendGood;
+import com.normal.model.openapi.TbOpenApiQueryParam;
 import com.normal.openapi.impl.ClientWrapper;
 import com.normal.openapi.impl.GoodsTextGeneratorFactory;
 import com.normal.openapi.impl.IGoodsTextGenerator;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 /**
  * @author: fei.he
  */
-public class TaoBaoSendGoodResultParamConverter implements ParamConverter<Map<String, Object>, TbkDgOptimusMaterialRequest, TbkDgOptimusMaterialResponse, List<SendGood>> {
+public class TaoBaoSendGoodResultParamConverter implements ParamConverter<TbOpenApiQueryParam, TbkDgOptimusMaterialRequest, TbkDgOptimusMaterialResponse, List<SendGood>> {
 
     private Environment environment;
 
@@ -38,13 +39,13 @@ public class TaoBaoSendGoodResultParamConverter implements ParamConverter<Map<St
 
 
     @Override
-    public TbkDgOptimusMaterialRequest toOpenReq(Map<String, Object> myReqParam) {
+    public TbkDgOptimusMaterialRequest toOpenReq(TbOpenApiQueryParam myReqParam) {
         this.myReqParam = myReqParam;
         return paramConverter.toOpenReq(myReqParam);
     }
 
     @Override
-    public List<SendGood> toMyRes(TbkDgOptimusMaterialResponse openBackParam, Map<String, Object> myReqParam) {
+    public List<SendGood> toMyRes(TbkDgOptimusMaterialResponse openBackParam, TbOpenApiQueryParam myReqParam) {
         List<TbkDgOptimusMaterialResponse.MapData> items = openBackParam.getResultList();
         return items.stream()
                 .map((item) -> {
