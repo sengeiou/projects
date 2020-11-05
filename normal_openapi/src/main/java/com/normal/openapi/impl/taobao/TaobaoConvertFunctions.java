@@ -56,23 +56,30 @@ public class TaobaoConvertFunctions {
 
     public ListGood convertListGood() {
         ListGood good = new ListGood();
+        good.setPlatform(BizDictEnums.PLATFORM_TB.key());
         good.setItemId(goodListAdapter.getItemId());
         good.setGoodTitle(goodListAdapter.getTitle());
         good.setDirect(false);
         good.setCurrPrice(getCurrPrice(goodListAdapter));
         good.setOriginalPrice(getOriginalPrice(goodListAdapter));
         good.setOfferInfo(getOfferInfo());
-        good.setImage("http:" + goodListAdapter.getPictUrl());
+        good.setImage(goodListAdapter.getPictUrl());
+        String couponShareUrl = goodListAdapter.getCouponShareUrl();
+        if (StringUtils.isEmpty(couponShareUrl)) {
+            good.setTbShareUrl(goodListAdapter.getCouponClickUrl());
+        } else {
+            good.setTbShareUrl(couponShareUrl);
+        }
+        if(StringUtils.isEmpty(good.getTbShareUrl())){
+            good.setTbShareUrl(goodListAdapter.getClickUrl());
+        }
         if (!StringUtils.isEmpty(goodListAdapter.getSellNum())) {
             good.setSellNum(goodListAdapter.getSellNum());
         }
         if (!StringUtils.isEmpty(goodListAdapter.getVolume())) {
             good.setSellNum(String.valueOf(goodListAdapter.getVolume()));
         }
-        good.setImages(goodListAdapter.getSmallImages()
-                .stream()
-                .map((image) -> "http:" + image)
-                .collect(Collectors.toList()));
+        good.setImages(goodListAdapter.getSmallImages());
         return good;
     }
 
@@ -165,7 +172,9 @@ public class TaobaoConvertFunctions {
         public List<String> getSmallImages() {
             List<String> smallImages = null;
             if (materialData != null) {
-                smallImages = materialData.getSmallImages();
+                if (materialData.getSmallImages() != null) {
+                    smallImages = materialData.getSmallImages().stream().map((item) -> "http:" + item).collect(Collectors.toList());
+                }
             } else {
                 smallImages = optionalData.getSmallImages();
             }
@@ -222,11 +231,12 @@ public class TaobaoConvertFunctions {
 
         public String getPictUrl() {
             if (materialData != null) {
-                return materialData.getPictUrl();
+                return "http:" + materialData.getPictUrl();
             } else {
                 return optionalData.getPictUrl();
             }
         }
+
 
         public String getSellNum() {
             if (materialData != null) {

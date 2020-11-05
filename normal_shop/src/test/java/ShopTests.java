@@ -23,23 +23,28 @@ public class ShopTests {
 
     @Test
     public void test() throws Exception {
-        PddDdkCmsPromUrlGenerateRequest request = new PddDdkCmsPromUrlGenerateRequest();
-        request.setChannelType(2);
-        request.setGenerateMobile(false);
-        request.setGenerateSchemaUrl(false);
+        PddDdkGoodsPromotionUrlGenerateRequest request = new PddDdkGoodsPromotionUrlGenerateRequest();
+//        request.setCustomParameters("str");
+        request.setGenerateMallCollectCoupon(false);
+        request.setGenerateQqApp(false);
+        request.setGenerateSchemaUrl(true);
         request.setGenerateShortUrl(true);
         request.setGenerateWeappWebview(false);
-        request.setMultiGroup(false);
-        List<String> pIdList = new ArrayList<String>();
-        pIdList.add("11136444_175955262");
-        request.setPIdList(pIdList);
+        request.setGenerateWeiboappWebview(false);
         request.setGenerateWeApp(false);
-        PddDdkCmsPromUrlGenerateResponse response = client.syncInvoke(request);
+        List<Long> goodsIdList = new ArrayList<Long>();
+        goodsIdList.add(186672819012L);
+        request.setGoodsIdList(goodsIdList);
+        request.setMultiGroup(false);
+        request.setPId("11136444_175955262");
+        //request.setSearchId("str");
+        //request.setZsDuoId(0L);
+/*
+        List<String> targetIdList = new ArrayList<String>();
+        targetIdList.add("str");
+        request.setTargetIdList(targetIdList);*/
+        request.setGenerateAuthorityUrl(false);
+        PddDdkGoodsPromotionUrlGenerateResponse response = client.syncInvoke(request);
         System.out.println(JsonUtil.transferToJson(response));
-
-       /* PddGoodsCatsGetRequest request = new PddGoodsCatsGetRequest();
-        request.setParentCatId(0L);
-        PddGoodsCatsGetResponse response = client.syncInvoke(request);
-        System.out.println(JsonUtil.transferToJson(response));*/
     }
 }

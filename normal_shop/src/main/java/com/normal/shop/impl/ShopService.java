@@ -3,21 +3,20 @@ package com.normal.shop.impl;
 import com.normal.base.cache.Cache;
 import com.normal.base.query.QueryService;
 import com.normal.dao.base.QuerySql;
+import com.normal.dao.shop.ConfigMapper;
 import com.normal.model.BizCodes;
 import com.normal.model.BizDictEnums;
 import com.normal.model.openapi.DefaultPageOpenApiQueryParam;
 import com.normal.model.openapi.PddOpenApiQueryParam;
 import com.normal.model.openapi.TbOpenApiQueryParam;
-import com.normal.model.shop.GoodCat;
-import com.normal.model.shop.ListGood;
+import com.normal.model.shop.*;
 import com.normal.openapi.impl.OpenApiManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author: fei.he
@@ -33,6 +32,9 @@ public class ShopService {
 
     @Autowired
     OpenApiManager openApiManager;
+
+    @Autowired
+    ConfigMapper configMapper;
 
     /**
      * 查询所有的类目
@@ -108,4 +110,28 @@ public class ShopService {
     }
 
 
+    public List<String> queryRecommendKeywords() {
+        Config config = configMapper.selectByKey(ConfigKey.recommendKeyword.name());
+        return Stream.of(config.getConfigValue().split(",")).map((item) -> item.trim()).collect(Collectors.toList());
+    }
+
+    public List<ListGood> pageQueryByKw(DefaultPageOpenApiQueryParam param) {
+        if (param.getPlatform().equals("tb")) {
+            return openApiManager.tbQueryByGjz(new TbOpenApiQueryParam(param)).getResults();
+        }
+        if (param.getPlatform().equals("pdd")) {
+            return openApiManager.pddPageQueryGoods(new PddOpenApiQueryParam(param)).getResults();
+        }
+        throw new UnsupportedOperationException("不支持此平平台关键字查询, platform: " + param.getPlatform());
+    }
+
+    public PddSchemaUrl queryPddSchemaUrl(Long itemId) {
+        return openApiManager.pddQuerySchemaUrl(itemId);
+    }
+
+    public String queryTbPwd(String url) {
+        StringJoiner joiner = new StringJoiner("\n", "复制该段文字,打开淘宝,等待三秒即可点击购买.", " ");
+        joiner.add(openApiManager.tbQueryPwd(url));
+        return joiner.toString();
+    }
 }

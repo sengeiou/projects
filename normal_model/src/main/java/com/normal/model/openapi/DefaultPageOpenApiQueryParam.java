@@ -35,7 +35,11 @@ public class DefaultPageOpenApiQueryParam extends PageParam {
     }
 
     public <T> T getValue(String key, Class<T> clazz) {
-        String value = String.valueOf(get(key));
+        Object obj = get(key);
+        if (obj == null  || String.valueOf(obj).length() == 0) {
+            return null;
+        }
+        String value = String.valueOf(obj);
         if (clazz.equals(Long.class)) {
             return (T) Long.valueOf(value);
         }

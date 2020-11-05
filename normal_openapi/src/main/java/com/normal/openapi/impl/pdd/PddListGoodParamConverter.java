@@ -1,6 +1,7 @@
 package com.normal.openapi.impl.pdd;
 
 import com.normal.base.mybatis.Page;
+import com.normal.model.BizDictEnums;
 import com.normal.model.openapi.DefaultPageOpenApiQueryParam;
 import com.normal.model.openapi.PddOpenApiQueryParam;
 import com.normal.model.shop.CouponInfo;
@@ -17,6 +18,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,9 +40,8 @@ public class PddListGoodParamConverter implements ParamConverter<PddOpenApiQuery
         PddDdkGoodsSearchRequest req = new PddDdkGoodsSearchRequest();
         req.setCatId(myReqParam.getCatId());
         String keyword = myReqParam.getValue(PddOpenApiQueryParam.keyword, String.class);
-        if (StringUtils.isEmpty(keyword)) {
-            req.setKeyword(keyword);
-        }
+        req.setKeyword(keyword);
+        req.setPid(environment.getProperty("openapi.pdd.pid").replace("|", "_"));
         Integer sortType = myReqParam.getValue(PddOpenApiQueryParam.sort, Integer.class);
         sortType = sortType == null ? 0 : sortType;
         req.setSortType(sortType);
@@ -62,25 +63,31 @@ public class PddListGoodParamConverter implements ParamConverter<PddOpenApiQuery
 
             PddDdkGoodsDetailRequest request = new PddDdkGoodsDetailRequest();
             request.setGoodsIdList(Arrays.asList(goodsId));
-            request.setPid(environment.getProperty("openapi.pdd.pid"));
+            request.setPid(environment.getProperty("openapi.pdd.pid").replace("|", "_"));
             request.setSearchId(rsp.getSearchId());
 
             PddDdkGoodsDetailResponse detailsRsp = clientWrapper.pddExecute(request);
             List<ListGood> collect = detailsRsp.getGoodsDetailResponse().getGoodsDetails().stream()
                     .map(detail -> {
+                        BigDecimal yb = BigDecimal.valueOf(100);
+                        BigDecimal couponDiscount = BigDecimal.valueOf(detail.getCouponDiscount()).divide(yb);
+                        BigDecimal minGroupPrice = BigDecimal.valueOf(detail.getMinGroupPrice()).divide(yb);
                         ListGood good = new ListGood();
                         good.setItemId(detail.getGoodsId());
                         good.setGoodTitle(detail.getGoodsName());
-                        String originalPrice = String.valueOf(detail.getMinGroupPrice() / 100);
-                        good.setOriginalPrice(originalPrice);
-                        long discount = detail.getCouponDiscount() == null ? 0 : detail.getCouponDiscount() / 100;
-                        good.setCurrPrice(String.valueOf((Long.valueOf(originalPrice) - discount)));
+
+                        BigDecimal discount = couponDiscount == null ? BigDecimal.ZERO : couponDiscount;
                         good.setImage(detail.getGoodsImageUrl());
                         good.setSellNum(detail.getSalesTip());
-                        if (discount == 0L) {
-                            good.setOfferInfo(new OfferInfo("只售" + detail.getMinNormalPrice() / 100 + "元"));
+                        good.setPlatform(BizDictEnums.PLATFORM_PDD.key());
+
+                        if (detail.getHasCoupon()) {
+                            good.setOriginalPrice(String.valueOf(minGroupPrice));
+                            good.setOfferInfo(new OfferInfo(new CouponInfo(discount.toString(), "")));
+                            good.setCurrPrice(minGroupPrice.subtract(discount).toString());
                         } else {
-                            good.setOfferInfo(new OfferInfo(new CouponInfo(String.valueOf(discount), "")));
+                            good.setOfferInfo(new OfferInfo("只售" + minGroupPrice));
+                            good.setCurrPrice(minGroupPrice.toString());
                         }
                         return good;
                     })

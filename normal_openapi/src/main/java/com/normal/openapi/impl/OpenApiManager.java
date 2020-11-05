@@ -1,16 +1,18 @@
 package com.normal.openapi.impl;
 
 import com.normal.base.mybatis.Page;
-import com.normal.model.BizDictEnums;
 import com.normal.model.autosend.DailyNoticeItem;
 import com.normal.model.autosend.SendGood;
 import com.normal.model.openapi.PddOpenApiQueryParam;
 import com.normal.model.openapi.TbOpenApiQueryParam;
 import com.normal.model.shop.ItemGood;
 import com.normal.model.shop.ListGood;
+import com.normal.model.shop.PddSchemaUrl;
 import com.normal.openapi.impl.pdd.PddListGoodParamConverter;
 import com.normal.openapi.impl.taobao.*;
+import com.pdd.pop.sdk.http.api.pop.request.PddDdkGoodsPromotionUrlGenerateRequest;
 import com.pdd.pop.sdk.http.api.pop.request.PddDdkGoodsSearchRequest;
+import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsPromotionUrlGenerateResponse;
 import com.pdd.pop.sdk.http.api.pop.response.PddDdkGoodsSearchResponse;
 import com.taobao.api.request.TbkDgMaterialOptionalRequest;
 import com.taobao.api.request.TbkDgOptimusMaterialRequest;
@@ -21,8 +23,10 @@ import com.taobao.api.response.TbkItemInfoGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -57,7 +61,6 @@ public class OpenApiManager {
         dailyNoticeQueryParamConverter = new TaoBaoDailyNoticeQueryParamConverter(environment, clientWrapper);
 
     }
-
 
 
     public ItemGood tbQueryItemGood(String itemId) {
@@ -96,5 +99,28 @@ public class OpenApiManager {
         TbkDgMaterialOptionalResponse res = clientWrapper.tbExecute(req);
         return new Page<>(keywordQueryParamConverter.toMyRes(res, param), param.getPageNo(), res.getTotalResults());
     }
+
+    public PddSchemaUrl pddQuerySchemaUrl(Long itemId) {
+        PddDdkGoodsPromotionUrlGenerateRequest request = new PddDdkGoodsPromotionUrlGenerateRequest();
+        request.setGenerateSchemaUrl(true);
+        request.setGoodsIdList(Arrays.asList(itemId));
+        request.setMultiGroup(false);
+        request.setPId(environment.getProperty("openapi.pdd.pid").replace("|", "_"));
+        PddDdkGoodsPromotionUrlGenerateResponse resp = clientWrapper.pddExecute(request);
+        List<PddDdkGoodsPromotionUrlGenerateResponse.GoodsPromotionUrlGenerateResponseGoodsPromotionUrlListItem> urlList = resp.getGoodsPromotionUrlGenerateResponse().getGoodsPromotionUrlList();
+        if (!CollectionUtils.isEmpty(urlList)) {
+            PddDdkGoodsPromotionUrlGenerateResponse.GoodsPromotionUrlGenerateResponseGoodsPromotionUrlListItem urlItem = urlList.get(0);
+            PddSchemaUrl url = new PddSchemaUrl();
+            url.setSchemaUrl(urlItem.getSchemaUrl());
+            url.setWxUrl(urlItem.getWeAppWebViewShortUrl());
+            return  url;
+        }
+        throw new RuntimeException("查询 schema url 错误");
+    }
+
+    public String tbQueryPwd(String url){
+         return clientWrapper.queryTbPwd(url);
+    }
+
 
 }

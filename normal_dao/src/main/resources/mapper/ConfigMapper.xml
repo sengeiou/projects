@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.normal.dao.shop.ConfigMapper">
+  <resultMap id="BaseResultMap" type="com.normal.model.shop.Config">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="config_type" jdbcType="CHAR" property="configType" />
+    <result column="config_key" jdbcType="CHAR" property="configKey" />
+    <result column="config_value" jdbcType="VARCHAR" property="configValue" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, config_type, config_key, config_value
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from trd_shop_config
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+    <select id="selectByKey" resultMap="BaseResultMap">
+      select
+      <include refid="Base_Column_List" />
+      from trd_shop_config
+      where config_key = #{key}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from trd_shop_config
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.normal.model.shop.Config">
+    insert into trd_shop_config (id, config_type, config_key, 
+      config_value)
+    values (#{id,jdbcType=INTEGER}, #{configType,jdbcType=CHAR}, #{configKey,jdbcType=CHAR}, 
+      #{configValue,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.normal.model.shop.Config">
+    insert into trd_shop_config
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="configType != null">
+        config_type,
+      </if>
+      <if test="configKey != null">
+        config_key,
+      </if>
+      <if test="configValue != null">
+        config_value,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="configType != null">
+        #{configType,jdbcType=CHAR},
+      </if>
+      <if test="configKey != null">
+        #{configKey,jdbcType=CHAR},
+      </if>
+      <if test="configValue != null">
+        #{configValue,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.normal.model.shop.Config">
+    update trd_shop_config
+    <set>
+      <if test="configType != null">
+        config_type = #{configType,jdbcType=CHAR},
+      </if>
+      <if test="configKey != null">
+        config_key = #{configKey,jdbcType=CHAR},
+      </if>
+      <if test="configValue != null">
+        config_value = #{configValue,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.normal.model.shop.Config">
+    update trd_shop_config
+    set config_type = #{configType,jdbcType=CHAR},
+      config_key = #{configKey,jdbcType=CHAR},
+      config_value = #{configValue,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

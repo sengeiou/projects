@@ -8,6 +8,7 @@ import com.taobao.api.request.TbkDgOptimusMaterialRequest;
 import com.taobao.api.response.TbkDgOptimusMaterialResponse;
 import org.springframework.core.env.Environment;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,7 +29,7 @@ public class TaoBaoMaterialQueryParamConverter implements ParamConverter<TbOpenA
     public TbkDgOptimusMaterialRequest toOpenReq(TbOpenApiQueryParam myReqParam) {
         TbkDgOptimusMaterialRequest req = new TbkDgOptimusMaterialRequest();
         req.setAdzoneId(Long.valueOf(environment.getProperty("openapi.taobao.adzoneid")));
-         req.setMaterialId(myReqParam.getTbMaterialId());
+        req.setMaterialId(myReqParam.getTbMaterialId());
         req.setPageNo(Long.valueOf(String.valueOf(myReqParam.get("pageNo"))));
         req.setPageSize(Long.valueOf(String.valueOf(myReqParam.get("pageSize"))));
         return req;
@@ -37,6 +38,9 @@ public class TaoBaoMaterialQueryParamConverter implements ParamConverter<TbOpenA
     @Override
     public List<ListGood> toMyRes(TbkDgOptimusMaterialResponse openBackParam, TbOpenApiQueryParam myReqParam) {
         List<TbkDgOptimusMaterialResponse.MapData> rawGoods = openBackParam.getResultList();
+        if (rawGoods == null){
+            return new ArrayList<>();
+        }
         List<ListGood> list = rawGoods.stream()
                 .map(mapData -> new TaobaoConvertFunctions(mapData).convertListGood())
                 .collect(Collectors.toList());

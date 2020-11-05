@@ -53,4 +53,14 @@ public class ListGood {
      * 子图片列表
      */
     private List<String> images;
+
+    /**
+     *  所属平台
+     */
+    private String platform;
+
+    /**
+     * tb 券优惠领取链接
+     */
+    private String tbShareUrl;
 }

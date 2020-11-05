@@ -11,6 +11,7 @@ import com.normal.model.openapi.OpenApiEvent;
 import com.normal.model.openapi.TbOpenApiQueryParam;
 import com.normal.openapi.impl.OpenApiManager;
 import io.appium.java_client.windows.WindowsDriver;
+import org.apache.ibatis.jdbc.Null;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
@@ -35,10 +36,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.function.Function;
 
 /**
@@ -87,14 +85,13 @@ public class AutoGoodSenderManager implements ApplicationListener<OpenApiEvent> 
         // 每日任务
         long initialDelaySecond = getInitialDelaySecond();
 
-        currDailyFuture = dailyExecutor.scheduleAtFixedRate(() -> {
-            dailyTask();
-        }, initialDelaySecond, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
+        currDailyFuture = dailyExecutor.scheduleAtFixedRate(() -> dailyTask(), initialDelaySecond, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
 
         //固定任务
         currPeriodFuture = periodExecutor.scheduleAtFixedRate(() -> {
             periodTask();
         }, 0L, periodSecond, TimeUnit.SECONDS);
+
     }
 
     private Long getPeriodSeconds() {
@@ -102,23 +99,31 @@ public class AutoGoodSenderManager implements ApplicationListener<OpenApiEvent> 
     }
 
     private synchronized void periodTask() {
-        SendGood item = dailyGoodList.poll();
-        logger.info("----peroid task --- good: {}");
+        try {
 
-        if (item == null) {
-            List<SendGood> goods = facadeAutoSendServiceWrapper.querySendGoods();
-            for (SendGood good : goods) {
-
-                dailyGoodList.offer(good);
+            SendGood item = dailyGoodList.poll();
+            logger.info("send good: \n {}", item);
+            if (item == null) {
+                List<SendGood> goods = facadeAutoSendServiceWrapper.querySendGoods();
+                for (SendGood good : goods) {
+                    dailyGoodList.offer(good);
+                }
             }
+            sendGood(item == null ? dailyGoodList.poll() : item);
+        } catch (Exception e) {
+            logger.error("e: {}", e);
         }
-        sendGood(item == null ? dailyGoodList.poll() : item);
     }
 
     private synchronized void dailyTask() {
-        TbOpenApiQueryParam param = new TbOpenApiQueryParam().setTbMaterialId(Long.valueOf(BizDictEnums.OTHER_XPKSP.key()));
-        List<DailyNoticeItem> rsts = openApiManager.tbQueryDailyGoods(param);
-        sendDailyNotices(rsts);
+        try {
+            TbOpenApiQueryParam param = new TbOpenApiQueryParam().setTbMaterialId(Long.valueOf(BizDictEnums.OTHER_XPKSP.key()));
+            List<DailyNoticeItem> rsts = openApiManager.tbQueryDailyGoods(param);
+            sendDailyNotices(rsts);
+        } catch (Exception e) {
+            logger.error("e: {}", e);
+        }
+
     }
 
 

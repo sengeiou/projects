@@ -44,5 +44,26 @@ public class ShopController {
         return Result.success(shopService.pageQueryByCat(param));
     }
 
+    @GetMapping("queryRecommendKeywords")
+    public Result queryRecommendKeywords() {
+        return Result.success(shopService.queryRecommendKeywords());
+    }
+
+    @GetMapping("pageQueryByKw")
+    public Result pageQueryByKw(@OpenApiQueryParam DefaultPageOpenApiQueryParam param) {
+        return Result.success(shopService.pageQueryByKw(param));
+    }
+
+    @GetMapping("queryPddSchemaUrl")
+    public Result queryPddSchemaUrl(Long itemId) {
+        return Result.success(shopService.queryPddSchemaUrl(itemId));
+    }
+
+
+    @GetMapping("queryTbPwd")
+    public Result queryTbPwd(String url) {
+        return Result.success(shopService.queryTbPwd(url));
+    }
+
 
 }

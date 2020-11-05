@@ -10,6 +10,7 @@ import com.taobao.api.response.TbkDgMaterialOptionalResponse;
 import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,6 +49,9 @@ public class TaoBaoKeywordQueryParamConverter implements ParamConverter<TbOpenAp
     @Override
     public List<ListGood> toMyRes(TbkDgMaterialOptionalResponse openBackParam, TbOpenApiQueryParam myReqParam) {
         List<TbkDgMaterialOptionalResponse.MapData> rawGoods = openBackParam.getResultList();
+        if(rawGoods == null){
+             rawGoods = new ArrayList<>();
+        }
         List<ListGood> list = rawGoods.stream()
                 .map((item) -> new TaobaoConvertFunctions(item).convertListGood())
                 .collect(Collectors.toList());

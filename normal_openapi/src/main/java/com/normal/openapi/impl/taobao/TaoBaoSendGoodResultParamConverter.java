@@ -47,6 +47,9 @@ public class TaoBaoSendGoodResultParamConverter implements ParamConverter<TbOpen
     @Override
     public List<SendGood> toMyRes(TbkDgOptimusMaterialResponse openBackParam, TbOpenApiQueryParam myReqParam) {
         List<TbkDgOptimusMaterialResponse.MapData> items = openBackParam.getResultList();
+        if(items == null){
+            throw new RuntimeException(openBackParam.getErrorCode() + " " + openBackParam.getMessage());
+        }
         return items.stream()
                 .map((item) -> {
                     //save image

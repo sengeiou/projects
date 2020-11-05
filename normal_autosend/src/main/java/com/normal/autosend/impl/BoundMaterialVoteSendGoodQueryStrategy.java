@@ -95,7 +95,7 @@ public class BoundMaterialVoteSendGoodQueryStrategy implements SendGoodQueryStra
             } else {
                 materialIdx++;
             }
-            param.put("materialId", materialIds.get(materialIdx));
+            param.put("tbMaterialId", materialIds.get(materialIdx));
             param.put("pageNo", pageNo);
             return param;
         }

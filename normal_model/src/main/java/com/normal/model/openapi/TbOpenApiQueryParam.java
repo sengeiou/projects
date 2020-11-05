@@ -14,12 +14,14 @@ public class TbOpenApiQueryParam extends DefaultPageOpenApiQueryParam {
 
     public TbOpenApiQueryParam() {
         super();
-        put(tbOrderBy, BizDictEnums.DEFAULT_ORDER_BY);
-        put(tbAsc, BizDictEnums.COMMON_DES);
+        put(tbOrderBy, BizDictEnums.DEFAULT_ORDER_BY.key());
+        put(tbAsc, BizDictEnums.COMMON_DES.key());
     }
 
     public TbOpenApiQueryParam(DefaultPageOpenApiQueryParam defaultParam) {
         super();
+        put(tbOrderBy, BizDictEnums.DEFAULT_ORDER_BY.key());
+        put(tbAsc, BizDictEnums.COMMON_DES.key());
         this.putAll(defaultParam);
     }
 
@@ -42,12 +44,12 @@ public class TbOpenApiQueryParam extends DefaultPageOpenApiQueryParam {
         return (TbOpenApiQueryParam) setParam(tbMaterialId, materialId);
     }
 
-    public BizDictEnums getTbOrderBy() {
-        return getValue(tbOrderBy, BizDictEnums.class);
+    public String getTbOrderBy() {
+        return getValue(tbOrderBy, String.class);
     }
 
-    public BizDictEnums getTbAsc() {
-        return getValue(tbOrderBy, BizDictEnums.class);
+    public String getTbAsc() {
+        return getValue(tbAsc, String.class);
     }
 
     public Long getTbMaterialId() {
@@ -56,7 +58,7 @@ public class TbOpenApiQueryParam extends DefaultPageOpenApiQueryParam {
 
 
     public String getTbSort() {
-        return getTbOrderBy().key() + getTbAsc().key();
+        return getTbOrderBy() + getTbAsc();
     }
 
 }

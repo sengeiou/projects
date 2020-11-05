@@ -34,7 +34,10 @@ openapi:
     appsecret: 8da2478ae2d25c96ebde05cf3f522e7f
     serverurl: http://gw.api.taobao.com/router/rest
     userid: 1309050177
-
+  pdd:
+    pid: 11136444|175955262
+    appkey: 66acc0f56ee545c48ff7748c10d4f871
+    appsecret: 68cd9546b762345ad9dd5725a5f00edcf9912076
 
 #order pay
 biz:

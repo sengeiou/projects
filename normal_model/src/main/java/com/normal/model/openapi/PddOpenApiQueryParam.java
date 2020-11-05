@@ -13,12 +13,14 @@ public class PddOpenApiQueryParam extends DefaultPageOpenApiQueryParam {
 
     public PddOpenApiQueryParam() {
         super();
+        put("pageNo", 1L);
         put(catId, 0);
     }
 
     public PddOpenApiQueryParam(DefaultPageOpenApiQueryParam defaultParam) {
         super();
         put(sort, 0);
+        put("pageNo", 1L);
         putAll(defaultParam);
     }
 

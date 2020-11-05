@@ -32,6 +32,7 @@ public class TaoBaoGoodsDetailQueryParamConverter implements ParamConverter<Stri
         itemGood.setGoodTitle(item.getTitle());
         itemGood.setImage(item.getPictUrl());
         itemGood.setSellNum(String.valueOf(item.getVolume()));
+        itemGood.setPlatform("tb");
         itemGood.setImages(item.getSmallImages()
                 .stream()
                 .map((image) -> "http:" + image)
