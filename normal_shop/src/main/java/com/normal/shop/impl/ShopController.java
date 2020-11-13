@@ -65,5 +65,9 @@ public class ShopController {
         return Result.success(shopService.queryTbPwd(url));
     }
 
+    @GetMapping("queryHomeDynamic")
+    public Result queryHomeDynamic() {
+        return Result.success(null);
+    }
 
 }
