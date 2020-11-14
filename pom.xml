@@ -109,7 +109,7 @@
             </dependency>
             <dependency>
                 <groupId>com.normal</groupId>
-                <artifactId>taobao-sdk-java-auto-20201008</artifactId>
+                <artifactId>taobao-sdk-java-auto-20201018</artifactId>
                 <version>1.0.0</version>
             </dependency>
             <dependency>

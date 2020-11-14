@@ -22,7 +22,7 @@ autosend:
     path: E:/pics/tmp/
   strategy: boundMaterialVote
   webchat:
-    location: E:/soft-install-here/WeChat/WeChat.exe
+    location: F:/soft_install/WeChat/WeChat.exe
   materialids: 13369,31362,31371,4094,3756,3786,13366
   favoritesId: 2017667085
 

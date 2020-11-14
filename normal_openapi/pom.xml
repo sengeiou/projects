@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>com.normal</groupId>
-            <artifactId>taobao-sdk-java-auto-20201008</artifactId>
+            <artifactId>taobao-sdk-java-auto-20201018</artifactId>
         </dependency>
         <dependency>
             <groupId>com.pdd</groupId>
