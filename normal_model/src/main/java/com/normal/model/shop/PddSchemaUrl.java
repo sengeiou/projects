@@ -1,11 +1,11 @@
 package com.normal.model.shop;
 
-import lombok.Data;
+
 
 /**
  * @author: fei.he
  */
-@Data
+
 public class PddSchemaUrl {
 
 
@@ -13,6 +13,19 @@ public class PddSchemaUrl {
 
     private String wxUrl;
 
+    public String getSchemaUrl() {
+        return schemaUrl;
+    }
 
+    public void setSchemaUrl(String schemaUrl) {
+        this.schemaUrl = schemaUrl;
+    }
 
+    public String getWxUrl() {
+        return wxUrl;
+    }
+
+    public void setWxUrl(String wxUrl) {
+        this.wxUrl = wxUrl;
+    }
 }

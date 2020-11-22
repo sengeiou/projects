@@ -1,6 +1,6 @@
 package com.normal.devtool.dbupdate;
 
-import lombok.Data;
+
 
 import java.util.List;
 import java.util.Map;
@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * @author: fei.he
  */
-@Data
+
 public class ParseNode {
 
     private String name;

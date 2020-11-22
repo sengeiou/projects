@@ -9,7 +9,7 @@ import com.normal.model.autosend.SendGood;
 import com.normal.model.context.BizContextTypes;
 import com.normal.model.openapi.TbOpenApiQueryParam;
 import com.normal.openapi.impl.OpenApiManager;
-import lombok.Data;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.Instant;
@@ -66,7 +66,7 @@ public class BoundMaterialVoteSendGoodQueryStrategy implements SendGoodQueryStra
         return this.strategyId;
     }
 
-    @Data
+
     static class Context {
         private int materialIdx = -1;
         private int pageNo = 1;

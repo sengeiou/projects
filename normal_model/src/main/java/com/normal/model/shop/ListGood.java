@@ -1,13 +1,13 @@
 package com.normal.model.shop;
 
-import lombok.Data;
+
 
 import java.util.List;
 
 /**
  * @author: fei.he
  */
-@Data
+
 public class ListGood {
 
     private Long  itemId;
@@ -63,4 +63,100 @@ public class ListGood {
      * tb 券优惠领取链接
      */
     private String tbShareUrl;
+
+    public Long getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(Long itemId) {
+        this.itemId = itemId;
+    }
+
+    public String getGoodTitle() {
+        return goodTitle;
+    }
+
+    public void setGoodTitle(String goodTitle) {
+        this.goodTitle = goodTitle;
+    }
+
+    public String getOriginalPrice() {
+        return originalPrice;
+    }
+
+    public void setOriginalPrice(String originalPrice) {
+        this.originalPrice = originalPrice;
+    }
+
+    public String getCurrPrice() {
+        return currPrice;
+    }
+
+    public void setCurrPrice(String currPrice) {
+        this.currPrice = currPrice;
+    }
+
+    public OfferInfo getOfferInfo() {
+        return offerInfo;
+    }
+
+    public void setOfferInfo(OfferInfo offerInfo) {
+        this.offerInfo = offerInfo;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getSellNum() {
+        return sellNum;
+    }
+
+    public void setSellNum(String sellNum) {
+        this.sellNum = sellNum;
+    }
+
+    public boolean isDirect() {
+        return direct;
+    }
+
+    public void setDirect(boolean direct) {
+        this.direct = direct;
+    }
+
+    public String getTbPwd() {
+        return tbPwd;
+    }
+
+    public void setTbPwd(String tbPwd) {
+        this.tbPwd = tbPwd;
+    }
+
+    public List<String> getImages() {
+        return images;
+    }
+
+    public void setImages(List<String> images) {
+        this.images = images;
+    }
+
+    public String getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(String platform) {
+        this.platform = platform;
+    }
+
+    public String getTbShareUrl() {
+        return tbShareUrl;
+    }
+
+    public void setTbShareUrl(String tbShareUrl) {
+        this.tbShareUrl = tbShareUrl;
+    }
 }

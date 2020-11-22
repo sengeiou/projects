@@ -1,11 +1,11 @@
 package com.normal.model.shop;
 
-import lombok.Data;
+
 
 /**
  * @author: fei.he
  */
-@Data
+
 public class CouponInfo {
 
     private String  couponAmt;
@@ -16,6 +16,22 @@ public class CouponInfo {
 
     public CouponInfo(String couponAmt, String validateDate) {
         this.couponAmt = couponAmt;
+        this.validateDate = validateDate;
+    }
+
+    public String getCouponAmt() {
+        return couponAmt;
+    }
+
+    public void setCouponAmt(String couponAmt) {
+        this.couponAmt = couponAmt;
+    }
+
+    public String getValidateDate() {
+        return validateDate;
+    }
+
+    public void setValidateDate(String validateDate) {
         this.validateDate = validateDate;
     }
 }

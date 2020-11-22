@@ -1,11 +1,10 @@
 package com.normal.model.autosend;
 
-import lombok.Data;
+
 
 /**
  * @author: fei.he
  */
-@Data
 public class DailyNoticeItem {
 
     /**
@@ -16,4 +15,19 @@ public class DailyNoticeItem {
 
     private String imagePath;
 
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
 }

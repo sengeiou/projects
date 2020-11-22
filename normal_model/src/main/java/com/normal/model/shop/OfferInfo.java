@@ -1,13 +1,13 @@
 package com.normal.model.shop;
 
 import com.normal.model.BizDictEnums;
-import lombok.Data;
+
 
 /**
  * @author: fei.he
  * 优惠信息
  */
-@Data
+
 public class OfferInfo {
 
     public OfferInfo(String context) {
@@ -35,5 +35,27 @@ public class OfferInfo {
      */
     private CouponInfo couponInfo;
 
+    public BizDictEnums getOfferType() {
+        return offerType;
+    }
 
+    public void setOfferType(BizDictEnums offerType) {
+        this.offerType = offerType;
+    }
+
+    public String getContext() {
+        return context;
+    }
+
+    public void setContext(String context) {
+        this.context = context;
+    }
+
+    public CouponInfo getCouponInfo() {
+        return couponInfo;
+    }
+
+    public void setCouponInfo(CouponInfo couponInfo) {
+        this.couponInfo = couponInfo;
+    }
 }

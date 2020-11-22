@@ -1,13 +1,10 @@
 package com.normal.base.web;
 
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * @author fei.he
  */
-@Getter
-@Setter
+
 public class Result<T> {
 
     private String code;
@@ -42,5 +39,19 @@ public class Result<T> {
         return new Result(errorMsg.getCode(), errorMsg.getMsg(), false, null);
     }
 
+    public boolean isSuccess() {
+        return success;
+    }
 
+    public String getCode() {
+        return code;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public T getData() {
+        return data;
+    }
 }

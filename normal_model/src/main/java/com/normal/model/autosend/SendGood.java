@@ -1,8 +1,8 @@
 package com.normal.model.autosend;
 
 import com.normal.model.YesOrNoEnum;
-import lombok.Data;
-import lombok.ToString;
+
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 /**
  * @author fei.he
  */
-@Data
-@ToString
+
+
 public class SendGood {
     private Integer id;
     /**
@@ -42,5 +42,45 @@ public class SendGood {
             return imagePaths.stream().collect(Collectors.joining(","));
         }
         return null;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public List<String> getImagePaths() {
+        return imagePaths;
+    }
+
+    public void setImagePaths(List<String> imagePaths) {
+        this.imagePaths = imagePaths;
+    }
+
+    public YesOrNoEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(YesOrNoEnum status) {
+        this.status = status;
     }
 }
