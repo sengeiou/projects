@@ -12,6 +12,7 @@ import com.normal.model.openapi.TbOpenApiQueryParam;
 import com.normal.model.shop.*;
 import com.normal.openapi.impl.OpenApiManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -36,6 +37,8 @@ public class ShopService {
     @Autowired
     ConfigMapper configMapper;
 
+    @Autowired
+    Environment environment;
     /**
      * 查询所有的类目
      *
@@ -133,5 +136,11 @@ public class ShopService {
         StringJoiner joiner = new StringJoiner("\n", "复制该段文字,打开淘宝,等待三秒即可点击购买.", " ");
         joiner.add(openApiManager.tbQueryPwd(url));
         return joiner.toString();
+    }
+
+    public List<ListGood> queryDailyGoods() {
+        TbOpenApiQueryParam param = new TbOpenApiQueryParam().setTbMaterialId(Long.valueOf(BizDictEnums.OTHER_XPKSP.key()));
+        param.setParam("favoritesId", environment.getProperty("openapi.taobao.favoritesId"));
+        return openApiManager.tbQueryDailyListGoods(param);
     }
 }

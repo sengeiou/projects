@@ -1,8 +1,8 @@
 package com.normal.openapi.impl.taobao;
 
 import com.normal.model.autosend.DailyNoticeItem;
-import com.normal.model.openapi.DefaultPageOpenApiQueryParam;
 import com.normal.model.openapi.TbOpenApiQueryParam;
+import com.normal.model.shop.ListGood;
 import com.normal.openapi.impl.ClientWrapper;
 import com.normal.openapi.impl.ParamConverter;
 import com.taobao.api.request.TbkDgOptimusMaterialRequest;
@@ -10,7 +10,6 @@ import com.taobao.api.response.TbkDgOptimusMaterialResponse;
 import org.springframework.core.env.Environment;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -34,7 +33,11 @@ public class TaoBaoDailyNoticeQueryParamConverter implements ParamConverter<TbOp
         req.setMaterialId(myReqParam.getTbMaterialId());
         req.setPageNo(Long.valueOf(String.valueOf(myReqParam.get("pageNo"))));
         req.setPageSize(10L);
-        req.setFavoritesId(environment.getProperty("autosend.favoritesId"));
+        if(myReqParam.get("favoritesId") == null){
+            req.setFavoritesId(environment.getProperty("autosend.favoritesId"));
+        }else {
+            req.setFavoritesId(String.valueOf(myReqParam.get("favoritesId")));
+        }
         return req;
     }
 
@@ -51,4 +54,18 @@ public class TaoBaoDailyNoticeQueryParamConverter implements ParamConverter<TbOp
                 .collect(Collectors.toList());
 
     }
+
+    public List<ListGood> toListGoods(TbkDgOptimusMaterialResponse openBackParam) {
+
+        List<TbkDgOptimusMaterialResponse.MapData> rawGoods = openBackParam.getResultList();
+        return rawGoods.stream()
+                .map(mapData -> {
+                    TaobaoConvertFunctions functions = new TaobaoConvertFunctions(mapData);
+                    return functions.convertListGood();
+
+                })
+                .collect(Collectors.toList());
+
+    }
+
 }

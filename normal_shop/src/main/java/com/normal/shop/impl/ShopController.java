@@ -70,4 +70,11 @@ public class ShopController {
         return Result.success(null);
     }
 
+
+    @GetMapping("queryDailyGoods")
+    public Result queryDailyGoods() {
+        return Result.success(shopService.queryDailyGoods());
+    }
+
+
 }

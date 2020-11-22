@@ -26,6 +26,7 @@ openapi:
     materialids: 13369,31362,31371,4094,3756,3786,13366
     images:
       path: E:/pics/tmp/
+    favoritesId: 2017667085
   pdd:
     pid: 11136444|175955262
     appkey: 66acc0f56ee545c48ff7748c10d4f871

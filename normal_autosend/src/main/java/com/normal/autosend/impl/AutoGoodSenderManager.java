@@ -63,7 +63,7 @@ public class AutoGoodSenderManager {
     private void initTask() {
         //init data
         TbOpenApiQueryParam param = new TbOpenApiQueryParam().setTbMaterialId(Long.valueOf(BizDictEnums.OTHER_XPKSP.key()));
-        dailyNoticeItems = openApiManager.tbQueryDailyGoods(param);
+        dailyNoticeItems = openApiManager.tbQueryDailyNotices(param);
         //submit
         dailyExecutor.scheduleAtFixedRate(this::dailyTask, 0L, getPeriodSeconds(), TimeUnit.SECONDS);
 
