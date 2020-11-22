@@ -75,6 +75,11 @@ public class OpenApiManager {
         return dailyNoticeQueryParamConverter.toMyRes(res, params);
     }
 
+    /**
+     * 经常出现查询为空的情况
+     * @param params
+     * @return
+     */
     public List<SendGood> tbQuerySendGoods(TbOpenApiQueryParam params) {
         TbkDgOptimusMaterialRequest req = sendGoodResultParamConverter.toOpenReq(params);
         TbkDgOptimusMaterialResponse res = clientWrapper.tbExecute(req);
@@ -82,11 +87,15 @@ public class OpenApiManager {
     }
 
 
+
+
     public Page<ListGood> pddPageQueryGoods(PddOpenApiQueryParam param) {
         PddDdkGoodsSearchRequest req = pddListGoodParamConverter.toOpenReq(param);
         PddDdkGoodsSearchResponse rsp = clientWrapper.pddExecute(req);
         return pddListGoodParamConverter.toMyRes(rsp, param);
     }
+
+
 
     public Page<ListGood> tbQueryByMaterialId(TbOpenApiQueryParam param) {
         TbkDgOptimusMaterialRequest req = materialParamConverter.toOpenReq(param);
